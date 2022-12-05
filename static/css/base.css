@@ -1,7 +1,118 @@
-/*.row {
-    width: 100%
+@media only screen and (max-width: 500px) {
+    .container {
+        width: 95%;
+    }
 }
 
-.container {
-    margin: 0px;
-}*/
+* {
+    color: white;
+}
+
+body {
+    background: #121212;
+    color: white;
+}
+
+nav {
+    padding: 0px 20px;
+}
+
+h4 {
+    line-height: 200%;
+}
+
+.custom_badge {
+    background: rgba(255, 255, 255, 0.07);
+    padding: 7px;
+    border-radius: 5px;
+    white-space: nowrap;
+}
+
+.vert-padding {
+    margin: 5px 0px;
+}
+
+.card {
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.row .col {
+    padding: 10px;
+}
+
+@media only screen and (max-width: 600px) {
+    .row .col {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+    h4 {
+        font-size: clamp(17px, 4vw, 4vw);
+    }
+}
+
+.col .card {
+    margin: 0;
+}
+
+.evenly-spaced {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.evenly-spaced a {
+    margin-right: unset;
+}
+
+.link {
+    color: #bb86fc !important
+}
+
+.link:hover {
+    color: hsl(267, 75%, 56%) !important
+}
+
+#home-lettering {
+    font-size: 3rem;
+}
+
+.card-content.mobile-view {
+    padding: 5px 10px;
+}
+
+.align-sideways {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lesson-time {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dp01 {
+    background: rgba(255, 255, 255, 0.05);
+}
+.dp02 {
+    background: rgba(255, 255, 255, 0.07);
+}
+.dp03 {
+    background: rgba(255, 255, 255, 0.08);
+}
+.dp04 {
+    background: rgba(255, 255, 255, 0.09);
+}
+.dp06 {
+    background: rgba(255, 255, 255, 0.1);
+}
+.dp08 {
+    background: rgba(255, 255, 255, 0.12);
+}
+.dp12 {
+    background: rgba(255, 255, 255, 0.14);
+}

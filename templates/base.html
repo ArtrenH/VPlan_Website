@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--<link rel="icon" href="https://bere.al/favicon.ico">-->
-    <link rel="icon" href="https://www.google.com/s2/favicons?domain=https://bere.al/">
-    <link rel="apple-touch-icon" href="https://bere.al/images/logos/bereal.png">
-    <title>BeReal-Dashboard</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/better_vp.svg') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/better_vp.svg') }}">
+    <title>Better VPlan</title>
 
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -22,14 +22,13 @@
     {% endblock %}
 </head>
 <body>
-    <nav>
+    <nav class="dp02">
         <div class="nav-wrapper">
             <a href="/">
-                <img class="navbar-image" src="{{ url_for('static', filename='images/befake-white.png') }}" alt="">
+                <span id="home-lettering">Home</span>
             </a>
             <ul id="nav-bar" class="right hide-on-med-and-down">
-                <li><a href="/today">today</a></li>
-                <li><a href="/user">posts</a></li>
+                <li><a href="/today">TODO</a></li>
             </ul>
         </div>
     </nav>
