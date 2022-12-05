@@ -23,6 +23,8 @@ def get_plan(school_num, date):
     if r.status_code == 404:
         print("error")
         return {"error": "plan not available"}
+    #with open("20221209.xml", "w") as f:
+    #    f.write(r.content.decode("utf-8"))
     return r
 
 
@@ -68,6 +70,32 @@ def find_free_rooms(school_num, day, lesson):
     free_rooms = [room for room in all_rooms if room not in rooms_hour]
     return free_rooms
 
+"""
+needs something like this:
+<Std>
+    <St>4</St>
+    <Beginn>10:35</Beginn>
+    <Ende>11:20</Ende>
+    <Fa FaAe="FaGeaendert">---</Fa>
+    <Ku2>ph1</Ku2>
+    <Le LeAe="LeGeaendert"></Le>
+    <Ra RaAe="RaGeaendert"></Ra>
+    <Nr>713</Nr>
+    <If>ph1 Frau Riedel fällt aus</If>
+</Std>
+"""
+def extract_data(std_soup):
+    cur_extract_data = {
+        new_name: std_soup.find(code).text.strip() if std_soup.find(code) else "" for new_name, code in zip(["course_id", "lesson", "begin", "end", "subject", "subject_name", "teacher", "room", "information"], ["nr", "st", "beginn", "ende", "fa", "ku2", "le", "ra", "if"])
+    }
+    for name, key in zip(["subject", "teacher", "room"], ["Fa", "Le", "Ra"]):
+        cur_part = std_soup.find(key.lower())
+        cur_extract_data[f"{name}_changed"] = False
+        if cur_part.get(f"{key.lower()}ae") == f"{key}Geaendert":
+            cur_extract_data[f"{name}_changed"] = True
+            print(f"{name} changed")
+    return cur_extract_data
+
 def room_lessons(school_num, day, room):
     c = get_plan(school_num=school_num, date=day)
     if "error" in c:
@@ -82,9 +110,7 @@ def room_lessons(school_num, day, room):
             room_num = class_lesson.find("ra").text.strip()
             info = class_lesson.find("if").text.strip()
             if room_num == room or room in info:
-                room_lessons.append({**{"class": class_name}, **{
-                    new_name: class_lesson.find(code).text.strip() if class_lesson.find(code) else "" for new_name, code in zip(["lesson", "begin", "end", "subject", "subject_name", "teacher", "room", "information"], ["st", "beginn", "ende", "fa", "ku2", "le", "ra", "if"])
-                }})
+                room_lessons.append({**{"class": class_name}, **extract_data(class_lesson)})
     return Plan(school_num, day, room_lessons).render()
 
 # extracts all lessons a teacher gives at a certain day
@@ -102,9 +128,7 @@ def teacher_lessons(school_num, day, tag):
             teacher = class_lesson.find("le").text.strip()
             info = class_lesson.find("if").text.strip()
             if teacher == tag or tag in info:
-                teacher_lessons.append({**{"class": class_name}, **{
-                    new_name: class_lesson.find(code).text.strip() if class_lesson.find(code) else "" for new_name, code in zip(["lesson", "begin", "end", "subject", "subject_name", "teacher", "room", "information"], ["st", "beginn", "ende", "fa", "ku2", "le", "ra", "if"])
-                }})
+                teacher_lessons.append({**{"class": class_name}, **extract_data(class_lesson)})
     return Plan(school_num, day, teacher_lessons).render()
 
 # gets a plan for a whole class
@@ -126,10 +150,7 @@ def get_plan_normal(school_num, day, course):
     std_all = pl.find_all("std")
     lessons = []
     for std in std_all:
-        lessons.append({**{"class": course}, **{
-            new_name: std.find(code).text.strip() if std.find(code) else "" for new_name, code in zip(["lesson", "begin", "end", "subject", "subject_name", "teacher", "room", "information"], ["st", "beginn", "ende", "fa", "ku2", "le", "ra", "if"])
-        }})
-    print("fast fertig")
+        lessons.append({**{"class": course}, **extract_data(std)})
     return Plan(school_num, day, lessons).render()
 
 # gets a plan for a class with only certain courses (for example: course="JG11", courses=["PH1", "MA4"])
@@ -181,8 +202,9 @@ def load_courses(school_num, group):
 
 if __name__ == "__main__":
     pass
+    #get_plan("10001329", "20221209")
     #print(load_courses("10001329", "JG12"))
     #print(get_plan_normal("10001329", "20221205", "JG12"))
     #print(get_plan_filtered_courses("10001329", "20221205", "JG12", ["MA1", "MA2", "MA3", "MA4"]))
-    print(teacher_lessons("10001329", "20221205", "GLS"))
+    #print(teacher_lessons("10001329", "20221205", "GLS"))
     #print(room_lessons("10001329", "20221205", "2312"))

@@ -9,6 +9,7 @@ class Lesson():
         self.data_dict = data_dict
         self.date = date
         self.school_num = school_num
+        self.course_id = data_dict.get("course_id", "--")
         self.class_name = data_dict.get("class", "--")
         self.lesson = data_dict.get("lesson", "--")
         self.room = data_dict.get("room", "--")
@@ -16,6 +17,10 @@ class Lesson():
         self.subject_name = data_dict.get("subject_name", "--")
         self.info = data_dict.get("info", "--")
         self.teacher = data_dict.get("teacher", "--")
+
+        self.subject_changed = data_dict.get("subject_changed", False)
+        self.teacher_changed = data_dict.get("teacher_changed", False)
+        self.room_changed = data_dict.get("room_changed", False)
 
         self.link_start = f"/../{self.school_num}/{self.date}"
 
@@ -32,6 +37,9 @@ class Lesson():
             "room_link": self.get_room_link(),
             "teacher_link": self.get_teacher_link(),
             "class_link": self.get_class_link(),
+            "subject_changed": self.subject_changed,
+            "teacher_changed": self.teacher_changed,
+            "room_changed": self.room_changed,
         }
     
     def get_room_link(self):
@@ -56,8 +64,6 @@ class Plan():
     def __init__(self, school_num, date, lesson_dicts):
         self.school_num = school_num
         self.lesson_dicts = lesson_dicts
-        print(len(lesson_dicts))
-        print(self.lesson_dicts)
         self.lessons = [Lesson(lesson_dict, school_num, date) for lesson_dict in lesson_dicts]
     
     def render(self):
