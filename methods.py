@@ -23,8 +23,6 @@ def get_plan(school_num, date):
     if r.status_code == 404:
         print("error")
         return {"error": "plan not available"}
-    #with open("20221209.xml", "w") as f:
-    #    f.write(r.content.decode("utf-8"))
     return r
 
 
