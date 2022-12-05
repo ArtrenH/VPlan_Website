@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h4>{{ title }}</h4>
+<body>
+    <div class="container">
+        <div class="row">
+            {% for lesson in plan %}
+                <div class="col s6 m6 l6">
+                    <div class="card blue-grey darken-1">
+                        <div class="card-content white-text">
+                            <span class="card-title">Stunde {{ lesson.lesson }}</span>
+                            <p>Klasse: {{ lesson.class }}</p>
+                            <p>Fach: {{ lesson.subject }}</p>
+                            <p>Fach2: {{ lesson.subject_name }}</p>
+                            <p>Lehrer: {{ lesson.teacher }}</p>
+                            <p>Raum: {{ lesson.room }}</p>
+                            <p>Informationen: {{ lesson.info }}</p>
+                        </div>
+                        <div class="card-action">
+                            <a href="{{ lesson.class_link }}">Klasse {{ lesson.class }}</a>
+                            <a href="{{ lesson.room_link }}">Raum {{ lesson.room }}</a>
+                            <a href="{{ lesson.teacher_link }}">Lehrer {{ lesson.teacher }}</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+
+{% endblock %}
