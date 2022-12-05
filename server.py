@@ -1,7 +1,7 @@
 import json
 from flask import Flask, redirect, render_template
 
-from methods import get_plan, find_free_rooms, room_lessons, teacher_lessons, get_plan_normal, get_plan_filtered_courses
+from methods import get_plan, find_free_rooms, room_lessons, teacher_lessons, get_plan_normal, get_plan_filtered_courses, load_courses
 
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -58,6 +58,18 @@ def plan(schulnummer, date, klasse, kurse):
     data = get_plan_filtered_courses(schulnummer, date, klasse, kurse)
     return render_template('plan.html', title=f"Plan für Datum '{date}' und Klasse '{klasse}':", plan=data)
 
+
+@app.route('/<schulnummer>/<date>/plan/<klasse>')
+def courses(schulnummer, date, klasse):
+    print(klasse)
+    klasse = klasse.replace("_", "/")
+    data = load_courses(schulnummer, klasse)
+    print(data)
+    return render_template('courses.html', title=f"Plan für Datum '{date}' und Klasse '{klasse}':", courses=data)
+
+#@app.route("/<schulnummer>/<group>")
+#def courses(schulnummer, group):
+    #return load_courses(sch)
 
 
 

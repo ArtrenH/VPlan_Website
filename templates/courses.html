@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Willkommen beim VPlan!!!</h1>
+<h3>Garantiert besser als der echte...</h3>
+{% for course in courses %}
+    <h2>{{ course.id }}</h2>
+    <p>{{ course.teacher }}</p>
+    <p>{{ course.subject }}</p>
+
+{% endfor %}
+{% endblock %}

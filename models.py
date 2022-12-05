@@ -1,3 +1,9 @@
+# Namenserklärungen:
+# group: Klasse, z.B. Jg12, 6/1
+# course: Kurs, z.B. eth1, lat
+
+
+
 class Lesson():
     def __init__(self, data_dict, school_num, date):
         self.data_dict = data_dict
@@ -46,13 +52,56 @@ class Lesson():
         return f"{self.link_start}/klassenplan/{self.class_name.replace('/', '_')}"
         #return f"../klassenplan/{self.class_name.replace('/', '_')}"
 
-
-
-
 class Plan():
-    def __init__(self, lesson_dicts, school_num, date):
+    def __init__(self, school_num, date, lesson_dicts):
+        self.school_num = school_num
         self.lesson_dicts = lesson_dicts
+        print(len(lesson_dicts))
+        print(self.lesson_dicts)
         self.lessons = [Lesson(lesson_dict, school_num, date) for lesson_dict in lesson_dicts]
     
     def render(self):
         return sorted([lesson.render() for lesson in self.lessons], key=lambda x: x["lesson"])
+
+
+
+class SharedCourse():
+    def __init__(self, school_num, course_dict):
+        self.school_num = school_num
+        self.course_dict = course_dict
+        self.course_name = course_dict.get("course", "")
+        self.teacher = course_dict.get("teacher", "")
+
+    def render(self):
+        return {
+            "course": self.course_name,
+            "teacher": self.teacher
+        }
+
+class Course():
+    def __init__(self, school_num, course_dict):
+        self.school_num = school_num
+        self.course_dict = course_dict
+        self.id = course_dict.get("id", "")
+        self.teacher = course_dict.get("teacher", "")
+        self.subject = course_dict.get("subject", "")
+        self.course = course_dict.get("course", "")
+        self.shared_course = SharedCourse(self.school_num, {"course": self.course, "teacher": self.teacher}) if self.course else {}
+
+    def render(self):
+        return {
+            "id": self.id,
+            "teacher": self.teacher,
+            "subject": self.subject,
+            "course": self.course,
+            "shared_course": self.shared_course.render() if self.shared_course else {}
+        }
+
+class Group():
+    def __init__(self, school_num, course_dicts):
+        self.school_num = school_num
+        self.course_dicts = course_dicts
+        self.courses = [Course(school_num, course_dict) for course_dict in self.course_dicts]
+
+    def render(self):
+        return [course.render() for course in self.courses]
