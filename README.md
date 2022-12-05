@@ -24,7 +24,7 @@ source venv/bin/activate
 4. install requirements
 ```bash
 pip3 install -r requirements.txt
-``
+```
 5. run server
 ```bash
 python3 server.py
