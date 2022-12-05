@@ -20,6 +20,7 @@ class Lesson():
 
         self.subject_changed = data_dict.get("subject_changed", False)
         self.teacher_changed = data_dict.get("teacher_changed", False)
+        self.teacher_changed = "mooorning"
         self.room_changed = data_dict.get("room_changed", False)
 
         self.link_start = f"/../{self.school_num}/{self.date}"
@@ -34,12 +35,12 @@ class Lesson():
             "subject_name": self.subject_name,
             "info": self.info,
             "teacher": self.teacher,
-            "room_link": self.get_room_link(),
-            "teacher_link": self.get_teacher_link(),
-            "class_link": self.get_class_link(),
             "subject_changed": self.subject_changed,
             "teacher_changed": self.teacher_changed,
             "room_changed": self.room_changed,
+            "room_link": self.get_room_link(),
+            "teacher_link": self.get_teacher_link(),
+            "class_link": self.get_class_link(),
         }
     
     def get_room_link(self):

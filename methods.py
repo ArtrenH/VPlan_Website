@@ -93,7 +93,6 @@ def extract_data(std_soup):
         cur_extract_data[f"{name}_changed"] = False
         if cur_part.get(f"{key.lower()}ae") == f"{key}Geaendert":
             cur_extract_data[f"{name}_changed"] = True
-            print(f"{name} changed")
     return cur_extract_data
 
 def room_lessons(school_num, day, room):
@@ -157,7 +156,7 @@ def get_plan_normal(school_num, day, course):
 def get_plan_filtered_courses(school_num, day, course, courses):
     normal_plan = get_plan_normal(school_num, day, course)
     if "error" in normal_plan:
-        return normal_plan
+        return 
     return Plan(school_num, day, [lesson for lesson in normal_plan if lesson["subject_name"] in courses or lesson["subject"] in courses]).render()
 
 

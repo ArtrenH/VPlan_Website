@@ -58,6 +58,7 @@ def klassenplan(schulnummer, date, klasse):
 def plan(schulnummer, date, klasse, kurse):
     kurse = kurse.split(",")
     data = get_plan_filtered_courses(schulnummer, date, klasse, kurse)
+    print(data)
     return render_template('plan.html', title=f"Plan für Klasse <span class='custom_badge'>{klasse}</span> am <span class='custom_badge'>{convert_date_readable(date)}</span>:", plan=data)
 
 

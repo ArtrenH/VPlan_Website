@@ -10,6 +10,11 @@
                     <span class="card-title">Stunde {{ lesson.lesson }} (TIME)</span>
                     <p><b>Fach</b>: {{ lesson.subject }} {% if lesson.subject == "---" %}({{ lesson.subject_name }} fällt aus){% endif %}</p>
                     <p><b>Lehrer</b>: {{ lesson.teacher }}</p>
+                    <!--@OFFICIALFREAK TODO:-->
+                    <!--(those are bools)-->
+                    <!--{{ lesson.subject_changed }}-->
+                    <!--{{ lesson.teacher_changed }}-->
+                    <!--{{ lesson.room_changed }}-->
                     <p><b>Raum</b>: {{ lesson.room }}</p>
                     <p><b>Klasse</b>: {{ lesson.class }}</p>
                     {% if lesson.info != "--" %}<p><b>Informationen</b>: {{ lesson.info }}</p>{% endif %}
