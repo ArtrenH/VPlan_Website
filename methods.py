@@ -137,7 +137,7 @@ def get_plan_filtered_courses(school_num, day, course, courses):
     normal_plan = get_plan_normal(school_num, day, course)
     if "error" in normal_plan:
         return normal_plan
-    return Plan([lesson for lesson in normal_plan if lesson["subject_name"] in courses or lesson["subject"] in courses], school_num, day).render()
+    return Plan(school_num, day, [lesson for lesson in normal_plan if lesson["subject_name"] in courses or lesson["subject"] in courses]).render()
 
 
 def get_classes(school_num):
