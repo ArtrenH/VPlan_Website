@@ -17,6 +17,11 @@ nav {
     padding: 0px 20px;
 }
 
+nav img {
+    height: 100%;
+    padding: 5px;
+}
+
 .headline {
     line-height: 200%;
     padding-left: 10px;
