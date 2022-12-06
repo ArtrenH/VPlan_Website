@@ -7,7 +7,7 @@
     <!--<link rel="icon" href="https://bere.al/favicon.ico">-->
     <link rel="icon" href="{{ url_for('static', filename='images/better_vp.svg') }}">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/better_vp.svg') }}">
-    <title>Better VPlan</title>
+    <title>Better VPlan - {% if plan_type %}{{ plan_type }} {{ plan_value }}{% else %}Startseite{% endif %}</title>
 
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -34,6 +34,9 @@
     </nav>
     
     <div class="container">
+        <h4 class="headline">{% if plan_type %}
+            Plan für {{ plan_type }} <span class='custom_badge'>{{ plan_value }}</span> am <span class='custom_badge'>{{ date }}</span>
+        {% else %}Startseite{% endif %}</h4>
         {% block content %}{% endblock %}
     </div>
     

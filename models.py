@@ -20,7 +20,6 @@ class Lesson():
 
         self.subject_changed = data_dict.get("subject_changed", False)
         self.teacher_changed = data_dict.get("teacher_changed", False)
-        self.teacher_changed = "mooorning"
         self.room_changed = data_dict.get("room_changed", False)
 
         self.link_start = f"/../{self.school_num}/{self.date}"

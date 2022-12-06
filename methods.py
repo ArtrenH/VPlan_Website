@@ -84,7 +84,7 @@ needs something like this:
 """
 def extract_data(std_soup):
     cur_extract_data = {
-        new_name: std_soup.find(code).text.strip() if std_soup.find(code) else "" for new_name, code in zip(["course_id", "lesson", "begin", "end", "subject", "subject_name", "teacher", "room", "information"], ["nr", "st", "beginn", "ende", "fa", "ku2", "le", "ra", "if"])
+        new_name: std_soup.find(code).text.strip() if std_soup.find(code) else "" for new_name, code in zip(["course_id", "lesson", "begin", "end", "subject", "subject_name", "teacher", "room", "info"], ["nr", "st", "beginn", "ende", "fa", "ku2", "le", "ra", "if"])
     }
     for name, key in zip(["subject", "teacher", "room"], ["Fa", "Le", "Ra"]):
         cur_part = std_soup.find(key.lower())

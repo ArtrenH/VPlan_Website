@@ -7,6 +7,50 @@ from methods import get_plan, find_free_rooms, room_lessons, teacher_lessons, ge
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
+def add_spacers(vplan_data):
+    prev_lesson = 1
+    for elem in vplan_data:
+        converted_lesson = None
+        try:
+            converted_lesson = int(elem["lesson"])
+        except Exception:
+            if(elem["lesson"].split(" - ")[1] == "2"):
+                continue
+            converted_lesson = int(elem["lesson"].split(" - ")[0])
+        
+        if prev_lesson + 1 == converted_lesson:
+            elem["spacer"] = True
+        
+        prev_lesson = converted_lesson
+
+    return vplan_data
+
+def equal_dicts(d1, d2, ignore_keys):
+    ignored = set(ignore_keys)
+    for k1, v1 in d1.items():
+        if k1 not in ignored and (k1 not in d2 or d2[k1] != v1):
+            return False
+    for k2, v2 in d2.items():
+        if k2 not in ignored and k2 not in d1:
+            return False
+    return True
+
+def remove_duplicates(vplan_data):
+    new_vplan_data = []
+    tmp_vplan_data = sorted(vplan_data, key=lambda d: d['subject'])
+    tmp_vplan_data = sorted(tmp_vplan_data, key=lambda d: d['class'])
+    tmp_vplan_data = sorted(tmp_vplan_data, key=lambda d: d['info'])
+    for i in range(0, len(tmp_vplan_data), 2):
+        if equal_dicts(tmp_vplan_data[i], tmp_vplan_data[i+1], ["lesson"]):
+            tmp_vplan_data[i]["lesson"] = str(int((int(tmp_vplan_data[i]["lesson"]) - 1)/2 + 1))
+            new_vplan_data.append(tmp_vplan_data[i])
+        else:
+            tmp_vplan_data[i]["lesson"] = f'{int((int(tmp_vplan_data[i]["lesson"]) - 1)/2 + 1)} - 1'
+            tmp_vplan_data[i+1]["lesson"] = f'{int((int(tmp_vplan_data[i+1]["lesson"]) - 1)/2 + 1)} - 2'
+            new_vplan_data.append(tmp_vplan_data[i])
+            new_vplan_data.append(tmp_vplan_data[i+1])
+    return sorted(new_vplan_data, key=lambda d: d['lesson'])
+
 def convert_date_readable(date):
     year = int(date[:4])
     month = int(date[4:6])
@@ -41,32 +85,32 @@ def schulplan(schulnummer, date):
 @app.route('/<schulnummer>/<date>/lehrerplan/<kuerzel>')
 def lehrerplan(schulnummer, date, kuerzel):
     data = teacher_lessons(schulnummer, date, kuerzel)
-    return render_template('plan.html', title=f"Plan für Lehrer <span class='custom_badge'>{kuerzel}</span> am <span class='custom_badge'>{convert_date_readable(date)}</span>:", plan=data)
+    return render_template('plan.html', plan_type="Lehrer", plan_value=kuerzel, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)))
 
 @app.route('/<schulnummer>/<date>/raumplan/<room_num>')
 def raumplan(schulnummer, date, room_num):
     data = room_lessons(schulnummer, date, room_num)
-    return render_template('plan.html', title=f"Plan für Raum <span class='custom_badge'>{room_num}</span> am <span class='custom_badge'>{convert_date_readable(date)}</span>:", plan=data)
+    return render_template('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)))
 
 @app.route('/<schulnummer>/<date>/klassenplan/<klasse>')
 def klassenplan(schulnummer, date, klasse):
     klasse = klasse.replace("_", "/")
     data = get_plan_normal(schulnummer, date, klasse)
-    return render_template('plan.html', title=f"Plan für Klasse <span class='custom_badge'>{klasse}</span> am <span class='custom_badge'>{convert_date_readable(date)}</span>:", plan=data)
+    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)))
 
 @app.route('/<schulnummer>/<date>/plan/<klasse>/<kurse>')
 def plan(schulnummer, date, klasse, kurse):
     kurse = kurse.split(",")
     data = get_plan_filtered_courses(schulnummer, date, klasse, kurse)
     print(data)
-    return render_template('plan.html', title=f"Plan für Klasse <span class='custom_badge'>{klasse}</span> am <span class='custom_badge'>{convert_date_readable(date)}</span>:", plan=data)
+    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)))
 
 
 @app.route('/<schulnummer>/<date>/plan/<klasse>')
 def courses(schulnummer, date, klasse):
     klasse = klasse.replace("_", "/")
     data = load_courses(schulnummer, klasse)
-    return render_template('courses.html', title=f"Plan für Klasse <span class='custom_badge'>{klasse}</span> am <span class='custom_badge'>{convert_date_readable(date)}</span>:", courses=data)
+    return render_template('courses.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), courses=add_spacers(remove_duplicates(data)))
 
 #@app.route("/<schulnummer>/<group>")
 #def courses(schulnummer, group):

@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h4>{{ title|safe }}</h4>
 <div class="row">
     {% for lesson in plan %}
+    {% if lesson.spacer %}
+    <div class="col s12"></div>
+    {% endif %}
         <div class="col s12 m6">
             <div class="card dp01">
                 <div class="card-content hide-on-small-only">
@@ -21,29 +23,24 @@
                 </div>
                 <div class="card-content hide-on-med-and-up mobile-view">
                     <div class="align-sideways">
-                        <div class="lesson-time">
+                        <div class="lesson-time same-width">
                             <span>{{ lesson.lesson }}</span>
                             <span>TIME</span>
                         </div>
-                        <p>{{ lesson.subject }}</p>
-                        <p><b>{{ lesson.teacher }}</b></p>
-                        <p>{{ lesson.room }}</p>
-                        <p>{{ lesson.class }}</p>
-                        <!--<p>{{ lesson.subject_name }}</p>-->
+                        {% if lesson.subject != "---" %}
+                        <div class="same-width {% if lesson.subject_changed %}changed{% endif %}">{{ lesson.subject }}</div>
+                        <div class="same-width link {% if lesson.teacher_changed %}changed{% endif %}"><a href="{{ lesson.teacher_link }}"><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></a></div>
+                        <div class="same-width link {% if lesson.room_changed %}changed{% endif %}"><a href="{{ lesson.room_link }}">{{ lesson.room }}{% if not lesson.room %}​{% endif %}</a></div>
+                        <div class="same-width link"><a href="{{ lesson.class_link }}">{{ lesson.class }}</a></div>
+                        {% else %}
+                        <div class="same-width {% if lesson.subject_changed %}changed{% endif %}" style="width: 46vw;">X</div>
+                        <div class="same-width link"><a href="{{ lesson.class_link }}">{{ lesson.class }}</a></div>
+                        {% endif %}
                     </div>
-                    {% if lesson.subject == "---" %}
-                    <p class="vert-padding">{{ lesson.subject_name }} fällt aus
-                    {% if lesson.info != "--" %}, {{ lesson.info }}{% endif %}
-                    </p>
-                    {% else %}
-                    {% if lesson.info != "--" %}<p class="vert-padding">{{ lesson.info }}</p>{% endif %}
+                    {% if (lesson.info != "--") and (lesson.info != "") %}
+                    <p class="vert-padding dp01">{{ lesson.info }}</p>
                     {% endif %}
                 </div>
-                <!--<div class="card-action evenly-spaced">
-                    <a href="{{ lesson.class_link }}" class="link">Klasse {{ lesson.class }}</a>
-                    <a href="{{ lesson.room_link }}" class="link">Raum {{ lesson.room }}</a>
-                    <a href="{{ lesson.teacher_link }}" class="link">Lehrer {{ lesson.teacher }}</a>
-                </div>-->
             </div>
         </div>
     {% endfor %}
