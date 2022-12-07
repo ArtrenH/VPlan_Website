@@ -34,7 +34,7 @@ def remove_duplicates(vplan_data):
     tmp_vplan_data = sorted(tmp_vplan_data, key=lambda d: d['class'])
     tmp_vplan_data = sorted(tmp_vplan_data, key=lambda d: d['info'])
     for i in range(0, len(tmp_vplan_data), 2):
-        if equal_dicts(tmp_vplan_data[i], tmp_vplan_data[i+1], ["lesson"]):
+        if equal_dicts(tmp_vplan_data[i], tmp_vplan_data[i+1], ["lesson", "begin", "end"]):
             tmp_vplan_data[i]["lesson"] = str(int((int(tmp_vplan_data[i]["lesson"]) - 1)/2 + 1))
             new_vplan_data.append(tmp_vplan_data[i])
         else:

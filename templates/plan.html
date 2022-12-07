@@ -25,7 +25,7 @@
                     <div class="align-sideways">
                         <div class="lesson-time same-width">
                             <span>{{ lesson.lesson }}</span>
-                            <span>TIME</span>
+                            <span>{{ lesson.begin }} <!-- {{ lesson.end }} --></span>
                         </div>
                         {% if lesson.subject != "---" %}
                         <div class="same-width {% if lesson.subject_changed %}changed{% endif %}">{{ lesson.subject }}</div>
