@@ -1,7 +1,7 @@
 # Namenserklärungen:
-# group: Klasse, z.B. Jg12, 6/1
+# group: Klasse, z.B. JG12, 6/1
 # course: Kurs, z.B. eth1, lat
-
+import json
 
 
 class Lesson():
@@ -22,6 +22,12 @@ class Lesson():
         self.teacher_changed = data_dict.get("teacher_changed", False)
         self.room_changed = data_dict.get("room_changed", False)
 
+        self.time_data = data_dict.get("time_data", {}).get(self.lesson, None)
+        if not self.time_data:
+            with open("default_time_data.json", "r") as f:
+                self.time_data = json.load(f).get(self.lesson, "?")
+        self.begin = self.time_data.get("begin", "?")
+        self.end = self.time_data.get("end", "?")
         self.link_start = f"/../{self.school_num}/{self.date}"
 
     
@@ -40,6 +46,8 @@ class Lesson():
             "room_link": self.get_room_link(),
             "teacher_link": self.get_teacher_link(),
             "class_link": self.get_class_link(),
+            "begin": self.begin,
+            "end": self.end
         }
     
     def get_room_link(self):

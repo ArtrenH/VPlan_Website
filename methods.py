@@ -23,6 +23,8 @@ def get_plan(school_num, date):
     if r.status_code == 404:
         print("error")
         return {"error": "plan not available"}
+    #with open("data/test.xml", "w+") as f:
+    #    f.write(r.text)
     return r
 
 
@@ -107,7 +109,7 @@ def room_lessons(school_num, day, room):
             room_num = class_lesson.find("ra").text.strip()
             info = class_lesson.find("if").text.strip()
             if room_num == room or room in info:
-                room_lessons.append({**{"class": class_name}, **extract_data(class_lesson)})
+                room_lessons.append({**{"class": class_name}, **extract_data(class_lesson), "time_data": find_times(day_data, class_name)})
     return Plan(school_num, day, room_lessons).render()
 
 # extracts all lessons a teacher gives at a certain day
@@ -125,29 +127,36 @@ def teacher_lessons(school_num, day, tag):
             teacher = class_lesson.find("le").text.strip()
             info = class_lesson.find("if").text.strip()
             if teacher == tag or tag in info:
-                teacher_lessons.append({**{"class": class_name}, **extract_data(class_lesson)})
+                teacher_lessons.append({**{"class": class_name}, **extract_data(class_lesson), "time_data": find_times(day_data, class_name)})
     return Plan(school_num, day, teacher_lessons).render()
+
+
+def find_times(plan, course):
+    course_data = find_course(plan, course)
+    time_data = course_data.find("klstunden")
+    time_data = {tag.text: {"lesson": tag.text, "begin": tag.get("zeitvon", "?"), "end": tag.get("zeitbis", "?")} for tag in time_data.find_all("klst")}
+    return time_data
+
+def find_course(plan, course):
+    for kl in plan.find_all("kl"):
+        if kl.find("kurz").text.strip() == course:
+            return kl
+    return {"error": "chosen class has not been found"}
 
 # gets a plan for a whole class
 def get_plan_normal(school_num, day, course):
     c = get_plan(school_num=school_num, date=day)
-    print("hallloooo")
     if "error" in c:
         return {"error": "error with getting the plan for the requested day and school"}
     day_data = BeautifulSoup(c.text, features="html.parser")
-    course_data = False
-    for kl in day_data.find_all("kl"):
-        if kl.find("kurz").text.strip() == course:
-            course_data = kl
-            break
-    if not course_data:
-        print("not found")
-        return {"error": "chosen class has not been found"}
-    pl = kl.find("pl")
+    course_data = find_course(day_data, course)
+    time_data = find_times(day_data, course)
+    print(time_data)
+    pl = course_data.find("pl")
     std_all = pl.find_all("std")
     lessons = []
     for std in std_all:
-        lessons.append({**{"class": course}, **extract_data(std)})
+        lessons.append({**{"class": course}, **extract_data(std), "time_data": time_data})
     return Plan(school_num, day, lessons).render()
 
 # gets a plan for a class with only certain courses (for example: course="JG11", courses=["PH1", "MA4"])
@@ -201,7 +210,8 @@ if __name__ == "__main__":
     pass
     #get_plan("10001329", "20221209")
     #print(load_courses("10001329", "JG12"))
-    #print(get_plan_normal("10001329", "20221205", "JG12"))
+    #get_plan_normal("10001329", "20221207", "JG12")
+    #print(get_plan_normal("10001329", "20221207", "JG12"))
     #print(get_plan_filtered_courses("10001329", "20221205", "JG12", ["MA1", "MA2", "MA3", "MA4"]))
-    #print(teacher_lessons("10001329", "20221205", "GLS"))
+    #print(teacher_lessons("10001329", "20221207", "GLS"))
     #print(room_lessons("10001329", "20221205", "2312"))
