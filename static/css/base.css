@@ -147,3 +147,26 @@ nav img {
 .dp12 {
     background: rgba(255, 255, 255, 0.14);
 }
+
+.floating-arrow  {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8vw;
+    aspect-ratio: 1;
+    border: none;
+    border-radius: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: background-color 200ms ease;
+}
+
+.floating-arrow:active, .floating-arrow:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.arrow-left {
+    left: -5vw;
+}
+.arrow-right {
+    right: -5vw;
+}
