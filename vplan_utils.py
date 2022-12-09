@@ -48,7 +48,26 @@ def convert_date_readable(date):
     year = int(date[:4])
     month = int(date[4:6])
     day = int(date[6:])
-    date_string = datetime.datetime(year, month, day).strftime("%a %d.%m.%Y")
-    translated_date_string = date_string.replace("Mon", "Mo.").replace("Tue", "Di.").replace("Wed", "Mi.").replace("Thu", "Do.").replace("Fri", "Fr.")
-    return translated_date_string
+    date_string = datetime.datetime(year, month, day).strftime("%a %d. %B")
+    translation_arr = [
+        # Weekdays
+        ["Mon", "Montag"],
+        ["Tue", "Dienstag"],
+        ["Wed", "Mittwoch"],
+        ["Thu", "Donnerstag"],
+        ["Fri", "Freitag"],
+        # Months
+        ["January", "Januar"],
+        ["February", "Februar"],
+        ["March", "März"],
+        ["April", "April"],
+        ["May", "Mai"],
+        ["June", "Juni"],
+        ["July", "Juli"],
+        ["October", "Oktober"],
+        ["December", "Dezember"],
+    ]
+    for translation in translation_arr:
+        date_string = date_string.replace(translation[0], translation[1])
+    return date_string
 
