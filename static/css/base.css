@@ -151,23 +151,37 @@ nav img {
 
 .floating-arrow  {
     position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 8vw;
+    bottom: 0;
+    width: 70px;
     aspect-ratio: 1;
     border: none;
     border-radius: 100%;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #BB86FC;
     transition: background-color 200ms ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.floating-arrow:active, .floating-arrow:focus {
-    background-color: rgba(255, 255, 255, 0.15);
+.floating-arrow span {
+    color: black !important;
+    font-size: 2rem;
+    line-height: 2rem;
+}
+
+.floating-arrow:hover, .floating-arrow:active, .floating-arrow:focus {
+    background-color: hsl(267, 95%, 60%);
 }
 
 .arrow-left {
-    left: -5vw;
+    left: 0;
+    transform: translate(20%, -20%);
 }
 .arrow-right {
-    right: -5vw;
+    right: 0;
+    transform: translate(-20%, -20%);
+}
+
+.bottom-spacer {
+    height: 100px;
 }
