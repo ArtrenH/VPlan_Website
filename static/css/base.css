@@ -82,7 +82,8 @@ nav img {
 }
 
 .changed {
-    outline:#BB86FC solid 6px !important;
+    outline:#BB86FC solid 7px !important;
+    outline-offset: -1px;
     border-radius: 1px;
     background-color: #BB86FC !important;
     text-align: center;
