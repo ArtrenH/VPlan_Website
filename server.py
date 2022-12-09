@@ -32,26 +32,25 @@ def schulplan(schulnummer, date):
 
 @app.route('/<schulnummer>/<date>/lehrerplan/<kuerzel>')
 def lehrerplan(schulnummer, date, kuerzel):
-    data = methods.teacher_lessons(schulnummer, date, kuerzel)
-    return render_template('plan.html', plan_type="Lehrer", plan_value=kuerzel, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)))
+    data, zusatzinfo = methods.teacher_lessons(schulnummer, date, kuerzel)
+    return render_template('plan.html', plan_type="Lehrer", plan_value=kuerzel, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)), zusatzinfo=zusatzinfo)
 
 @app.route('/<schulnummer>/<date>/raumplan/<room_num>')
 def raumplan(schulnummer, date, room_num):
-    data = methods.room_lessons(schulnummer, date, room_num)
-    return render_template('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)))
+    data, zusatzinfo = methods.room_lessons(schulnummer, date, room_num)
+    return render_template('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)), zusatzinfo=zusatzinfo)
 
 @app.route('/<schulnummer>/<date>/klassenplan/<klasse>')
 def klassenplan(schulnummer, date, klasse):
     klasse = klasse.replace("_", "/")
-    data = methods.get_plan_normal(schulnummer, date, klasse)
-    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)))
+    data, zusatzinfo = methods.get_plan_normal(schulnummer, date, klasse)
+    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)), zusatzinfo=zusatzinfo)
 
 @app.route('/<schulnummer>/<date>/plan/<klasse>/<kurse>')
 def plan(schulnummer, date, klasse, kurse):
     kurse = kurse.split(",")
-    data = methods.get_plan_filtered_courses(schulnummer, date, klasse, kurse)
-    print(data)
-    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)))
+    data, zusatzinfo = methods.get_plan_filtered_courses(schulnummer, date, klasse, kurse)
+    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)), zusatzinfo=zusatzinfo)
 
 
 @app.route('/<schulnummer>/<date>/plan/<klasse>')
@@ -65,6 +64,7 @@ def courses(schulnummer, date, klasse):
     #return load_courses(sch)
 
 
+print("http://127.0.0.1:5010/10001329/20221209/klassenplan/JG12")
 
 
 app.run(port=5010)

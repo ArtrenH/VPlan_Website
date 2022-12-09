@@ -68,14 +68,26 @@ class Lesson():
         return f"{self.link_start}/klassenplan/{self.class_name.replace('/', '_')}"
         #return f"../klassenplan/{self.class_name.replace('/', '_')}"
 
+class Zusatzinfo():
+    def __init__(self, zusatzinfo_lst):
+        self.zusatzinfo_lst = zusatzinfo_lst
+    
+    def render(self):
+        return self.zusatzinfo_lst
+
 class Plan():
-    def __init__(self, school_num, date, lesson_dicts):
+    def __init__(self, school_num, date, lesson_dicts, zusatzinfo_lst):
         self.school_num = school_num
         self.lesson_dicts = lesson_dicts
         self.lessons = [Lesson(lesson_dict, school_num, date) for lesson_dict in lesson_dicts]
+        self.zusatzinfo_lst = zusatzinfo_lst
     
     def render(self):
-        return sorted([lesson.render() for lesson in self.lessons], key=lambda x: x["lesson"])
+        return [
+            sorted([lesson.render() for lesson in self.lessons], key=lambda x: x["lesson"]),
+            Zusatzinfo(self.zusatzinfo_lst).render()
+        ]
+
 
 
 

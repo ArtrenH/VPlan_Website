@@ -95,6 +95,9 @@ def extract_data(std_soup):
             cur_extract_data[f"{name}_changed"] = True
     return cur_extract_data
 
+def find_zusatzinfo(soup):
+    return [elem.text.strip() for elem in soup.find("zusatzinfo").find_all("zizeile")] if soup.find("zusatzinfo") else []
+
 def room_lessons(school_num, day, room):
     c = get_plan(school_num=school_num, date=day)
     if "error" in c:
@@ -110,7 +113,8 @@ def room_lessons(school_num, day, room):
             info = class_lesson.find("if").text.strip()
             if room_num == room or room in info:
                 room_lessons.append({**{"class": class_name}, **extract_data(class_lesson), "time_data": find_times(day_data, class_name)})
-    return Plan(school_num, day, room_lessons).render()
+    zusatzinfo = find_zusatzinfo(day_data)
+    return Plan(school_num, day, room_lessons, zusatzinfo).render()
 
 # extracts all lessons a teacher gives at a certain day
 def teacher_lessons(school_num, day, tag):
@@ -128,7 +132,8 @@ def teacher_lessons(school_num, day, tag):
             info = class_lesson.find("if").text.strip()
             if teacher == tag or tag in info:
                 teacher_lessons.append({**{"class": class_name}, **extract_data(class_lesson), "time_data": find_times(day_data, class_name)})
-    return Plan(school_num, day, teacher_lessons).render()
+    zusatzinfo = find_zusatzinfo(day_data)
+    return Plan(school_num, day, teacher_lessons, zusatzinfo).render()
 
 
 def find_times(plan, course):
@@ -151,13 +156,13 @@ def get_plan_normal(school_num, day, course):
     day_data = BeautifulSoup(c.text, features="html.parser")
     course_data = find_course(day_data, course)
     time_data = find_times(day_data, course)
-    print(time_data)
     pl = course_data.find("pl")
     std_all = pl.find_all("std")
     lessons = []
     for std in std_all:
         lessons.append({**{"class": course}, **extract_data(std), "time_data": time_data})
-    return Plan(school_num, day, lessons).render()
+    zusatzinfo = find_zusatzinfo(day_data)
+    return Plan(school_num, day, lessons, zusatzinfo).render()
 
 # gets a plan for a class with only certain courses (for example: course="JG11", courses=["PH1", "MA4"])
 def get_plan_filtered_courses(school_num, day, course, courses):
@@ -210,7 +215,7 @@ if __name__ == "__main__":
     pass
     #get_plan("10001329", "20221209")
     #print(load_courses("10001329", "JG12"))
-    #get_plan_normal("10001329", "20221207", "JG12")
+    get_plan_normal("10001329", "20221209", "JG12")
     #print(get_plan_normal("10001329", "20221207", "JG12"))
     #print(get_plan_filtered_courses("10001329", "20221205", "JG12", ["MA1", "MA2", "MA3", "MA4"]))
     #print(teacher_lessons("10001329", "20221207", "GLS"))
