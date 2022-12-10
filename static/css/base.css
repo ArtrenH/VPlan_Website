@@ -81,6 +81,14 @@ nav img {
     width: calc(50vw / 5);
 }
 
+.same-width, .same-width span {
+    font-size: 14px;
+}
+
+.lesson-time .time {
+    font-size: 12px;
+}
+
 .changed {
     outline:#BB86FC solid 7px !important;
     outline-offset: -1px;
@@ -152,7 +160,7 @@ nav img {
 .floating-arrow  {
     position: fixed;
     bottom: 0;
-    width: 70px;
+    width: 60px;
     aspect-ratio: 1;
     border: none;
     border-radius: 100%;
@@ -170,7 +178,7 @@ nav img {
 }
 
 .floating-arrow:hover, .floating-arrow:active, .floating-arrow:focus {
-    background-color: hsl(267, 95%, 60%);
+    background-color: #BB86FC;
 }
 
 .arrow-left {
