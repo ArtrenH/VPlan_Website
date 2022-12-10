@@ -92,14 +92,36 @@ nav img {
 }
 
 .desktop-view .lesson-time {
-    height: calc((31px) * 4);
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .desktop-view .lesson-time span {
-    font-size: 2rem;
+    font-size: 26px;
+}
+
+.desktop-view .lesson-time .time {
+    font-size: 20px;
+}
+
+.desktop-view .link {
+    margin: 6px;
+}
+
+.desktop-view .link a {
+    font-size: min(3vmax, 30px);
+}
+
+.desktop-view .changed {
+    margin: 7px;
+}
+
+.desktop-subject {
+    font-size: min(3vmax, 30px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .changed {
@@ -144,13 +166,14 @@ nav img {
 .desktop-alignment {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 10px;
+    margin-right: -12px;
 }
 
 .halfway-split {
     display: flex;
     flex-direction: row;
-    gap: 5px;
+    gap: 10px;
 }
 
 .halfway-split div {
@@ -166,11 +189,12 @@ nav img {
 }
 
 .mobile-cancellation {
-    width: 58vw;
+    width: 38vw;
 }
 
 .desktop-cancellation {
-    height: calc((31px + 6px) * 2);
+    font-size: min(3vmax, 30px);
+    height: 100%;
 }
 
 .align-sideways {

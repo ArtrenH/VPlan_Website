@@ -36,6 +36,7 @@ def remove_duplicates(vplan_data):
     for i in range(0, len(tmp_vplan_data), 2):
         if equal_dicts(tmp_vplan_data[i], tmp_vplan_data[i+1], ["lesson", "begin", "end"]):
             tmp_vplan_data[i]["lesson"] = str(int((int(tmp_vplan_data[i]["lesson"]) - 1)/2 + 1))
+            tmp_vplan_data[i]["end"] = tmp_vplan_data[i+1]["end"]
             new_vplan_data.append(tmp_vplan_data[i])
         else:
             tmp_vplan_data[i]["lesson"] = f'{int((int(tmp_vplan_data[i]["lesson"]) - 1)/2 + 1)} - 1'
