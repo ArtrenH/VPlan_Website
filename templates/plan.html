@@ -1,22 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row">
+<div class="row vplan-wrapper">
     {% for lesson in plan %}
-    {% if lesson.spacer %}
-    <div class="col s12"></div>
-    {% endif %}
-        <div class="col s12 m6">
+        {% if lesson.spacer %}
+        <div class="col s12"></div>
+        {% endif %}
+        <div class="col s12 hide-on-med-and-up">
             <div class="card dp01">
-                <div class="card-content hide-on-small-only">
-                    <span class="card-title">Stunde {{ lesson.lesson }} (TIME)</span>
-                    <p><b>Fach</b>: {{ lesson.subject }} {% if lesson.subject == "---" %}({{ lesson.subject_name }} fällt aus){% endif %}</p>
-                    <p><b>Lehrer</b>: {{ lesson.teacher }}</p>
-                    <p><b>Raum</b>: {{ lesson.room }}</p>
-                    <p><b>Klasse</b>: {{ lesson.class }}</p>
-                    {% if lesson.info != "--" %}<p><b>Informationen</b>: {{ lesson.info }}</p>{% endif %}
-                </div>
-                <div class="card-content hide-on-med-and-up mobile-view">
+                <div class="card-content mobile-view">
                     <div class="align-sideways">
                         <div class="lesson-time same-width">
                             <span>{{ lesson.lesson }}</span>
@@ -26,11 +18,39 @@
                         <div class="same-width {% if lesson.subject_changed %}changed{% endif %}">{{ lesson.subject }}</div>
                         <div class="same-width link {% if lesson.teacher_changed %}changed{% endif %}"><a href="{{ lesson.teacher_link }}"><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></a></div>
                         <div class="same-width link {% if lesson.room_changed %}changed{% endif %}"><a href="{{ lesson.room_link }}">{{ lesson.room }}{% if not lesson.room %}​{% endif %}</a></div>
-                        <div class="same-width link"><a href="{{ lesson.class_link }}">{{ lesson.class }}</a></div>
+                        {% if plan_type != "Klasse" %}<div class="same-width link"><a href="{{ lesson.class_link }}">{{ lesson.class }}</a></div>{% endif %}
                         {% else %}
-                        <div class="same-width {% if lesson.subject_changed %}changed{% endif %}" style="width: 46vw;">X</div>
-                        <div class="same-width link"><a href="{{ lesson.class_link }}">{{ lesson.class }}</a></div>
+                        <div class="same-width changed mobile-cancellation" {% if plan_type == "Klasse" %}style="flex: 1"{% endif %}>X</div>
+                        {% if plan_type != "Klasse" %}<div class="same-width link"><a href="{{ lesson.class_link }}">{{ lesson.class }}</a></div>{% endif %}
                         {% endif %}
+                    </div>
+                    {% if (lesson.info != "--") and (lesson.info != "") %}
+                        <p class="vert-padding dp01">{{ lesson.info }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col s12 hide-on-small-only">
+            <div class="card dp01">
+                <div class="card-content desktop-view">
+                    <div class="row">
+                        <div class="lesson-time same-width col s1">
+                            <span>{{ lesson.lesson }}</span>
+                            <span class="time">{{ lesson.begin }} <!-- {{ lesson.end }} --></span>
+                        </div>
+                        <div class="col s11 desktop-alignment">
+                            {% if lesson.subject != "---" %}
+                            <div class="{% if lesson.subject_changed %} changed{% endif %}">{{ lesson.subject }}</div>
+                            <div class="halfway-split">
+                                <div class="link{% if lesson.teacher_changed %} changed{% endif %}"><a href="{{ lesson.teacher_link }}"><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></a></div>
+                                <div class="link{% if lesson.room_changed %} changed{% endif %}"><a href="{{ lesson.room_link }}">{{ lesson.room }}{% if not lesson.room %}​{% endif %}</a></div>
+                            </div>
+                            <div class="link"><a href="{{ lesson.class_link }}">{{ lesson.class }}</a></div>
+                            {% else %}
+                            <div class="changed desktop-cancellation">X</div>
+                            <div class="link"><a href="{{ lesson.class_link }}">{{ lesson.class }}</a></div>
+                            {% endif %}
+                        </div>
                     </div>
                     {% if (lesson.info != "--") and (lesson.info != "") %}
                         <p class="vert-padding dp01">{{ lesson.info }}</p>

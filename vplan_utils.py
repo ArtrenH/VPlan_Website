@@ -70,4 +70,3 @@ def convert_date_readable(date):
     for translation in translation_arr:
         date_string = date_string.replace(translation[0], translation[1])
     return date_string
-

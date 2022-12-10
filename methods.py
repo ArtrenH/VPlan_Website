@@ -2,8 +2,9 @@ import json
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
-from models import Plan
 from pprint import pprint
+from models import Plan
+from errors import DayOnWeekend, CredentialsNotFound
 
 """
 needs something like this:
@@ -50,13 +51,12 @@ class Plan_Extractor():
     def __init__(self, school_num, date):
         self.school_num = school_num
         self.date = date
-        year, month, day = int(date[:4]), int(date[4:6]), int(date[6:])
-        d = datetime(year, month, day)
-        if d.weekday() > 4: raise ValueError("day is on the weekend")
         with open('creds.json') as f:
             self.credentials = json.load(f).get(school_num, None)
-        if not self.credentials: raise ValueError("school number not found")
-        print("we got here...")
+        if not self.credentials: raise CredentialsNotFound(school_num)
+        year, month, day = int(date[:4]), int(date[4:6]), int(date[6:])
+        d = datetime(year, month, day)
+        if d.weekday() > 4: raise DayOnWeekend(date)
         self.get()
         self.zusatzinfo = find_zusatzinfo(self.day_data)
     

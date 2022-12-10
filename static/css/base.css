@@ -49,16 +49,18 @@ nav img {
 }
 
 .row .col {
-    padding: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
 @media only screen and (max-width: 600px) {
-    .row .col {
-        padding-top: 4px;
-        padding-bottom: 4px;
-    }
     h4 {
         font-size: clamp(17px, 4vw, 4vw);
+    }   
+}
+@media only screen and (min-width: 601px) {
+    .vplan-wrapper {
+        max-width: 100%
     }
 }
 
@@ -78,7 +80,7 @@ nav img {
 }
 
 .same-width {
-    width: calc(50vw / 5);
+    width: calc(62vw / 5);
 }
 
 .same-width, .same-width span {
@@ -89,6 +91,17 @@ nav img {
     font-size: 12px;
 }
 
+.desktop-view .lesson-time {
+    height: calc((31px) * 4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.desktop-view .lesson-time span {
+    font-size: 2rem;
+}
+
 .changed {
     outline:#BB86FC solid 7px !important;
     outline-offset: -1px;
@@ -96,6 +109,9 @@ nav img {
     background-color: #BB86FC !important;
     text-align: center;
     font-weight: 600 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .link {
@@ -119,6 +135,42 @@ nav img {
 
 .card-content.mobile-view {
     padding: 5px 10px;
+}
+
+.card-content.desktop-view {
+    padding: 5px 10px;
+}
+
+.desktop-alignment {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.halfway-split {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.halfway-split div {
+    width: 50%;
+}
+
+.desktop-view .row {
+    margin: 0;
+}
+
+.desktop-view {
+    padding: 10px;
+}
+
+.mobile-cancellation {
+    width: 58vw;
+}
+
+.desktop-cancellation {
+    height: calc((31px + 6px) * 2);
 }
 
 .align-sideways {

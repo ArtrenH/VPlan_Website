@@ -3,6 +3,7 @@ from flask import Flask, redirect, render_template, make_response
 import datetime
 from methods import Plan_Extractor
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
+from errors import DayOnWeekend, CredentialsNotFound
 
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -10,7 +11,6 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 @app.route('/')
 def hello():
     return render_template('index.html')
-
 
 @app.route('/name/<schulname>')
 def schulname(schulname):
@@ -43,7 +43,12 @@ def raumplan(schulnummer, date, room_num):
 @app.route('/<schulnummer>/<date>/klassenplan/<klasse>')
 def klassenplan(schulnummer, date, klasse):
     klasse = klasse.replace("_", "/")
-    data, zusatzinfo = Plan_Extractor(schulnummer, date).get_plan_normal(klasse)
+    try:
+        data, zusatzinfo = Plan_Extractor(schulnummer, date).get_plan_normal(klasse)
+    except CredentialsNotFound:
+        return "no credentials for your school"
+    except DayOnWeekend:
+        return "day is on the weekend"
     return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)), zusatzinfo=zusatzinfo)
 
 @app.route('/<schulnummer>/<date>/plan/<klasse>/<kurse>')
