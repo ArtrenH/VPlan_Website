@@ -32,30 +32,39 @@ def schulplan(schulnummer, date):
 
 @app.route('/<schulnummer>/<date>/lehrerplan/<kuerzel>')
 def lehrerplan(schulnummer, date, kuerzel):
-    data, zusatzinfo = Plan_Extractor(schulnummer, date).teacher_lessons(kuerzel)
-    return render_template('plan.html', plan_type="Lehrer", plan_value=kuerzel, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)), zusatzinfo=zusatzinfo)
+    data = Plan_Extractor(schulnummer, date).teacher_lessons(kuerzel)
+    lessons = data["lessons"]
+    zusatzinfo = data["zusatzinfo"]
+    return render_template('plan.html', plan_type="Lehrer", plan_value=kuerzel, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
 @app.route('/<schulnummer>/<date>/raumplan/<room_num>')
 def raumplan(schulnummer, date, room_num):
-    data, zusatzinfo = Plan_Extractor(schulnummer, date).room_lessons(room_num)
-    return render_template('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)), zusatzinfo=zusatzinfo)
+    data = Plan_Extractor(schulnummer, date).room_lessons(room_num)
+    lessons = data["lessons"]
+    zusatzinfo = data["zusatzinfo"]
+    return render_template('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
 @app.route('/<schulnummer>/<date>/klassenplan/<klasse>')
 def klassenplan(schulnummer, date, klasse):
     klasse = klasse.replace("_", "/")
     try:
-        data, zusatzinfo = Plan_Extractor(schulnummer, date).get_plan_normal(klasse)
+        data = Plan_Extractor(schulnummer, date).get_plan_normal(klasse)
     except CredentialsNotFound:
         return "no credentials for your school"
     except DayOnWeekend:
         return "day is on the weekend"
-    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)), zusatzinfo=zusatzinfo)
+    lessons = data["lessons"]
+    zusatzinfo = data["zusatzinfo"]
+    print(data["new_dates"])
+    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
 @app.route('/<schulnummer>/<date>/plan/<klasse>/<kurse>')
 def plan(schulnummer, date, klasse, kurse):
     kurse = kurse.split(",")
-    data, zusatzinfo = Plan_Extractor(schulnummer, date).get_plan_filtered_courses(klasse, kurse)
-    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(data)), zusatzinfo=zusatzinfo)
+    data = Plan_Extractor(schulnummer, date).get_plan_filtered_courses(klasse, kurse)
+    lessons = data["lessons"]
+    zusatzinfo = data["zusatzinfo"]
+    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
 @app.route('/sw.js')
 def service_worker():

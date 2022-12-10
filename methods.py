@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 from bs4 import BeautifulSoup
 from pprint import pprint
@@ -59,6 +59,9 @@ class Plan_Extractor():
         if d.weekday() > 4: raise DayOnWeekend(date)
         self.get()
         self.zusatzinfo = find_zusatzinfo(self.day_data)
+        self.freie_tage = self.parse_freie_tage()
+        self.date_after = self.next_day()
+        self.date_before = self.next_day(False)
     
     def get(self):
         plan_url = f"https://z1.stundenplan24.de/schulen/{self.credentials['school_number']}/mobil/mobdaten/PlanKl{self.date}.xml"
@@ -74,12 +77,11 @@ class Plan_Extractor():
         return self.r
     
     def render(self, lessons):
-        return Plan(self.school_num, self.date, lessons, self.zusatzinfo).render()
+        return Plan(self.school_num, self.date, lessons, self.zusatzinfo, date_after=self.date_after, date_before=self.date_before).render()
     
     def teacher_lessons(self, tag):
         teacher_lessons = []
         class_plans = self.day_data.find_all("Kl")
-        print(len(class_plans))
         for class_plan in class_plans:
             class_name = class_plan.find("Kurz").text.strip()
             class_lessons = class_plan.find_all("Std")
@@ -117,7 +119,18 @@ class Plan_Extractor():
         normal_plan= self.get_plan_normal(course)
         return self.render([lesson for lesson in normal_plan[0] if lesson["subject_name"] in courses or lesson["subject"] in courses])
     
-
+    def parse_freie_tage(self):
+        datestamps = ["20" + elem.text for elem in self.day_data.find("FreieTage").find_all("ft")]
+        return datestamps
+    
+    def next_day(self, forward=True):
+        year, month, day = int(self.date[:4]), int(self.date[4:6]), int(self.date[6:])
+        d = datetime(year, month, day)
+        delta = 1 if forward else -1
+        d += timedelta(days=delta)
+        while d.strftime("%Y%m%d") in self.freie_tage or d.weekday() > 4:
+            d += timedelta(days=delta)
+        return d.strftime("%Y%m%d")
 
 if __name__ == "__main__":
     p = Plan_Extractor("10001329", "20221209").get_plan_filtered_courses("JG12", ["de2"])

@@ -76,17 +76,23 @@ class Zusatzinfo():
         return self.zusatzinfo_lst
 
 class Plan():
-    def __init__(self, school_num, date, lesson_dicts, zusatzinfo_lst):
+    def __init__(self, school_num, date, lesson_dicts, zusatzinfo_lst, **kwargs):
         self.school_num = school_num
         self.lesson_dicts = lesson_dicts
         self.lessons = [Lesson(lesson_dict, school_num, date) for lesson_dict in lesson_dicts]
         self.zusatzinfo_lst = zusatzinfo_lst
+        self.new_dates = [
+            kwargs.get("date_before", date),
+            date,
+            kwargs.get("date_after", date),
+        ]
     
     def render(self):
-        return [
-            sorted([lesson.render() for lesson in self.lessons], key=lambda x: x["lesson"]),
-            Zusatzinfo(self.zusatzinfo_lst).render()
-        ]
+        return {
+            "lessons": sorted([lesson.render() for lesson in self.lessons], key=lambda x: x["lesson"]),
+            "zusatzinfo": Zusatzinfo(self.zusatzinfo_lst).render(),
+            "new_dates": self.new_dates
+        }
 
 
 
