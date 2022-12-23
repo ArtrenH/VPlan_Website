@@ -51,7 +51,7 @@ class Plan_Extractor():
     def __init__(self, school_num, date):
         self.school_num = school_num
         self.date = date
-        with open('creds.json') as f:
+        with open('creds.json', encoding="utf-8") as f:
             self.credentials = json.load(f).get(school_num, None)
         if not self.credentials: raise CredentialsNotFound(school_num)
         year, month, day = int(date[:4]), int(date[4:6]), int(date[6:])
@@ -70,7 +70,7 @@ class Plan_Extractor():
         if self.r.status_code == 404:
             print("error")
             return {"error": "plan not available"}
-        with open("data/test2.xml", "w+") as f:
+        with open("data/test2.xml", "w+", encoding="utf-8") as f:
             f.write(self.r.text)
         #self.day_data = BeautifulSoup(self.r.text, "html.parser")
         self.day_data = BeautifulSoup(self.r.text, "xml")
