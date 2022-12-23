@@ -103,6 +103,13 @@ def schulnummer(schulnummer):
 def schulplan(schulnummer, date):
     return Plan_Extractor(schulnummer, date).r.content
 
+@app.route('/new/<schulnummer>')
+def new(schulnummer):
+    print(request.args)
+    return "ok"
+
+
+### LEHRERPLAN ###
 @app.route('/<schulnummer>/<date>/lehrerplan/<kuerzel>')
 @login_required
 def lehrerplan(schulnummer, date, kuerzel):
@@ -111,6 +118,8 @@ def lehrerplan(schulnummer, date, kuerzel):
     zusatzinfo = data["zusatzinfo"]
     return render_template('plan.html', plan_type="Lehrer", plan_value=kuerzel, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
+
+### RAUMPLAN ###
 @app.route('/<schulnummer>/<date>/raumplan/<room_num>')
 @login_required
 def raumplan(schulnummer, date, room_num):
@@ -119,15 +128,26 @@ def raumplan(schulnummer, date, room_num):
     zusatzinfo = data["zusatzinfo"]
     return render_template('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
-
+### KLASSENPLAN ###
 @app.route('/<schulnummer>/klassenplan')
 def klassenliste(schulnummer):
+    print(schulnummer)
     lst = MetaExtractor(schulnummer).course_list()
     links = [{
         "name": elem,
         "link": "/"+schulnummer+"/klassenplan/"+elem.replace("/", "_")
     } for elem in lst]
     return render_template('links.html', links=links)
+
+@app.route('/<schulnummer>/klassenplan/<klasse>')
+def klassenplan_daten(schulnummer, klasse):
+    #klasse = klasse.replace("_", "/")
+    dates = MetaExtractor(schulnummer).current_school_days_str()
+    dates = [{
+        "name": elem[0],
+        "link": "/"+schulnummer+"/"+elem[1]+"/klassenplan/"+klasse
+    } for elem in dates]
+    return render_template('links.html', links=dates)
 
 @app.route('/<schulnummer>/<date>/klassenplan/<klasse>')
 @login_required
@@ -144,6 +164,8 @@ def klassenplan(schulnummer, date, klasse):
     print(data["new_dates"])
     return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
+
+### Gefilterter Klassenplan ###
 @app.route('/<schulnummer>/<date>/plan/<klasse>/<kurse>')
 @login_required
 def plan(schulnummer, date, klasse, kurse):

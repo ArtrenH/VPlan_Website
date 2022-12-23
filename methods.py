@@ -179,10 +179,34 @@ class MetaExtractor():
     def all_free_days(self):
         self.weekends()
         return self.free_days_datetimes
-
+    
+    def school_days(self):
+        self.all_free_days()
+        min_free_day = min(self.free_days_datetimes)
+        max_free_day = max(self.free_days_datetimes)
+        school_days = [min_free_day + timedelta(days=i) for i in range((max_free_day - min_free_day).days + 1)]
+        school_days = [elem for elem in school_days if elem not in self.free_days_datetimes]
+        self.school_days_datetimes = school_days
+        self.school_days_datetimes.sort()
+        return self.school_days_datetimes
+    
+    def current_school_days(self):
+        self.school_days()
+        today = datetime.now()
+        cur_day_lst = self.school_days_datetimes
+        cur_day_lst.append(today)
+        cur_day_lst.sort()
+        ind = cur_day_lst.index(today)
+        cur_day_lst.remove(today)
+        return cur_day_lst[ind-5:ind+10]
+    
+    def current_school_days_str(self):
+        return [[datetime.strftime(elem, "%d.%m.%Y"), datetime.strftime(elem, "%Y%m%d")] for elem in self.current_school_days()]
 
 if __name__ == "__main__":
     #p = Plan_Extractor("10001329", "20221209").get_plan_filtered_courses("JG12", ["de2"])
     #pprint(p)
-    c = MetaExtractor("10001329").all_free_days()
-    pprint([datetime.strftime(elem, "%d.%m.%Y") for elem in c])
+    c = MetaExtractor("10001329").current_school_days_str()
+    #print(len(c))
+    print(c)
+    #pprint([datetime.strftime(elem, "%d.%m.%Y") for elem in c])
