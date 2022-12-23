@@ -1,7 +1,7 @@
 import json
 from flask import Flask, redirect, render_template, make_response, url_for, request
 import datetime
-from methods import Plan_Extractor
+from methods import MetaExtractor, Plan_Extractor
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
 from errors import DayOnWeekend, CredentialsNotFound
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user
@@ -83,9 +83,20 @@ def schulname(schulname):
         return {"error": "no school with this name found"}
     return redirect("/"+ cur_schulnummer[0], code=302)
 
-"""@app.route('/<schulnummer>')
+@app.route('/<schulnummer>')
 def schulnummer(schulnummer):
-    return schulnummer"""
+    if not schulnummer.isdigit():
+        return redirect("/name/" + schulnummer, code=302)
+    with open("creds.json", "r") as f:
+        creds = json.load(f)
+    if schulnummer not in creds:
+        return {"error": "no school with this number found"}
+    links = {
+        "klassenplan": "/"+schulnummer+"/klassenplan",
+        "lehrerplan": "/"+schulnummer+"/lehrerplan",
+        "raumplan": "/"+schulnummer+"/raumplan",
+    }
+    return render_template('index.html', links=links)
 
 @app.route('/<schulnummer>/<date>')
 @login_required
@@ -107,6 +118,16 @@ def raumplan(schulnummer, date, room_num):
     lessons = data["lessons"]
     zusatzinfo = data["zusatzinfo"]
     return render_template('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
+
+
+@app.route('/<schulnummer>/klassenplan')
+def klassenliste(schulnummer):
+    lst = MetaExtractor(schulnummer).course_list()
+    links = [{
+        "name": elem,
+        "link": "/"+schulnummer+"/klassenplan/"+elem.replace("/", "_")
+    } for elem in lst]
+    return render_template('links.html', links=links)
 
 @app.route('/<schulnummer>/<date>/klassenplan/<klasse>')
 @login_required
@@ -156,6 +177,7 @@ def courses(schulnummer, date, klasse):
 
 
 print("http://127.0.0.1:5010/10001329/20221209/klassenplan/JG12")
+print("vplan.fr/10001329/20221209/klassenplan/JG12")
 
 if __name__ == '__main__':
     app.run(port=5010)
