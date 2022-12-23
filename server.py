@@ -91,6 +91,6 @@ def courses(schulnummer, date, klasse):
 
 print("http://127.0.0.1:5010/10001329/20221209/klassenplan/JG12")
 
-
-app.run(port=5010)
+if __name__ == '__main__':
+    app.run(port=5010)
 #app.run(host='0.0.0.0', port=5010)
