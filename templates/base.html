@@ -46,7 +46,7 @@
                 <img src="{{ url_for('static', filename='images/better_vp_white.svg') }}" alt="Logo" width="64" height="64">
             </a>
             <ul id="nav-bar" class="right hide-on-med-and-down">
-                <li><a href="/today">TODO</a></li>
+                {% if not hide_logout %}<li><a href="{{ url_for('logout') }}">Logout</a></li>{% endif %}
             </ul>
         </div>
     </nav>
@@ -54,12 +54,13 @@
     <div class="container">
         <h4 class="headline">{% if plan_type %}
             Plan für {{ plan_type }} <span class='custom_badge'>{{ plan_value }}</span> am <span class='custom_badge'>{{ date }}</span>
-        {% else %}Startseite{% endif %}</h4>
+        {% else %}{% block title %}Startseite{% endblock %}{% endif %}</h4>
         {% block content %}{% endblock %}
     </div>
     
+    {% block change_day %}
     <button class="floating-arrow arrow-left waves-effect waves-light"><span class="material-symbols-outlined">arrow_back_ios_new</span></button>
     <button class="floating-arrow arrow-right waves-effect waves-light"><span class="material-symbols-outlined">arrow_forward_ios</span></button>
-
+    {% endblock %}
 </body>
 </html>

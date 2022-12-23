@@ -1,18 +1,79 @@
 import json
-from flask import Flask, redirect, render_template, make_response
+from flask import Flask, redirect, render_template, make_response, url_for, request
 import datetime
 from methods import Plan_Extractor
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
 from errors import DayOnWeekend, CredentialsNotFound
+from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY") if os.getenv("SECRET_KEY") else "DEBUG_KEY"
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+users = {'schueler': {'pw': 'IsfibeT'}}
+
+class User(UserMixin):
+    pass
+
+@login_manager.user_loader
+def user_loader(username):
+    if username not in users:
+        return
+
+    user = User()
+    user.id = username
+    return user
+
+@login_manager.request_loader
+def request_loader(request):
+    username = request.form.get('username')
+    if username not in users:
+        return
+
+    user = User()
+    user.id = username
+
+    user.is_authenticated = request.form['pw'] == users[username]['pw']
+
+    return user
+
+
 @app.route('/')
-def hello():
+@login_required
+def index():
     return render_template('index.html')
 
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return redirect(url_for("login"))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        try:
+            username = request.form.get('username')
+            if request.form.get('pw') == users[username]['pw']:
+                user = User()
+                user.id = username
+                login_user(user)
+                return redirect(url_for('index'))
+        except Exception:
+            return render_template('login.html', errors="Benutzername oder Passwort waren inkorrekt! Bitte versuchen Sie es erneut.", hide_logout=True)
+    return render_template('login.html', hide_logout=True)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
 @app.route('/name/<schulname>')
+@login_required
 def schulname(schulname):
     print(schulname)
     with open("creds.json", "r") as f:
@@ -27,10 +88,12 @@ def schulnummer(schulnummer):
     return schulnummer"""
 
 @app.route('/<schulnummer>/<date>')
+@login_required
 def schulplan(schulnummer, date):
     return Plan_Extractor(schulnummer, date).r.content
 
 @app.route('/<schulnummer>/<date>/lehrerplan/<kuerzel>')
+@login_required
 def lehrerplan(schulnummer, date, kuerzel):
     data = Plan_Extractor(schulnummer, date).teacher_lessons(kuerzel)
     lessons = data["lessons"]
@@ -38,6 +101,7 @@ def lehrerplan(schulnummer, date, kuerzel):
     return render_template('plan.html', plan_type="Lehrer", plan_value=kuerzel, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
 @app.route('/<schulnummer>/<date>/raumplan/<room_num>')
+@login_required
 def raumplan(schulnummer, date, room_num):
     data = Plan_Extractor(schulnummer, date).room_lessons(room_num)
     lessons = data["lessons"]
@@ -45,6 +109,7 @@ def raumplan(schulnummer, date, room_num):
     return render_template('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
 @app.route('/<schulnummer>/<date>/klassenplan/<klasse>')
+@login_required
 def klassenplan(schulnummer, date, klasse):
     klasse = klasse.replace("_", "/")
     try:
@@ -59,6 +124,7 @@ def klassenplan(schulnummer, date, klasse):
     return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
 @app.route('/<schulnummer>/<date>/plan/<klasse>/<kurse>')
+@login_required
 def plan(schulnummer, date, klasse, kurse):
     kurse = kurse.split(",")
     data = Plan_Extractor(schulnummer, date).get_plan_filtered_courses(klasse, kurse)

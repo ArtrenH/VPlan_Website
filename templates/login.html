@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<form method='POST'>
+    <div class="row">
+        {% if errors %}<span class="error-popup col">{{ errors }} <button onclick="this.parentNode.remove();">X</button></span>{% endif %}
+        <div class="input-field col s12">
+            <input id="username" name="username" type="text" class="validate">
+            <label for="username">Nutzername</label>
+        </div>
+        <div class="input-field col s12">
+            <input id="pw" name="pw" type="password" class="validate">
+            <label for="pw">Passwort</label>
+        </div>
+        <input type='submit' name='submit' class="btn waves-effect login-btn"></input>
+    </div>
+</form>
+{% endblock %}
+
+{% block change_day %}{% endblock %}

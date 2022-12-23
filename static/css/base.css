@@ -269,3 +269,33 @@ nav img {
 .bottom-spacer {
     height: 100px;
 }
+
+.btn, .btn:hover, .btn:active, .btn:focus {
+    background: #BB86FC;
+}
+
+input:focus {
+    border-color: #BB86FC !important;
+}
+
+input:focus+label {
+    color: #BB86FC !important;
+}
+
+.error-popup {
+    background: hsl(0, 95%, 66%);
+    padding: 5px;
+    margin: 0 .75rem;
+    border-radius: 5px;
+}
+
+.error-popup button {
+    background: transparent;
+    border: 1px solid white;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+.login-btn {
+    margin: 0 0.75rem;
+}
