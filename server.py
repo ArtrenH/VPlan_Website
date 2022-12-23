@@ -1,5 +1,5 @@
 import json
-from flask import Flask, redirect, render_template, make_response, url_for, request
+from flask import Flask, redirect, render_template, make_response, url_for, request, session
 import datetime
 from methods import MetaExtractor, Plan_Extractor
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
@@ -12,6 +12,7 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY") if os.getenv("SECRET_KEY") else "DEBUG_KEY"
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config["PERMANENT_SESSION_LIFETIME"] = 32140800
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -60,6 +61,7 @@ def login():
                 user = User()
                 user.id = username
                 login_user(user)
+                session.permanent = True
                 return redirect(url_for('index'))
             else:
                 return render_template('login.html', errors="Benutzername oder Passwort waren inkorrekt! Bitte versuchen Sie es erneut.", hide_logout=True)
