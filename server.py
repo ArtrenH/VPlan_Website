@@ -22,9 +22,9 @@ def schulname(schulname):
         return {"error": "no school with this name found"}
     return redirect("/"+ cur_schulnummer[0], code=302)
 
-@app.route('/<schulnummer>')
+"""@app.route('/<schulnummer>')
 def schulnummer(schulnummer):
-    return schulnummer
+    return schulnummer"""
 
 @app.route('/<schulnummer>/<date>')
 def schulplan(schulnummer, date):
