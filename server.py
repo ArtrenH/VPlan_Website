@@ -36,7 +36,10 @@ def request_loader(request):
         return
     user = User()
     user.id = username
-    user.is_authenticated = request.form['pw'] == users[username]['pw']
+
+    if request.form['pw'] == users[username]['pw']:
+        user.is_authenticated = True
+
     return user
 
 @app.route('/')
@@ -58,6 +61,8 @@ def login():
                 user.id = username
                 login_user(user)
                 return redirect(url_for('index'))
+            else:
+                return render_template('login.html', errors="Benutzername oder Passwort waren inkorrekt! Bitte versuchen Sie es erneut.", hide_logout=True)
         except Exception:
             return render_template('login.html', errors="Benutzername oder Passwort waren inkorrekt! Bitte versuchen Sie es erneut.", hide_logout=True)
     return render_template('login.html', hide_logout=True)
