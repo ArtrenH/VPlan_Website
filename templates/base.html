@@ -46,9 +46,10 @@
                 <img src="{{ url_for('static', filename='images/better_vp_white.svg') }}" alt="Logo" width="64" height="64">
             </a>
             <ul id="nav-bar" class="right hide-on-med-and-down">
-                <li><a href="">Alle Klassen</a></li>
-                <li><a href="">Alle Lehrer</a></li>
-                <li><a href="">Alle Räume</a></li>
+                <li><a href="{{ links.klassenplan }}">Alle Klassen</a></li>
+                <li><a href="{{ links.lehrerplan }}">Alle Lehrer</a></li>
+                <li><a href="{{ links.raumplan }}">Alle Räume</a></li>
+                {% if not hide_logout %}<li><a href="{{ url_for('logout') }}">Logout</a></li>{% endif %}
             </ul>
         </div>
     </nav>
