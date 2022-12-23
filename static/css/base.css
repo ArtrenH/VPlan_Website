@@ -109,7 +109,7 @@ nav img {
     margin: 6px;
 }
 
-.desktop-view .link a {
+.desktop-view .link {
     font-size: min(3vmax, 30px);
 }
 
@@ -141,14 +141,11 @@ nav img {
     border-radius: 1px;
     background-color: rgba(255, 255, 255, 0.08);
     text-align: center;
+    color: white !important;
 }
 
 .link a {
-    color: white;
-}
-
-.link:hover {
-    color: hsl(267, 75%, 56%) !important
+    color: white !important;
 }
 
 #home-lettering {
@@ -176,7 +173,7 @@ nav img {
     gap: 10px;
 }
 
-.halfway-split div {
+.halfway-split * {
     width: 50%;
 }
 

@@ -42,13 +42,13 @@
                             {% if lesson.subject != "---" %}
                             <div class="desktop-subject{% if lesson.subject_changed %} changed{% endif %}">{{ lesson.subject }}</div>
                             <div class="halfway-split">
-                                <div class="link{% if lesson.teacher_changed %} changed{% endif %}"><a href="{{ lesson.teacher_link }}"><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></a></div>
-                                <div class="link{% if lesson.room_changed %} changed{% endif %}"><a href="{{ lesson.room_link }}">{{ lesson.room }}{% if not lesson.room %}​{% endif %}</a></div>
+                                <a href="{{ lesson.teacher_link }}" class="link{% if lesson.teacher_changed %} changed{% endif %}"><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></a>
+                                <a href="{{ lesson.room_link }}" class="link{% if lesson.room_changed %} changed{% endif %}">{{ lesson.room }}{% if not lesson.room %}​{% endif %}</a>
                             </div>
                             {% else %}
                             <div class="changed desktop-cancellation">X</div>
                             {% endif %}
-                            {% if plan_type != "Klasse" %}<div class="link"><a href="{{ lesson.class_link }}">{{ lesson.class }}</a></div>{% endif %}
+                            {% if plan_type != "Klasse" %}<a href="{{ lesson.class_link }}" class="link">{{ lesson.class }}</a>{% endif %}
                         </div>
                     </div>
                     {% if (lesson.info != "--") and (lesson.info != "") %}
