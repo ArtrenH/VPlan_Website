@@ -25,7 +25,6 @@ class User(UserMixin):
 def user_loader(username):
     if username not in users:
         return
-
     user = User()
     user.id = username
     return user
@@ -35,14 +34,10 @@ def request_loader(request):
     username = request.form.get('username')
     if username not in users:
         return
-
     user = User()
     user.id = username
-
     user.is_authenticated = request.form['pw'] == users[username]['pw']
-
     return user
-
 
 @app.route('/')
 @login_required
@@ -72,6 +67,34 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+@app.route('/<schulnummer>')
+@login_required
+def handle_plan(schulnummer):
+    if len(request.args) == 0:
+        if not schulnummer.isdigit():
+            return redirect("/name/" + schulnummer, code=302)
+        with open("creds.json", "r") as f:
+            creds = json.load(f)
+        if schulnummer not in creds:
+            return {"error": "no school with this number found"}
+        return render_template('index.html')
+    
+    if request.args["type"] == "klasse":
+        return handle_klasse(schulnummer, request.args)
+    if "date" in request.args:
+        if not "type" in request.args:
+            return "type fehlt"
+        if request.args["type"] == "teacher":
+            if not "teacher" in request.args:
+                return "kuerzel fehlt"
+            return lehrerplan(schulnummer, request.args["date"], request.args["teacher"])
+        if request.args["type"] == "room":
+            if not "room" in request.args:
+                return "room fehlt"
+            return raumplan(schulnummer, request.args["date"], request.args["room"])
+        print("date enthalten")
+    return "ok"
+
 @app.route('/name/<schulname>')
 @login_required
 def schulname(schulname):
@@ -83,53 +106,42 @@ def schulname(schulname):
         return {"error": "no school with this name found"}
     return redirect("/"+ cur_schulnummer[0], code=302)
 
-@app.route('/<schulnummer>')
-def schulnummer(schulnummer):
-    if not schulnummer.isdigit():
-        return redirect("/name/" + schulnummer, code=302)
-    with open("creds.json", "r") as f:
-        creds = json.load(f)
-    if schulnummer not in creds:
-        return {"error": "no school with this number found"}
-    links = {
-        "klassenplan": "/"+schulnummer+"/klassenplan",
-        "lehrerplan": "/"+schulnummer+"/lehrerplan",
-        "raumplan": "/"+schulnummer+"/raumplan",
-    }
-    return render_template('index.html', links=links)
-
 @app.route('/<schulnummer>/<date>')
 @login_required
 def schulplan(schulnummer, date):
     return Plan_Extractor(schulnummer, date).r.content
 
-@app.route('/new/<schulnummer>')
-def new(schulnummer):
-    print(request.args)
-    return "ok"
-
-
 ### LEHRERPLAN ###
-@app.route('/<schulnummer>/<date>/lehrerplan/<kuerzel>')
-@login_required
 def lehrerplan(schulnummer, date, kuerzel):
     data = Plan_Extractor(schulnummer, date).teacher_lessons(kuerzel)
     lessons = data["lessons"]
     zusatzinfo = data["zusatzinfo"]
     return render_template('plan.html', plan_type="Lehrer", plan_value=kuerzel, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
-
 ### RAUMPLAN ###
-@app.route('/<schulnummer>/<date>/raumplan/<room_num>')
-@login_required
 def raumplan(schulnummer, date, room_num):
     data = Plan_Extractor(schulnummer, date).room_lessons(room_num)
     lessons = data["lessons"]
     zusatzinfo = data["zusatzinfo"]
     return render_template('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
+
+
 ### KLASSENPLAN ###
-@app.route('/<schulnummer>/klassenplan')
+def handle_klasse(schulnummer, args):
+    if "date" in args and "klasse" in args:
+        # 10001329?date=20221221&type=klasse&klasse=5%2F1
+        # 10001329?date=20221221&type=klasse&klasse=JG12
+        return klassenplan(schulnummer, args["date"], args["klasse"])
+    if "date" not in args and "klasse" not in args:
+        # 10001329?type=klasse
+        return klassenliste(schulnummer)
+    if "klasse" in args:
+        # 10001329?type=klasse&klasse=JG12
+        return klassenplan_daten(schulnummer, args["klasse"])
+    return "?"
+
+
 def klassenliste(schulnummer):
     print(schulnummer)
     lst = MetaExtractor(schulnummer).course_list()
@@ -139,7 +151,6 @@ def klassenliste(schulnummer):
     } for elem in lst]
     return render_template('links.html', links=links)
 
-@app.route('/<schulnummer>/klassenplan/<klasse>')
 def klassenplan_daten(schulnummer, klasse):
     #klasse = klasse.replace("_", "/")
     dates = MetaExtractor(schulnummer).current_school_days_str()
@@ -149,8 +160,6 @@ def klassenplan_daten(schulnummer, klasse):
     } for elem in dates]
     return render_template('links.html', links=dates)
 
-@app.route('/<schulnummer>/<date>/klassenplan/<klasse>')
-@login_required
 def klassenplan(schulnummer, date, klasse):
     klasse = klasse.replace("_", "/")
     try:

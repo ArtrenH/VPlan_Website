@@ -2,6 +2,7 @@
 # group: Klasse, z.B. JG12, 6/1
 # course: Kurs, z.B. eth1, lat
 import json
+import urllib
 
 
 class Lesson():
@@ -28,7 +29,7 @@ class Lesson():
                 self.time_data = json.load(f).get(self.lesson, "?")
         self.begin = self.time_data.get("begin", "?")
         self.end = self.time_data.get("end", "?")
-        self.link_start = f"/../{self.school_num}/{self.date}"
+        self.link_start = f"/../{self.school_num}?date={self.date}"
 
     
     def render(self):
@@ -53,20 +54,20 @@ class Lesson():
     def get_room_link(self):
         if self.room == "--":
             return "#"
-        return f"{self.link_start}/raumplan/{self.room}"
-        #return f"../raumplan/{self.room}"
+        additional_params = urllib.parse.urlencode({'type': 'room', 'room': self.room})
+        return f"{self.link_start}&{additional_params}"
     
     def get_teacher_link(self):
         if self.teacher == "--":
             return "#"
-        return f"{self.link_start}/lehrerplan/{self.teacher}"
-        #return f"../lehrerplan/{self.teacher}"
+        additional_params = urllib.parse.urlencode({'type': 'teacher', 'teacher': self.teacher})
+        return f"{self.link_start}&{additional_params}"
     
     def get_class_link(self):
         if self.class_name == "--":
             return "#"
-        return f"{self.link_start}/klassenplan/{self.class_name.replace('/', '_')}"
-        #return f"../klassenplan/{self.class_name.replace('/', '_')}"
+        additional_params = urllib.parse.urlencode({'type': 'klasse', 'klasse': self.class_name})
+        return f"{self.link_start}&{additional_params}"
 
 class Zusatzinfo():
     def __init__(self, zusatzinfo_lst):
@@ -93,8 +94,6 @@ class Plan():
             "zusatzinfo": Zusatzinfo(self.zusatzinfo_lst).render(),
             "new_dates": self.new_dates
         }
-
-
 
 
 class SharedCourse():
