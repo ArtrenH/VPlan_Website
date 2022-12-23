@@ -21,15 +21,15 @@ needs something like this:
 </Std>
 """
 def extract_data(std_soup):
-        cur_extract_data = {
-            new_name: std_soup.find(code).text.strip() if std_soup.find(code) else "" for new_name, code in zip(["course_id", "lesson", "begin", "end", "subject", "subject_name", "teacher", "room", "info"], ["Nr", "St", "Beginn", "Ende", "Fa", "Ku2", "Le", "Ra", "If"])
-        }
-        for name, key in zip(["subject", "teacher", "room"], ["Fa", "Le", "Ra"]):
-            cur_part = std_soup.find(key)
-            cur_extract_data[f"{name}_changed"] = False
-            if cur_part.get(f"{key}Ae") == f"{key}Geaendert":
-                cur_extract_data[f"{name}_changed"] = True
-        return cur_extract_data
+    cur_extract_data = {
+        new_name: std_soup.find(code).text.strip() if std_soup.find(code) else "" for new_name, code in zip(["course_id", "lesson", "begin", "end", "subject", "subject_name", "teacher", "room", "info"], ["Nr", "St", "Beginn", "Ende", "Fa", "Ku2", "Le", "Ra", "If"])
+    }
+    for name, key in zip(["subject", "teacher", "room"], ["Fa", "Le", "Ra"]):
+        cur_part = std_soup.find(key)
+        cur_extract_data[f"{name}_changed"] = False
+        if cur_part.get(f"{key}Ae") == f"{key}Geaendert":
+            cur_extract_data[f"{name}_changed"] = True
+    return cur_extract_data
 
 def find_zusatzinfo(soup):
     return [elem.text.strip() for elem in soup.find("ZusatzInfo").find_all("ZiZeile")] if soup.find("ZusatzInfo") else []
@@ -132,6 +132,57 @@ class Plan_Extractor():
             d += timedelta(days=delta)
         return d.strftime("%Y%m%d")
 
+
+class MetaExtractor():
+    def __init__(self, school_num):
+        self.school_num = school_num
+        with open('creds.json') as f:
+            self.credentials = json.load(f).get(school_num, None)
+        self.get()
+    
+    def get(self):
+        plan_url = f"https://z1.stundenplan24.de/schulen/{self.credentials['school_number']}/mobil/mobdaten/Klassen.xml"
+        header_stripped = {"authorization": self.credentials["authorization"],}
+        self.r = requests.get(plan_url, headers=header_stripped)
+        print(self.r)
+        #with open("data/klassen.xml", "w+") as f:
+        #    f.write(self.r.text)
+        self.soup = BeautifulSoup(self.r.text, "xml")
+    
+    def room_list(self):
+        rooms = list(set([elem.text for elem in self.soup.find_all("Ra") if elem.text]))
+        return rooms
+    
+    def course_list(self):
+        courses = [elem.text for elem in self.soup.find_all("Kurz")]
+        return courses
+    
+    def free_days(self):
+        datestamps = ["20" + elem.text for elem in self.soup.find("FreieTage").find_all("ft")]
+        datestamps = [datetime.strptime(datestamp, "%Y%m%d") for datestamp in datestamps]
+        self.free_days_datetimes = datestamps
+        return datestamps
+    
+    def weekends(self):
+        self.free_days()
+        min_free_day = min(self.free_days_datetimes)
+        max_free_day = max(self.free_days_datetimes)
+        weekends = []
+        for i in range((max_free_day - min_free_day).days + 1):
+            day = min_free_day + timedelta(days=i)
+            if day.weekday() > 4:
+                weekends.append(day)
+        self.free_days_datetimes.extend(weekends)
+        self.free_days_datetimes.sort()
+        return weekends
+
+    def all_free_days(self):
+        self.weekends()
+        return self.free_days_datetimes
+
+
 if __name__ == "__main__":
-    p = Plan_Extractor("10001329", "20221209").get_plan_filtered_courses("JG12", ["de2"])
-    pprint(p)
+    #p = Plan_Extractor("10001329", "20221209").get_plan_filtered_courses("JG12", ["de2"])
+    #pprint(p)
+    c = MetaExtractor("10001329").all_free_days()
+    pprint([datetime.strftime(elem, "%d.%m.%Y") for elem in c])
