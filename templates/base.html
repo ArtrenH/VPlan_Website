@@ -26,13 +26,13 @@
     <title>Better VPlan - {% if plan_type %}{{ plan_type }} {{ plan_value }}{% else %}Startseite{% endif %}</title>
 
     <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="{{ url_for('static', filename='css/materialize.min.css') }}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
     <!-- Compiled and minified JavaScript -->
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" defer></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" defer></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/materialize.min.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/base.js') }}" defer></script>
 
     <link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet" type="text/css">
     {% block links %}
@@ -55,7 +55,10 @@
         <h4 class="headline">{% if plan_type %}
             Plan für {{ plan_type }} <span class='custom_badge'>{{ plan_value }}</span> am <span class='custom_badge'>{{ date }}</span>
         {% else %}{% block title %}Startseite{% endblock %}{% endif %}</h4>
-        {% block content %}{% endblock %}
+        <div class="loaded_content">
+            {% block content %}
+            {% endblock %}
+        </div>
     </div>
     
     {% block change_day %}
