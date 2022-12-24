@@ -1,8 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 <h1>Willkommen beim VPlan!!!</h1>
 <h3>Garantiert besser als der echte...</h3>
+<h4>Pläne für {{ school_name }}</h4>
+
+<br>
+hellooo
+<br>
+{% for date in dates %}
+{{ date.0 }}
+{{ date.1 }} <br>
+{% endfor %}
+<br>
+{% for teacher in teachers %}
+{{ teacher.kuerzel }}
+{% if teacher.name %}
+{{ teacher.name }}
+{% endif %}
+<br>
+{% endfor %}
+<br>
+{% for room in rooms %}
+{{ room }} <br>
+{% endfor %}
+<br>
+{% for klasse in klassen %}
+{{ klasse }} <br>
+{% endfor %}
+<br>
 {% endblock %}
+
 
 {% block change_day %}{% endblock %}

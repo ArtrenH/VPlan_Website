@@ -3,7 +3,7 @@ import gzip
 
 url = "https://z1.stundenplan24.de/schulen/10001329/mobil/_phpmob/vpdir.php"
 headers = {
-    "user-agent": "Indiware",
+    #"user-agent": "Indiware",
 }
 with open("creds.json", "r") as f:
     creds = json.load(f)

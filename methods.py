@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime, timedelta
 import requests
 from bs4 import BeautifulSoup
@@ -144,11 +145,31 @@ class MetaExtractor():
         plan_url = f"https://z1.stundenplan24.de/schulen/{self.credentials['school_number']}/mobil/mobdaten/Klassen.xml"
         header_stripped = {"authorization": self.credentials["authorization"],}
         self.r = requests.get(plan_url, headers=header_stripped)
-        print(self.r)
         #with open("data/klassen.xml", "w+") as f:
         #    f.write(self.r.text)
         self.soup = BeautifulSoup(self.r.text, "xml")
-    
+
+    def teacher_list(self):
+        if f"{self.school_num}_teachers.json" in os.listdir("data"):
+            with open(f"data/{self.school_num}_teachers.json") as f:
+                teachers = json.load(f)
+            return teachers.values()
+        teachers = {}
+        for elem in self.soup.find_all("UeNr"):
+            cur_teacher = elem.get("UeLe")
+            cur_subject = elem.get("UeFa")
+            cur_subject = cur_subject if cur_subject not in ["KL", "AnSt", "FÖ"] else ""
+            if cur_teacher and cur_teacher not in teachers:
+                teachers[cur_teacher] = {"kuerzel": cur_teacher, "faecher": []}
+            if cur_subject and cur_subject not in teachers[cur_teacher]["faecher"]:
+                teachers[cur_teacher]["faecher"].append(cur_subject)
+        for elem in self.soup.find_all("KKz"):
+            cur_teacher = elem.get("KLe")
+            if cur_teacher and cur_teacher not in teachers:
+                teachers[cur_teacher] = {"kuerzel": cur_teacher, "faecher": []}
+        teachers = teachers.values()
+        return teachers
+
     def room_list(self):
         rooms = list(set([elem.text for elem in self.soup.find_all("Ra") if elem.text]))
         return rooms
@@ -156,7 +177,7 @@ class MetaExtractor():
     def course_list(self):
         courses = [elem.text for elem in self.soup.find_all("Kurz")]
         return courses
-    
+    ### Basically useless now... ###
     def free_days(self):
         datestamps = ["20" + elem.text for elem in self.soup.find("FreieTage").find_all("ft")]
         datestamps = [datetime.strptime(datestamp, "%Y%m%d") for datestamp in datestamps]
@@ -203,10 +224,49 @@ class MetaExtractor():
     def current_school_days_str(self):
         return [[datetime.strftime(elem, "%d.%m.%Y"), datetime.strftime(elem, "%Y%m%d")] for elem in self.current_school_days()]
 
+
+class DateExtractor():
+    def __init__(self, school_num):
+        self.school_num = school_num
+        with open('creds.json') as f:
+            self.credentials = json.load(f).get(school_num, None)
+        self.get()
+
+
+    
+    def random_data(self):
+        bound_thing = f"---------Embt-Boundary--{self.hex_num}"
+        self.data = f'{bound_thing}\nContent-Disposition: form-data; name="pw"\n\nI N D I W A R E\n{bound_thing}\nContent-Disposition: form-data; name="art"\n\nmobk\n{bound_thing}--\n'
+    def random_content_type(self):
+        self.headers["content-type"] = f"multipart/form-data; boundary=-------Embt-Boundary--{self.hex_num}"
+
+    def get(self):
+        self.headers = {}
+        self.hex_num = 0
+        self.random_data()
+        self.random_content_type()
+        data_url = f"https://z1.stundenplan24.de/schulen/{self.school_num}/mobil/_phpmob/vpdir.php"
+        self.headers["authorization"] = self.credentials["authorization"]
+        r = requests.post(data_url, headers=self.headers, data=self.data)
+        data = r.text.split(";")[::2]
+        data.remove("Klassen.xml")
+        data.remove('')
+        data.sort()
+        data = [elem.split(".")[0][6:] for elem in data]
+        self.data = data
+        return self.data
+    
+    def read_data(self):
+        self.formatted_dates = [datetime.strptime(elem, "%Y%m%d").strftime("%d.%m.%Y") for elem in self.data]
+        return list(zip(self.data, self.formatted_dates))
+    
+    
+
 if __name__ == "__main__":
     #p = Plan_Extractor("10001329", "20221209").get_plan_filtered_courses("JG12", ["de2"])
     #pprint(p)
-    c = MetaExtractor("10001329").current_school_days_str()
+    #c = MetaExtractor("10001329").current_school_days_str()
     #print(len(c))
+    c = DateExtractor("10001329").read_data()
     print(c)
     #pprint([datetime.strftime(elem, "%d.%m.%Y") for elem in c])

@@ -1,7 +1,7 @@
 import json
 from flask import Flask, redirect, render_template, make_response, url_for, request, session
 import datetime
-from methods import MetaExtractor, Plan_Extractor
+from methods import MetaExtractor, Plan_Extractor, DateExtractor
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
 from errors import DayOnWeekend, CredentialsNotFound
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user
@@ -75,8 +75,13 @@ def logout():
     return redirect(url_for('login'))
 
 @app.route('/<schulnummer>')
-@login_required
+#@login_required
 def handle_plan(schulnummer):
+    dates = DateExtractor(schulnummer).read_data()
+    other_data = MetaExtractor(schulnummer)
+    teachers = other_data.teacher_list()
+    rooms = other_data.room_list()
+    klassen = other_data.course_list()
     if len(request.args) == 0:
         if not schulnummer.isdigit():
             return redirect("/name/" + schulnummer, code=302)
@@ -84,22 +89,15 @@ def handle_plan(schulnummer):
             creds = json.load(f)
         if schulnummer not in creds:
             return {"error": "no school with this number found"}
-        return render_template('index.html')
-    
+        return render_template('index.html', dates=dates, teachers=teachers, rooms=rooms, klassen=klassen, school_name=creds[schulnummer]["school_name"])
+    if "type" not in request.args:
+        return "type fehlt"
     if request.args["type"] == "klasse":
         return handle_klasse(schulnummer, request.args)
-    if "date" in request.args:
-        if not "type" in request.args:
-            return "type fehlt"
-        if request.args["type"] == "teacher":
-            if not "teacher" in request.args:
-                return "kuerzel fehlt"
-            return lehrerplan(schulnummer, request.args["date"], request.args["teacher"])
-        if request.args["type"] == "room":
-            if not "room" in request.args:
-                return "room fehlt"
-            return raumplan(schulnummer, request.args["date"], request.args["room"])
-        print("date enthalten")
+    if request.args["type"] == "teacher":
+        return handle_teacher(schulnummer, request.args)
+    if request.args["type"] == "room":
+        return handle_room(schulnummer, request.args)
     return "ok"
 
 @app.route('/name/<schulname>')
@@ -119,13 +117,32 @@ def schulplan(schulnummer, date):
     return Plan_Extractor(schulnummer, date).r.content
 
 ### LEHRERPLAN ###
+def handle_teacher(schulnummer, args):
+    if "date" in args and "teacher" in args:
+        return lehrerplan(schulnummer, args["date"], args["teacher"])
+    # http://127.0.0.1:5010/10001329?date=20221221&type=teacher
+    if "teacher" in args:
+        return "not yet implemented..."
+    return lehrerliste(schulnummer)
+    #return render_template('index.html')
+
 def lehrerplan(schulnummer, date, kuerzel):
     data = Plan_Extractor(schulnummer, date).teacher_lessons(kuerzel)
     lessons = data["lessons"]
     zusatzinfo = data["zusatzinfo"]
     return render_template('plan.html', plan_type="Lehrer", plan_value=kuerzel, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
+def lehrerliste(schulnummer):
+    data = MetaExtractor(schulnummer).teacher_list()
+    print(data)
+    return "ok"
+
 ### RAUMPLAN ###
+def handle_room(schulnummer, args):
+    if "date" in args and "room" in args:
+        return raumplan(schulnummer, args["date"], args["room"])
+    return render_template('index.html')
+
 def raumplan(schulnummer, date, room_num):
     data = Plan_Extractor(schulnummer, date).room_lessons(room_num)
     lessons = data["lessons"]
@@ -213,9 +230,6 @@ def courses(schulnummer, date, klasse):
 #def courses(schulnummer, group):
     #return load_courses(sch)
 
-
-print("http://127.0.0.1:5010/10001329/20221209/klassenplan/JG12")
-print("vplan.fr/10001329/20221209/klassenplan/JG12")
 
 if __name__ == '__main__':
     app.run(port=5010)
