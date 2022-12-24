@@ -75,7 +75,7 @@ def logout():
     return redirect(url_for('login'))
 
 @app.route('/<schulnummer>')
-#@login_required
+@login_required
 def handle_plan(schulnummer):
     dates = DateExtractor(schulnummer).read_data()
     other_data = MetaExtractor(schulnummer)
