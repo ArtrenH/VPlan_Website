@@ -77,14 +77,14 @@ def logout():
 @app.route('/<schulnummer>')
 @login_required
 def handle_plan(schulnummer):
+    if not schulnummer.isdigit():
+        return redirect("/name/" + schulnummer, code=302)
     dates = DateExtractor(schulnummer).read_data()
     other_data = MetaExtractor(schulnummer)
     teachers = other_data.teacher_list()
     rooms = other_data.room_list()
     klassen = other_data.course_list()
     if len(request.args) == 0:
-        if not schulnummer.isdigit():
-            return redirect("/name/" + schulnummer, code=302)
         with open("creds.json", "r") as f:
             creds = json.load(f)
         if schulnummer not in creds:

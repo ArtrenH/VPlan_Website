@@ -232,8 +232,6 @@ class DateExtractor():
             self.credentials = json.load(f).get(school_num, None)
         self.get()
 
-
-    
     def random_data(self):
         bound_thing = f"---------Embt-Boundary--{self.hex_num}"
         self.data = f'{bound_thing}\nContent-Disposition: form-data; name="pw"\n\nI N D I W A R E\n{bound_thing}\nContent-Disposition: form-data; name="art"\n\nmobk\n{bound_thing}--\n'
