@@ -30,6 +30,11 @@ nav img {
     padding-left: 10px;
 }
 
+.global_headline {
+    font-size: 3rem;
+    padding-left: 10px;
+}
+
 .custom_badge {
     background: rgba(255, 255, 255, 0.07);
     padding: 2px 7px;
@@ -295,4 +300,37 @@ input:focus+label {
 
 .login-btn {
     margin: 0 0.75rem;
+}
+
+.plan_picker.row .col {
+    padding: .75rem !important;
+}
+
+.plan_picker_btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1.5;
+    border-radius: 5px;
+}
+
+.plan_picker_btn .material-symbols-outlined {
+    font-size: clamp(3rem, 5vw, 5vw);
+}
+
+#selected_time {
+    font-size: clamp(1rem, 2vw, 2vw);
+    margin-bottom: clamp(-1rem, -2vw, -2vw);
+}
+
+@media only screen and (min-width: 400px) and (max-width: 992px) {
+    .plan_picker_btn .material-symbols-outlined {
+        font-size: 10vw;
+    }
+    
+    #selected_time {
+        font-size: 4vw;
+        margin-bottom: -4vw;
+    }
 }

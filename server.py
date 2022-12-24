@@ -46,7 +46,8 @@ def request_loader(request):
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html')
+    #return render_template('index.html')
+    return redirect(url_for('handle_plan', schulnummer="10001329"))
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
@@ -88,7 +89,8 @@ def handle_plan(schulnummer):
         with open("creds.json", "r") as f:
             creds = json.load(f)
         if schulnummer not in creds:
-            return {"error": "no school with this number found"}
+            return redirect(url_for('handle_plan', schulnummer="10001329"))
+            #return {"error": "no school with this number found"}
         return render_template('index.html', dates=dates, teachers=teachers, rooms=rooms, klassen=klassen, school_name=creds[schulnummer]["school_name"])
     if "type" not in request.args:
         return "type fehlt"
@@ -108,7 +110,8 @@ def schulname(schulname):
         creds = json.load(f)
     cur_schulnummer = [creds[elem]["school_number"] for elem in creds if creds[elem]["school_name"] == schulname]
     if len(cur_schulnummer) == 0:
-        return {"error": "no school with this name found"}
+        return redirect(url_for('handle_plan', schulnummer="10001329"))
+        #return {"error": "no school with this name found"}
     return redirect("/"+ cur_schulnummer[0], code=302)
 
 @app.route('/<schulnummer>/<date>')
