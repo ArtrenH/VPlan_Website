@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+Moin <br>
+Bitte gib deine Schulnummer/Schulnamen ein (z.B. "10001329" oder "ostwald")
+<input type="text" placeholder="10001329">
+<button style="color: black;" onclick="weiterleitung()">Weiter zur Schule</button>
+
+
+<script>
+    function weiterleitung() {
+        var schulnummer = document.getElementsByTagName("input")[0].value;
+        if (schulnummer == "") {
+            schulnummer = "10001329";
+        }
+        window.location.href = "/" + schulnummer;
+    }
+</script>
+
+{% endblock %}
+
+{% block change_day %}{% endblock %}

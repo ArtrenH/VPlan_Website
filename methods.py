@@ -171,6 +171,10 @@ class MetaExtractor():
         return teachers
 
     def room_list(self):
+        if f"{self.school_num}_rooms.json" in os.listdir("data"):
+            with open(f"data/{self.school_num}_rooms.json", encoding="utf-8") as f:
+                rooms = json.load(f)
+            return rooms
         rooms = list(set([elem.text for elem in self.soup.find_all("Ra") if elem.text]))
         return rooms
     

@@ -46,7 +46,7 @@ def request_loader(request):
 @app.route('/')
 @login_required
 def index():
-    #return render_template('index.html')
+    return render_template('start.html')
     return redirect(url_for('handle_plan', schulnummer="10001329"))
 
 @login_manager.unauthorized_handler
