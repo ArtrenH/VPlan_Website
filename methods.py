@@ -137,7 +137,7 @@ class Plan_Extractor():
 class MetaExtractor():
     def __init__(self, school_num):
         self.school_num = school_num
-        with open('creds.json') as f:
+        with open('creds.json', encoding="utf-8") as f:
             self.credentials = json.load(f).get(school_num, None)
         self.get()
     
@@ -151,7 +151,7 @@ class MetaExtractor():
 
     def teacher_list(self):
         if f"{self.school_num}_teachers.json" in os.listdir("data"):
-            with open(f"data/{self.school_num}_teachers.json") as f:
+            with open(f"data/{self.school_num}_teachers.json", encoding="utf-8") as f:
                 teachers = json.load(f)
             return teachers.values()
         teachers = {}
@@ -228,7 +228,7 @@ class MetaExtractor():
 class DateExtractor():
     def __init__(self, school_num):
         self.school_num = school_num
-        with open('creds.json') as f:
+        with open('creds.json', encoding="utf-8") as f:
             self.credentials = json.load(f).get(school_num, None)
         self.get()
 
