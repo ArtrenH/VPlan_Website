@@ -81,7 +81,7 @@ def logout():
 def handle_plan(schulnummer):
     if not schulnummer.isdigit():
         return redirect("/name/" + schulnummer, code=302)
-        
+    # data for selection
     dates = DateExtractor(schulnummer).read_data()
     other_data = MetaExtractor(schulnummer)
     teachers = other_data.teacher_list()
@@ -96,6 +96,7 @@ def handle_plan(schulnummer):
         return render_template('index.html',
             dates=dates, teachers=teachers, rooms=rooms, klassen=klassen, school_name=creds[schulnummer]["school_name"],
             var_vorangezeigt="true", var_angefragt_link=urllib.parse.urlencode(new_string_args))
+    # normal website
     if len(request.args) == 0:
         with open("creds.json", "r") as f:
             creds = json.load(f)
@@ -105,6 +106,7 @@ def handle_plan(schulnummer):
         return render_template('index.html',
             dates=dates, teachers=teachers, rooms=rooms, klassen=klassen, school_name=creds[schulnummer]["school_name"],
             var_vorangezeigt="false", var_angefragt_link="")
+    # actual plans depending on type of plan (klasse, teacher, room)
     if "type" not in request.args:
         return "type fehlt"
     print(request.args)
@@ -136,32 +138,23 @@ def schulplan(schulnummer, date):
 
 ### LEHRERPLAN ###
 def handle_teacher(schulnummer, args):
-    return lehrerplan(schulnummer, args["date"], args["teacher"])
-
-def lehrerplan(schulnummer, date, kuerzel):
+    date, kuerzel = args["date"], args["teacher"]
     data = Plan_Extractor(schulnummer, date).teacher_lessons(kuerzel)
     lessons = data["lessons"]
     zusatzinfo = data["zusatzinfo"]
     return render_template('plan.html', plan_type="Lehrer", plan_value=kuerzel, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
-
 ### RAUMPLAN ###
 def handle_room(schulnummer, args):
-    return raumplan(schulnummer, args["date"], args["room"])
-
-def raumplan(schulnummer, date, room_num):
+    date, room_num = args["date"], args["room"]
     data = Plan_Extractor(schulnummer, date).room_lessons(room_num)
     lessons = data["lessons"]
     zusatzinfo = data["zusatzinfo"]
     return render_template('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
-
-
 ### KLASSENPLAN ###
 def handle_klasse(schulnummer, args):
-    return klassenplan(schulnummer, args["date"], args["klasse"])
-
-def klassenplan(schulnummer, date, klasse):
+    date, klasse = args["date"], args["klasse"]
     klasse = klasse.replace("_", "/")
     try:
         data = Plan_Extractor(schulnummer, date).get_plan_normal(klasse)
