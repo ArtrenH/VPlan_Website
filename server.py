@@ -82,19 +82,22 @@ def handle_plan(schulnummer):
     if not schulnummer.isdigit():
         return redirect("/name/" + schulnummer, code=302)
     # data for selection
-    dates = DateExtractor(schulnummer).read_data()
+    date_data = DateExtractor(schulnummer)
+    dates = date_data.read_data()
+    default_date = date_data.default_date()
     other_data = MetaExtractor(schulnummer)
+    klassen = other_data.course_list()
     teachers = other_data.teacher_list()
     rooms = other_data.room_list()
-    klassen = other_data.course_list()
     # sharable links that automatically load the plan
-    if request.args.get("share", False):
+    if request.args.get("share", False) == "true":
         with open("creds.json", "r") as f:
             creds = json.load(f)
         new_string_args = dict(request.args)
         del new_string_args["share"]
         return render_template('index.html',
-            dates=dates, teachers=teachers, rooms=rooms, klassen=klassen, school_name=creds[schulnummer]["school_name"],
+            dates=dates, teachers=teachers, rooms=rooms, klassen=klassen,
+            school_name=creds[schulnummer]["school_name"], default_date=default_date,
             var_vorangezeigt="true", var_angefragt_link=urllib.parse.urlencode(new_string_args))
     # normal website
     if len(request.args) == 0:
@@ -104,25 +107,29 @@ def handle_plan(schulnummer):
             return redirect(url_for('handle_plan', schulnummer="10001329"))
             #return {"error": "no school with this number found"}
         return render_template('index.html',
-            dates=dates, teachers=teachers, rooms=rooms, klassen=klassen, school_name=creds[schulnummer]["school_name"],
+            dates=dates, teachers=teachers, rooms=rooms, klassen=klassen,
+            school_name=creds[schulnummer]["school_name"],
+            default_date=default_date,
             var_vorangezeigt="false", var_angefragt_link="")
     # actual plans depending on type of plan (klasse, teacher, room)
     if "type" not in request.args:
         return "type fehlt"
-    print(request.args)
     if "date" not in request.args:
         return "date fehlt"
-    for handle_pair in [("klasse", handle_klasse), ("teacher", handle_teacher), ("room", handle_room)]: # order is important
+    if request.args["date"] not in [date[0] for date in dates]:
+        return "date ungültig"
+    for handle_pair in [("klasse", handle_klasse, klassen), ("teacher", handle_teacher, [teacher["kuerzel"] for teacher in teachers]), ("room", handle_room, rooms)]: # order is important
         if request.args["type"] == handle_pair[0]:
             if handle_pair[0] not in request.args:
                 return handle_pair[0] + " fehlt"
+            if request.args[handle_pair[0]] not in handle_pair[2]:
+                return handle_pair[0] + " not found"
             return handle_pair[1](schulnummer, request.args)
     return "ok"
 
 @app.route('/name/<schulname>')
 @login_required
 def schulname(schulname):
-    print(schulname)
     with open("creds.json", "r") as f:
         creds = json.load(f)
     cur_schulnummer = [creds[elem]["school_number"] for elem in creds if creds[elem]["school_name"] == schulname]
@@ -164,7 +171,6 @@ def handle_klasse(schulnummer, args):
         return "day is on the weekend"
     lessons = data["lessons"]
     zusatzinfo = data["zusatzinfo"]
-    print(data["new_dates"])
     return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
 

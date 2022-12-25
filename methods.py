@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import requests
 from bs4 import BeautifulSoup
 from pprint import pprint
@@ -149,6 +149,10 @@ class MetaExtractor():
         #    f.write(self.r.text)
         self.soup = BeautifulSoup(self.r.text, "xml")
 
+    def course_list(self):
+        courses = [elem.text for elem in self.soup.find_all("Kurz")]
+        return courses
+    
     def teacher_list(self):
         if f"{self.school_num}_teachers.json" in os.listdir("data"):
             with open(f"data/{self.school_num}_teachers.json", encoding="utf-8") as f:
@@ -179,9 +183,6 @@ class MetaExtractor():
         rooms = list(set([elem.text for elem in self.soup.find_all("Ra") if elem.text]))
         return rooms
     
-    def course_list(self):
-        courses = [elem.text for elem in self.soup.find_all("Kurz")]
-        return courses
     ### Basically useless now... ###
     def free_days(self):
         datestamps = ["20" + elem.text for elem in self.soup.find("FreieTage").find_all("ft")]
@@ -249,11 +250,9 @@ class DateExtractor():
         self.random_data()
         self.random_content_type()
         data_url = f"https://{self.credentials['api_server']}/{self.school_num}/mobil/_phpmob/vpdir.php"
-        print(data_url)
         self.headers["authorization"] = self.credentials["authorization"]
         r = requests.post(data_url, headers=self.headers, data=self.data)
         data = r.text.split(";")[::2]
-        print(data)
         data.remove("Klassen.xml")
         data.remove('')
         data.sort()
@@ -265,13 +264,27 @@ class DateExtractor():
         self.formatted_dates = [datetime.strptime(elem, "%Y%m%d").strftime("%d.%m.%Y") for elem in self.data]
         return list(zip(self.data, self.formatted_dates))
     
-    
+    def default_date(self):
+        today = datetime.now().date()
+        dates = [datetime.strptime(elem, "%Y%m%d").date() for elem in self.data]
+        if today in dates:
+            return [today.strftime("%Y%m%d"), today.strftime("%d.%m.%Y")]
+        future = sorted([elem for elem in dates if elem > today])
+        if len(future) > 0:
+            return [future[0].strftime("%Y%m%d"), future[0].strftime("%d.%m.%Y")]
+        past = sorted([elem for elem in dates if elem < today])
+        if len(past) > 0:
+            return [past[-1].strftime("%Y%m%d"), past[-1].strftime("%d.%m.%Y")]
+        return None
+        
+        
+
 
 if __name__ == "__main__":
     #p = Plan_Extractor("10001329", "20221209").get_plan_filtered_courses("JG12", ["de2"])
     #pprint(p)
     #c = MetaExtractor("10001329").current_school_days_str()
     #print(len(c))
-    c = DateExtractor("10001329").read_data()
+    c = DateExtractor("10001329").default_date()
     print(c)
     #pprint([datetime.strftime(elem, "%d.%m.%Y") for elem in c])
