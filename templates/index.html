@@ -55,3 +55,10 @@
 {% endblock %}
 
 {% block change_day %}{% endblock %}
+{% block scripts %}
+{{ smth_vorangezeigt }}
+<script>
+    const vorangezeigt = {{ var_vorangezeigt }};
+    const angefragt_link = "{{ var_angefragt_link|safe }}";
+</script>
+{% endblock %}
