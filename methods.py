@@ -65,7 +65,7 @@ class Plan_Extractor():
         self.date_before = self.next_day(False)
     
     def get(self):
-        plan_url = f"https://z1.stundenplan24.de/schulen/{self.credentials['school_number']}/mobil/mobdaten/PlanKl{self.date}.xml"
+        plan_url = f"https://{self.credentials['api_server']}/{self.credentials['school_number']}/mobil/mobdaten/PlanKl{self.date}.xml"
         header_stripped = {"authorization": self.credentials["authorization"],}
         self.r = requests.get(plan_url, headers=header_stripped)
         if self.r.status_code == 404:
@@ -142,7 +142,7 @@ class MetaExtractor():
         self.get()
     
     def get(self):
-        plan_url = f"https://z1.stundenplan24.de/schulen/{self.credentials['school_number']}/mobil/mobdaten/Klassen.xml"
+        plan_url = f"https://{self.credentials['api_server']}/{self.credentials['school_number']}/mobil/mobdaten/Klassen.xml"
         header_stripped = {"authorization": self.credentials["authorization"],}
         self.r = requests.get(plan_url, headers=header_stripped)
         #with open("data/klassen.xml", "w+") as f:
@@ -159,7 +159,8 @@ class MetaExtractor():
             cur_teacher = elem.get("UeLe")
             cur_subject = elem.get("UeFa")
             cur_subject = cur_subject if cur_subject not in ["KL", "AnSt", "FÖ"] else ""
-            if cur_teacher and cur_teacher not in teachers:
+            if not cur_teacher: continue
+            if cur_teacher not in teachers:
                 teachers[cur_teacher] = {"kuerzel": cur_teacher, "faecher": []}
             if cur_subject and cur_subject not in teachers[cur_teacher]["faecher"]:
                 teachers[cur_teacher]["faecher"].append(cur_subject)
@@ -247,10 +248,12 @@ class DateExtractor():
         self.hex_num = 0
         self.random_data()
         self.random_content_type()
-        data_url = f"https://z1.stundenplan24.de/schulen/{self.school_num}/mobil/_phpmob/vpdir.php"
+        data_url = f"https://{self.credentials['api_server']}/{self.school_num}/mobil/_phpmob/vpdir.php"
+        print(data_url)
         self.headers["authorization"] = self.credentials["authorization"]
         r = requests.post(data_url, headers=self.headers, data=self.data)
         data = r.text.split(";")[::2]
+        print(data)
         data.remove("Klassen.xml")
         data.remove('')
         data.sort()

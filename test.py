@@ -1,13 +1,13 @@
 import requests, json
 import gzip
 
-url = "https://z1.stundenplan24.de/schulen/10001329/mobil/_phpmob/vpdir.php"
+url = "https://www.stundenplan24.de/10453929/mobil/_phpmob/vpdir.php"
 headers = {
     #"user-agent": "Indiware",
 }
 with open("creds.json", "r") as f:
     creds = json.load(f)
-headers["authorization"] = creds["10001329"]["authorization"]
+headers["authorization"] = creds["10453929"]["authorization"]
 
 
 def random_data(hex_num):
@@ -21,5 +21,6 @@ headers["content-type"] = random_content_type(hex_num)
 data = random_data(hex_num)
 
 r = requests.post(url, headers=headers, data=data)
+print(r.text)
 from pprint import pprint
-pprint(r.text.split(";"))
+#pprint(r.text.split(";"))
