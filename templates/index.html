@@ -3,23 +3,26 @@
 {% block content %}
 {% if school_name %}
     <div class="row plan_picker">
+        <!-- Datum -->
         <div class="col s6 l3">
             <div class="plan_picker_btn dp01 waves-effect">
                 <span class="material-symbols-outlined">calendar_month</span>
-                <span id="selected_time">02.03.2005</span>
+                <span id="selected_time">{{ default_date.1 }}</span>
             </div>
-            
         </div>
+        <!-- Lehrer -->
         <div class="col s6 l3">
             <div class="plan_picker_btn dp01 waves-effect">
                 <span class="material-symbols-outlined">school</span>
             </div>
         </div>
+        <!-- Raum -->
         <div class="col s6 l3">
             <div class="plan_picker_btn dp01 waves-effect">
                 <span class="material-symbols-outlined">location_on</span>
             </div>
         </div>
+        <!-- Klasse -->
         <div class="col s6 l3">
             <div class="plan_picker_btn dp01 waves-effect">
                 <span class="material-symbols-outlined">grade</span>

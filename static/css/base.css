@@ -347,6 +347,10 @@ input:focus+label {
     color: white !important;
 }
 
+.dropdown-content li img {
+    border-radius: 5px;
+}
+
 .select-dropdown.dropdown-content li.selected {
     background: rgba(0, 0, 0, 0.15) !important;
 }
