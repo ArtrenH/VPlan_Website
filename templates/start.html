@@ -11,7 +11,7 @@
         <div class="input-field">
             <select>
                 {% for school in available_schools %}
-                <option value="{{ school }}" data-icon="{{ url_for('static', filename='images/school_icons/'+school+".png") }}" {% if loop.index == 0 %}selected{% endif %}>{{ school }}</option>
+                <option value="{{ school[0] }}" data-icon="{{ url_for('static', filename='images/school_icons/'+school[0]+".png") }}" {% if loop.index == 0 %}selected{% endif %}>{{ school[1] }}</option>
                 {% endfor %}
             </select>
             <label>Schulauswahl</label>
