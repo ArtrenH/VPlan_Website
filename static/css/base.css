@@ -350,12 +350,22 @@ input:focus+label {
 }
 
 .plan_picker_btn .material-symbols-outlined {
-    font-size: clamp(3rem, 5vw, 5vw);
+    font-size: clamp(3rem, 5vw, 7rem);
+}
+
+.free_room_btn {
+    aspect-ratio: 10;
+}
+
+@media only screen and (max-width: 992px) {   
+    .free_room_btn {
+        aspect-ratio: 5;
+    }
 }
 
 #selected_time {
-    font-size: clamp(1rem, 2vw, 2vw);
-    margin-bottom: clamp(-1rem, -2vw, -2vw);
+    font-size: clamp(1rem, 2vw, 3rem);
+    margin-bottom: clamp(-1rem, -2vw, -3rem);
 }
 
 @media only screen and (min-width: 400px) and (max-width: 992px) {
