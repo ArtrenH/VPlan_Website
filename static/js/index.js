@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         onSelect: function(date) {
             selected_date = `${date.getFullYear()}${date.getMonth()+1}${date.getDate()}`;
             document.getElementById('selected_time').innerHTML = `${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`;
-        }
-    },
-    firstDay: 1);
+        },
+        firstDay: 1
+    });
 });
