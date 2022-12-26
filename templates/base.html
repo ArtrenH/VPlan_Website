@@ -55,10 +55,8 @@
         <h4 class="global_headline">{% if plan_type %}
             Plan für {{ plan_type }} <span class='custom_badge'>{{ plan_value }}</span> am <span class='custom_badge'>{{ date }}</span>
         {% else %}{% block title %}Startseite{% endblock %}{% endif %}</h4>
-        <div class="loaded_content">
-            {% block content %}
-            {% endblock %}
-        </div>
+        {% block content %}
+        {% endblock %}
     </div>
     
     {% block change_day %}

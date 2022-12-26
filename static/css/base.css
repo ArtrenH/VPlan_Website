@@ -404,3 +404,19 @@ input:focus+label {
 .modal-footer button {
     color: white !important;
 }
+
+.datepicker-date-display, .datepicker-table td.is-selected, .month-prev:focus, .month-next:focus {
+    background-color: #BB86FC !important;
+}
+
+.datepicker-day-button:focus {
+    background-color: rgba(187, 134, 252, 0.25) !important;
+}
+
+.month-prev svg, .month-next svg {
+    fill: white !important;
+}
+
+.datepicker-table td.is-today:not(.is-selected), .datepicker-cancel, .datepicker-done {
+    color: #BB86FC !important;
+}

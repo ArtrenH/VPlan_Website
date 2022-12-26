@@ -2,96 +2,92 @@
 
 {% block links %}
 <script>
+    const school_number = "{{ school_number }}";
     const vorangezeigt = {{ var_vorangezeigt }};
     const angefragt_link = "{{ var_angefragt_link|safe }}";
     const default_date = "{{ default_date.0 }}";
+    var available_dates = [{% for date in dates %}"{{ date.0 }}",{% endfor %}];
+    
     var selected_date = "{{ default_date.0 }}";
+    var selected_type;
+    var selected_value;
 </script>
 <script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 {% endblock %}
 
 {% block content %}
-{% if school_name %}
-    <div class="row plan_picker">
-        <!-- Datum -->
-        <div class="col s6 l3">
-            <button class="plan_picker_btn dp01 waves-effect datepicker" tabindex="0">
-                <span class="material-symbols-outlined">calendar_month</span>
-                <span id="selected_time">{{ default_date.1 }}</span>
-            </butt>
+<div class="row plan_picker">
+    <!-- Datum -->
+    <div class="col s6 l3">
+        <button class="plan_picker_btn dp01 waves-effect datepicker" tabindex="0">
+            <span class="material-symbols-outlined">calendar_month</span>
+            <span id="selected_time">{{ default_date.1 }}</span>
+        </butt>
+    </div>
+    <!-- Lehrer -->
+    <div class="col s6 l3">
+        <button data-target="teacher-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
+            <span class="material-symbols-outlined">school</span>
+        </button>
+    </div>
+    <div id="teacher-picker-modal" class="modal">
+        <div class="modal-content">
+            <h4>Lehrer auswählen</h4>
+            <p class="flow-text">
+                {% for teacher in teachers %}
+                    {{ teacher.kuerzel }}
+                    {% if teacher.name %}
+                        {{ teacher.name }}
+                    {% endif %}
+                    <br>
+                {% endfor %}
+            </p>
         </div>
-        <!-- Lehrer -->
-        <div class="col s6 l3">
-            <button data-target="teacher-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
-                <span class="material-symbols-outlined">school</span>
-            </button>
-        </div>
-        <div id="teacher-picker-modal" class="modal">
-            <div class="modal-content">
-                <h4>Lehrer auswählen</h4>
-                <p class="flow-text">
-                    {% for teacher in teachers %}
-                        {{ teacher.kuerzel }}
-                        {% if teacher.name %}
-                            {{ teacher.name }}
-                        {% endif %}
-                        <br>
-                    {% endfor %}
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-close waves-effect btn-flat">Fertig</button>
-            </div>
-        </div>
-        <!-- Raum -->
-        <div class="col s6 l3">
-            <button data-target="room-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
-                <span class="material-symbols-outlined">location_on</span>
-            </button>
-        </div>
-        <div id="room-picker-modal" class="modal">
-            <div class="modal-content">
-                <h4>Raum auswählen</h4>
-                <p class="flow-text">
-                    {% for room in rooms %}
-                        {{ room }}<br>
-                    {% endfor %}
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-close waves-effect btn-flat">Fertig</button>
-            </div>
-        </div>
-        <!-- Klasse -->
-        <div class="col s6 l3">
-            <button data-target="class-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
-                <span class="material-symbols-outlined">grade</span>
-            </button>
-        </div>
-        <div id="class-picker-modal" class="modal">
-            <div class="modal-content">
-                <h4>Klasse auswählen</h4>
-                <p class="flow-text">
-                    {% for klasse in klassen %}
-                        {{ klasse }} <br>
-                    {% endfor %}
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-close waves-effect btn-flat">Fertig</button>
-            </div>
+        <div class="modal-footer">
+            <button class="modal-close waves-effect btn-flat">Fertig</button>
         </div>
     </div>
-    vorausgewählt: {{ default_date.0 }} {{ default_date.1 }}
-    <br>
-    {% for date in dates %}
-        {{ date.0 }}
-        {{ date.1 }} <br>
-    {% endfor %}
-{% else %}
-<!-- Diese Meldung sollte niemals angezeigt werden weil das Backend den Fall verhindert (hoffentlich) -->
-<h4>Die angegebene Schule konnte nicht gefunden werden. Versuche es bitte erneut.</h4>
-{% endif %}
+    <!-- Raum -->
+    <div class="col s6 l3">
+        <button data-target="room-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
+            <span class="material-symbols-outlined">location_on</span>
+        </button>
+    </div>
+    <div id="room-picker-modal" class="modal">
+        <div class="modal-content">
+            <h4>Raum auswählen</h4>
+            <p class="flow-text">
+                {% for room in rooms %}
+                    {{ room }}<br>
+                {% endfor %}
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-close waves-effect btn-flat">Fertig</button>
+        </div>
+    </div>
+    <!-- Klasse -->
+    <div class="col s6 l3">
+        <button data-target="class-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
+            <span class="material-symbols-outlined">grade</span>
+        </button>
+    </div>
+    <div id="class-picker-modal" class="modal">
+        <div class="modal-content">
+            <h4>Klasse auswählen</h4>
+            <p class="flow-text">
+                {% for klasse in klassen %}
+                    {{ klasse }} <br>
+                {% endfor %}
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-close waves-effect btn-flat">Fertig</button>
+        </div>
+    </div>
+</div>
+<div class="loaded_content">
+</div>
 {% endblock %}
 
 {% block change_day %}{% endblock %}

@@ -100,7 +100,7 @@ def handle_plan(schulnummer):
         del new_string_args["share"]
         return render_template('index.html',
             dates=dates, teachers=teachers, rooms=rooms, klassen=klassen,
-            school_name=creds[schulnummer]["school_name"], default_date=default_date,
+            school_number=schulnummer, default_date=default_date,
             var_vorangezeigt="true", var_angefragt_link=urllib.parse.urlencode(new_string_args))
     # normal website
     if len(request.args) == 0:
@@ -111,7 +111,7 @@ def handle_plan(schulnummer):
             #return {"error": "no school with this number found"}
         return render_template('index.html',
             dates=dates, teachers=teachers, rooms=rooms, klassen=klassen,
-            school_name=creds[schulnummer]["school_name"],
+            school_number=schulnummer,
             default_date=default_date,
             var_vorangezeigt="false", var_angefragt_link="")
     # actual plans depending on type of plan (klasse, teacher, room)
