@@ -8,6 +8,7 @@ from flask_login import LoginManager, UserMixin, login_required, logout_user, lo
 from dotenv import load_dotenv
 import os
 import urllib
+from pprint import pprint
 load_dotenv()
 
 app = Flask(__name__)
@@ -127,6 +128,8 @@ def handle_plan(schulnummer):
             if request.args[handle_pair[0]] not in handle_pair[2]:
                 return handle_pair[0] + " not found"
             return handle_pair[1](schulnummer, request.args)
+    if request.args["type"] == "free_rooms":
+        return handle_free_rooms(schulnummer, request.args, rooms)
     return "ok"
 
 @app.route('/name/<schulname>')
@@ -145,6 +148,20 @@ def schulname(schulname):
 def schulplan(schulnummer, date):
     return Plan_Extractor(schulnummer, date).r.content
 
+### KLASSENPLAN ###
+def handle_klasse(schulnummer, args):
+    date, klasse = args["date"], args["klasse"]
+    klasse = klasse.replace("_", "/")
+    try:
+        data = Plan_Extractor(schulnummer, date).get_plan_normal(klasse)
+    except CredentialsNotFound:
+        return "no credentials for your school"
+    except DayOnWeekend:
+        return "day is on the weekend"
+    lessons = data["lessons"]
+    zusatzinfo = data["zusatzinfo"]
+    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
+
 ### LEHRERPLAN ###
 def handle_teacher(schulnummer, args):
     date, kuerzel = args["date"], args["teacher"]
@@ -161,20 +178,11 @@ def handle_room(schulnummer, args):
     zusatzinfo = data["zusatzinfo"]
     return render_template('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
-### KLASSENPLAN ###
-def handle_klasse(schulnummer, args):
-    date, klasse = args["date"], args["klasse"]
-    klasse = klasse.replace("_", "/")
-    try:
-        data = Plan_Extractor(schulnummer, date).get_plan_normal(klasse)
-    except CredentialsNotFound:
-        return "no credentials for your school"
-    except DayOnWeekend:
-        return "day is on the weekend"
-    lessons = data["lessons"]
-    zusatzinfo = data["zusatzinfo"]
-    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
-
+### FREE ROOMS ###
+def handle_free_rooms(schulnummer, args, all_rooms):
+    date = args["date"]
+    rooms = Plan_Extractor(schulnummer, date).free_rooms(all_rooms)
+    return rooms
 
 ### Gefilterter Klassenplan ###
 @app.route('/<schulnummer>/<date>/plan/<klasse>/<kurse>')

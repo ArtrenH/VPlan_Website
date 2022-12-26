@@ -132,8 +132,29 @@ class Plan_Extractor():
         while d.strftime("%Y%m%d") in self.freie_tage or d.weekday() > 4:
             d += timedelta(days=delta)
         return d.strftime("%Y%m%d")
-
-
+    
+    def room_list(self):
+        lessons_rooms = {}
+        class_lessons = self.day_data.find_all("Std")
+        for class_lesson in class_lessons:
+            lesson_num = class_lesson.find("St")
+            if not lesson_num: continue
+            lesson_num = lesson_num.text.strip()
+            room_num = class_lesson.find("Ra").text.strip()
+            if not room_num: continue
+            if lesson_num not in lessons_rooms:
+                lessons_rooms[lesson_num] = []
+            if room_num not in lessons_rooms[lesson_num]:
+                lessons_rooms[lesson_num].append(room_num)
+        self.lessons_rooms = lessons_rooms
+        return lessons_rooms
+    
+    def free_rooms(self, all_rooms):
+        free_rooms = self.room_list()
+        for lesson_num in free_rooms:
+            free_rooms[lesson_num] = [room for room in all_rooms if room not in free_rooms[lesson_num]]
+        return free_rooms
+        
 class MetaExtractor():
     def __init__(self, school_num):
         self.school_num = school_num
@@ -277,14 +298,17 @@ class DateExtractor():
             return [past[-1].strftime("%Y%m%d"), past[-1].strftime("%d.%m.%Y")]
         return None
         
-        
+
 
 
 if __name__ == "__main__":
-    #p = Plan_Extractor("10001329", "20221209").get_plan_filtered_courses("JG12", ["de2"])
-    #pprint(p)
+    with open("data/10001329_rooms.json", encoding="utf-8") as f:
+        rooms = json.load(f)
+    p = Plan_Extractor("10001329", "20221221")
+    p = p.free_rooms(rooms)
+    pprint(p)
     #c = MetaExtractor("10001329").current_school_days_str()
     #print(len(c))
-    c = DateExtractor("10001329").default_date()
-    print(c)
+    #c = DateExtractor("10001329").default_date()
+    #print(c)
     #pprint([datetime.strftime(elem, "%d.%m.%Y") for elem in c])
