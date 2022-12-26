@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 
 {% block links %}
+<script>
+    const vorangezeigt = {{ var_vorangezeigt }};
+    const angefragt_link = "{{ var_angefragt_link|safe }}";
+</script>
 <script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 {% endblock %}
 
@@ -64,10 +68,3 @@
 {% endblock %}
 
 {% block change_day %}{% endblock %}
-{% block scripts %}
-{{ smth_vorangezeigt }}
-<script>
-    const vorangezeigt = {{ var_vorangezeigt }};
-    const angefragt_link = "{{ var_angefragt_link|safe }}";
-</script>
-{% endblock %}
