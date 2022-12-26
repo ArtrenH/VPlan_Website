@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
         onSelect: function(date) {
             selected_date = `${date.getFullYear()}${zeroPad(date.getMonth()+1, 2)}${zeroPad(date.getDate(), 2)}`;
             document.getElementById('selected_time').innerHTML = `${zeroPad(date.getDate(), 2)}.${zeroPad(date.getMonth()+1, 2)}.${date.getFullYear()}`;
+            get_plan(selected_type, selected_value);
         },
         firstDay: 1,
         disableDayFn: function(date) {

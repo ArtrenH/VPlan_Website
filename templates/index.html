@@ -33,15 +33,11 @@
     <div id="teacher-picker-modal" class="modal">
         <div class="modal-content">
             <h4>Lehrer auswählen</h4>
-            <p class="flow-text">
+            <div class="row">
                 {% for teacher in teachers %}
-                    {{ teacher.kuerzel }}
-                    {% if teacher.name %}
-                        {{ teacher.name }}
-                    {% endif %}
-                    <br>
+                    <div class="col s12 m6 xl4"><button onclick="selected_type='teacher';selected_value='{{ teacher.kuerzel }}';get_plan(selected_type, selected_value);" class="modal-selection-btn btn dp01 waves-effect">{% if teacher.name %}{{ teacher.anrede }} {{ teacher.name }}{% else %}{{ teacher.kuerzel }}{% endif %}</button></div>
                 {% endfor %}
-            </p>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="modal-close waves-effect btn-flat">Fertig</button>
@@ -56,11 +52,11 @@
     <div id="room-picker-modal" class="modal">
         <div class="modal-content">
             <h4>Raum auswählen</h4>
-            <p class="flow-text">
+            <div class="row">
                 {% for room in rooms %}
-                    {{ room }}<br>
+                    <div class="col s6 m3 xl2"><button onclick="selected_type='room';selected_value='{{ room }}';get_plan(selected_type, selected_value);" class="modal-selection-btn btn dp01 waves-effect">{{ room }}</button></div>
                 {% endfor %}
-            </p>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="modal-close waves-effect btn-flat">Fertig</button>
@@ -75,11 +71,11 @@
     <div id="class-picker-modal" class="modal">
         <div class="modal-content">
             <h4>Klasse auswählen</h4>
-            <p class="flow-text">
+            <div class="row">
                 {% for klasse in klassen %}
-                    {{ klasse }} <br>
+                    <div class="col s6 m3 xl2"><button onclick="selected_type='klasse';selected_value='{{ klasse }}';get_plan(selected_type, selected_value);" class="modal-selection-btn btn dp01 waves-effect">{{ klasse }}</button></div>
                 {% endfor %}
-            </p>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="modal-close waves-effect btn-flat">Fertig</button>

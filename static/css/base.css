@@ -430,3 +430,9 @@ input:focus+label {
 .datepicker-table td.is-today:not(.is-selected), .datepicker-cancel, .datepicker-done {
     color: #BB86FC !important;
 }
+
+.modal-selection-btn {
+    text-transform: capitalize;
+    width: 100%;
+    border-radius: 5px;
+}
