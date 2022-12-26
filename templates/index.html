@@ -4,6 +4,8 @@
 <script>
     const vorangezeigt = {{ var_vorangezeigt }};
     const angefragt_link = "{{ var_angefragt_link|safe }}";
+    const default_date = "{{ default_date.0 }}";
+    var selected_date = "{{ default_date.0 }}";
 </script>
 <script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 {% endblock %}
@@ -13,10 +15,10 @@
     <div class="row plan_picker">
         <!-- Datum -->
         <div class="col s6 l3">
-            <button class="plan_picker_btn dp01 waves-effect" tabindex="0">
+            <button class="plan_picker_btn dp01 waves-effect datepicker" tabindex="0">
                 <span class="material-symbols-outlined">calendar_month</span>
                 <span id="selected_time">{{ default_date.1 }}</span>
-            </button>
+            </butt>
         </div>
         <!-- Lehrer -->
         <div class="col s6 l3">
