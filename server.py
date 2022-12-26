@@ -48,7 +48,7 @@ def request_loader(request):
 @app.route('/')
 @login_required
 def index():
-    with open("creds.json", "r") as f:
+    with open("creds.json", "r", encoding="utf-8") as f:
         tmp_data = json.load(f)
         return render_template('start.html', available_schools=[[item["school_name"], item["display_name"]] for item in tmp_data.values()])
     return redirect(url_for('handle_plan', schulnummer="10001329"))
@@ -94,7 +94,7 @@ def handle_plan(schulnummer):
     rooms = other_data.room_list()
     # sharable links that automatically load the plan
     if request.args.get("share", False) == "true":
-        with open("creds.json", "r") as f:
+        with open("creds.json", "r", encoding="utf-8") as f:
             creds = json.load(f)
         new_string_args = dict(request.args)
         del new_string_args["share"]
@@ -104,7 +104,7 @@ def handle_plan(schulnummer):
             var_vorangezeigt="true", var_angefragt_link=urllib.parse.urlencode(new_string_args))
     # normal website
     if len(request.args) == 0:
-        with open("creds.json", "r") as f:
+        with open("creds.json", "r", encoding="utf-8") as f:
             creds = json.load(f)
         if schulnummer not in creds:
             return redirect(url_for('handle_plan', schulnummer="10001329"))
@@ -135,7 +135,7 @@ def handle_plan(schulnummer):
 @app.route('/name/<schulname>')
 @login_required
 def schulname(schulname):
-    with open("creds.json", "r") as f:
+    with open("creds.json", "r", encoding="utf-8") as f:
         creds = json.load(f)
     cur_schulnummer = [creds[elem]["school_number"] for elem in creds if creds[elem]["school_name"] == schulname]
     if len(cur_schulnummer) == 0:
@@ -197,7 +197,7 @@ def plan(schulnummer, date, klasse, kurse):
 
 @app.route('/sponsors')
 def sponsors():
-    with open("data/sponsors.json", "r") as f:
+    with open("data/sponsors.json", "r", encoding="utf-8") as f:
         sponsors = json.load(f)
     return render_template('sponsors.html', sponsors=sponsors)
 
