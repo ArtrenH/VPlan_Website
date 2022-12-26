@@ -35,7 +35,7 @@
             <h4>Lehrer auswählen</h4>
             <div class="row">
                 {% for teacher in teachers %}
-                    <div class="col s12 m6 xl4"><button onclick="selected_type='teacher';selected_value='{{ teacher.kuerzel }}';get_plan(selected_type, selected_value);" class="modal-close modal-selection-btn btn dp01 waves-effect">{% if teacher.name %}{{ teacher.anrede }} {{ teacher.name }}{% else %}{{ teacher.kuerzel }}{% endif %}</button></div>
+                    <div class="col s12 m6 xl4"><button onclick="selected_type='teacher';selected_value='{{ teacher.kuerzel }}';get_plan();" class="modal-close modal-selection-btn btn dp01 waves-effect">{% if teacher.name %}{{ teacher.anrede }} {{ teacher.name }}{% else %}{{ teacher.kuerzel }}{% endif %}</button></div>
                 {% endfor %}
             </div>
         </div>
@@ -54,7 +54,7 @@
             <h4>Raum auswählen</h4>
             <div class="row">
                 {% for room in rooms %}
-                    <div class="col s6 m3 xl2"><button onclick="selected_type='room';selected_value='{{ room }}';get_plan(selected_type, selected_value);" class="modal-close modal-selection-btn btn dp01 waves-effect">{{ room }}</button></div>
+                    <div class="col s6 m3 xl2"><button onclick="selected_type='room';selected_value='{{ room }}';get_plan();" class="modal-close modal-selection-btn btn dp01 waves-effect">{{ room }}</button></div>
                 {% endfor %}
             </div>
         </div>
@@ -73,7 +73,7 @@
             <h4>Klasse auswählen</h4>
             <div class="row">
                 {% for klasse in klassen %}
-                    <div class="col s6 m3 xl2"><button onclick="selected_type='klasse';selected_value='{{ klasse }}';get_plan(selected_type, selected_value);" class="modal-close modal-selection-btn btn dp01 waves-effect">{{ klasse }}</button></div>
+                    <div class="col s6 m3 xl2"><button onclick="selected_type='klasse';selected_value='{{ klasse }}';get_plan();" class="modal-close modal-selection-btn btn dp01 waves-effect">{{ klasse }}</button></div>
                 {% endfor %}
             </div>
         </div>

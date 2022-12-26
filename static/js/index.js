@@ -10,15 +10,28 @@ if (vorangezeigt) {
     });
 }
 
-function get_plan(type, value) {
+function get_plan_url(url) {
+    M.toast({text: 'Lade Plan...', displayLength: 750});
     $.ajax({
         type: 'GET',
-        url: `/${school_number}?date=${selected_date}&type=${type}&value=${value}`,
+        url: url,
         dataType: 'html',
         success: function(response) {
             $('.loaded_content').html(response);
+            $('a.link').click(function(event) {
+                event.preventDefault();
+                get_plan_url($(event.currentTarget).prop("href"));
+            });
+            M.toast({text: 'Plan geladen!', displayLength: 1000});
+        },
+        error: function(request, status, error) {
+            M.toast({text: 'Beim laden des Plans ist ein Fehler aufgetreten!', displayLength: 2000});
         }
     });
+}
+
+function get_plan() {
+    get_plan_url(`/${school_number}?date=${selected_date}&type=${selected_type}&value=${selected_value}`);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
