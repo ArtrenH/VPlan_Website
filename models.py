@@ -54,17 +54,17 @@ class Lesson():
     def get_class_link(self):
         if self.class_name == "--":
             return "#"
-        return url_for('handle_plan', schulnummer=self.school_num, date=self.date, type="klasse", klasse=self.class_name)
+        return url_for('handle_plan', schulnummer=self.school_num, date=self.date, type="klasse", value=self.class_name)
     
     def get_teacher_link(self):
         if self.teacher == "--":
             return "#"
-        return url_for('handle_plan', schulnummer=self.school_num, date=self.date, type="teacher", teacher=self.teacher)
+        return url_for('handle_plan', schulnummer=self.school_num, date=self.date, type="teacher", value=self.teacher)
     
     def get_room_link(self):
         if self.room == "--":
             return "#"
-        return url_for('handle_plan', schulnummer=self.school_num, date=self.date, type="room", room=self.room)
+        return url_for('handle_plan', schulnummer=self.school_num, date=self.date, type="room", value=self.room)
     
 
 class Zusatzinfo():

@@ -123,9 +123,9 @@ def handle_plan(schulnummer):
         return "date ungültig"
     for handle_pair in [("klasse", handle_klasse, klassen), ("teacher", handle_teacher, [teacher["kuerzel"] for teacher in teachers]), ("room", handle_room, rooms)]: # order is important
         if request.args["type"] == handle_pair[0]:
-            if handle_pair[0] not in request.args:
-                return handle_pair[0] + " fehlt"
-            if request.args[handle_pair[0]] not in handle_pair[2]:
+            if "value" not in request.args:
+                return f"value for {handle_pair[0]} fehlt"
+            if request.args["value"] not in handle_pair[2]:
                 return handle_pair[0] + " not found"
             return handle_pair[1](schulnummer, request.args)
     if request.args["type"] == "free_rooms":
@@ -150,7 +150,7 @@ def schulplan(schulnummer, date):
 
 ### KLASSENPLAN ###
 def handle_klasse(schulnummer, args):
-    date, klasse = args["date"], args["klasse"]
+    date, klasse = args["date"], args["value"]
     klasse = klasse.replace("_", "/")
     try:
         data = Plan_Extractor(schulnummer, date).get_plan_normal(klasse)
@@ -164,7 +164,7 @@ def handle_klasse(schulnummer, args):
 
 ### LEHRERPLAN ###
 def handle_teacher(schulnummer, args):
-    date, kuerzel = args["date"], args["teacher"]
+    date, kuerzel = args["date"], args["value"]
     data = Plan_Extractor(schulnummer, date).teacher_lessons(kuerzel)
     lessons = data["lessons"]
     zusatzinfo = data["zusatzinfo"]
@@ -172,7 +172,7 @@ def handle_teacher(schulnummer, args):
 
 ### RAUMPLAN ###
 def handle_room(schulnummer, args):
-    date, room_num = args["date"], args["room"]
+    date, room_num = args["date"], args["value"]
     data = Plan_Extractor(schulnummer, date).room_lessons(room_num)
     lessons = data["lessons"]
     zusatzinfo = data["zusatzinfo"]
