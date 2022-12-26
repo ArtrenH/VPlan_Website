@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col s12 m7">
+        {% for sponsor in sponsors %}
+            <div class="card">
+                <div class="card-image">
+                    <img src="{{ url_for('static', filename='images/sponsors/' + sponsor.image) }}">
+                    <span class="card-title">{{ sponsor.name }}</span>
+                </div>
+                <div class="card-content">
+                    <p style="color: black">
+                        {{ sponsor.message|safe }}
+                        {% if sponsor.amount %}
+                            <br> Unterstzützung: {{ sponsor.amount }} für {{ sponsor.purpose }}
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="card-action">
+                    {% for link in sponsor.links %}
+                        <a href="{{ link.url }}" target="_blank">{{ link.description }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}
