@@ -1,0 +1,9 @@
+
+<h1>Freie Räume am {{ date }}</h1>
+{% for lesson in lessons %}
+    Stunde {{ lesson.0 }}: 
+    {% for room in lesson.1 %}
+        {{ room }},
+    {% endfor %}
+    <br>
+{% endfor %}
