@@ -22,6 +22,12 @@ function get_plan_url(url) {
                 event.preventDefault();
                 get_plan_url($(event.currentTarget).prop("href"));
             });
+            $('a.link').keyup(function(event) {
+                if (e.which == 32 || e.which == 13) {
+                    event.preventDefault();
+                    get_plan_url($(event.currentTarget).prop("href"));
+                }
+            });
             M.toast({text: 'Plan geladen!', displayLength: 1000});
         },
         error: function(request, status, error) {

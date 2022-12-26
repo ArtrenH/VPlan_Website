@@ -138,6 +138,10 @@ nav img {
     font-size: 20px;
 }
 
+.link:focus {
+    border: 3px solid white;
+}
+
 .desktop-view .link {
     margin: 6px;
 }
@@ -435,4 +439,8 @@ input:focus+label {
     text-transform: capitalize;
     width: 100%;
     border-radius: 5px;
+}
+
+.modal-selection-btn:focus {
+    border: 3px solid white;
 }
