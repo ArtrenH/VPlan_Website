@@ -2,6 +2,23 @@
 
 {% block title %}Schulauswahl{% endblock %}
 
+{% block links %}
+<script>
+    function weiterleitung() {
+        var schulnummer = instances[0].getSelectedValues()[0];
+        if (schulnummer == "") {
+            schulnummer = "10001329";
+        }
+        window.location.href = "/" + schulnummer;
+    }
+    var instances;
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('select');
+        instances = M.FormSelect.init(elems, {});
+    });
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <div class="col s12">
@@ -21,22 +38,6 @@
         <button class="btn waves-effect" onclick="weiterleitung()">Weiter zur Schule</button>
     </div>
 </div>
-
-<script>
-    function weiterleitung() {
-        var schulnummer = instances[0].getSelectedValues()[0];
-        if (schulnummer == "") {
-            schulnummer = "10001329";
-        }
-        window.location.href = "/" + schulnummer;
-    }
-    var instances;
-    document.addEventListener('DOMContentLoaded', function() {
-        var elems = document.querySelectorAll('select');
-        instances = M.FormSelect.init(elems, {});
-    });
-</script>
-
 {% endblock %}
 
 {% block change_day %}{% endblock %}
