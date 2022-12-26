@@ -1,12 +1,26 @@
 {% extends 'base.html' %}
 
+{% block title %}Schulauswahl{% endblock %}
+
 {% block content %}
-
-Moin <br>
-Bitte gib deine Schulnummer/Schulnamen ein (z.B. "10001329" oder "ostwald")
-<input type="text" placeholder="10001329">
-<button style="color: black;" onclick="weiterleitung()">Weiter zur Schule</button>
-
+<div class="row">
+    <div class="col s12">
+        <p class="flow-text">Moin, bitte wähle hier dein Schule aus:</p>
+    </div>
+    <div class="col s12">
+        <div class="input-field">
+            <select>
+                {% for school in available_schools %}
+                <option value="{{ school }}" {% if loop.index == 0 %}selected{% endif %}>{{ school }}</option>
+                {% endfor %}
+            </select>
+            <label>Schulauswahl</label>
+        </div>
+    </div>
+    <div class="col s12">
+        <button class="btn waves-effect" onclick="weiterleitung()">Weiter zur Schule</button>
+    </div>
+</div>
 
 <script>
     function weiterleitung() {
@@ -16,6 +30,10 @@ Bitte gib deine Schulnummer/Schulnamen ein (z.B. "10001329" oder "ostwald")
         }
         window.location.href = "/" + schulnummer;
     }
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('select');
+        var instances = M.FormSelect.init(elems, {});
+    });
 </script>
 
 {% endblock %}
