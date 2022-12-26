@@ -189,7 +189,7 @@ def plan(schulnummer, date, klasse, kurse):
 
 @app.route('/sponsors')
 def sponsors():
-    with open("data/sponsors.json", "r") as f:
+    with open("data/sponsors.json", "r", encoding="utf-8") as f:
         sponsors = json.load(f)
     return render_template('sponsors.html', sponsors=sponsors)
 
