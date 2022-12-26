@@ -47,7 +47,9 @@ def request_loader(request):
 @app.route('/')
 @login_required
 def index():
-    return render_template('start.html')
+    with open("creds.json", "r") as f:
+        tmp_data = json.load(f)
+        return render_template('start.html', available_schools=[[item["school_name"], item["display_name"]] for item in tmp_data.values()])
     return redirect(url_for('handle_plan', schulnummer="10001329"))
 
 @login_manager.unauthorized_handler
