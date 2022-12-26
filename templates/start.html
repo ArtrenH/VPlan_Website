@@ -5,7 +5,7 @@
 {% block content %}
 <div class="row">
     <div class="col s12">
-        <p class="flow-text">Moin, bitte wähle hier dein Schule aus:</p>
+        <p class="flow-text">Moin, bitte wähle hier deine Schule aus:</p>
     </div>
     <div class="col s12">
         <div class="input-field">
@@ -24,15 +24,16 @@
 
 <script>
     function weiterleitung() {
-        var schulnummer = document.getElementsByTagName("input")[0].value;
+        var schulnummer = instances[0].getSelectedValues()[0];
         if (schulnummer == "") {
             schulnummer = "10001329";
         }
         window.location.href = "/" + schulnummer;
     }
+    var instances;
     document.addEventListener('DOMContentLoaded', function() {
         var elems = document.querySelectorAll('select');
-        var instances = M.FormSelect.init(elems, {});
+        instances = M.FormSelect.init(elems, {});
     });
 </script>
 
