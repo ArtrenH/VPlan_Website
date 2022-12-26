@@ -163,3 +163,4 @@ cython_debug/
 
 creds.json
 data
+static/images/sponsors

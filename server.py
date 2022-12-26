@@ -186,6 +186,13 @@ def plan(schulnummer, date, klasse, kurse):
     zusatzinfo = data["zusatzinfo"]
     return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
 
+
+@app.route('/sponsors')
+def sponsors():
+    with open("data/sponsors.json", "r") as f:
+        sponsors = json.load(f)
+    return render_template('sponsors.html', sponsors=sponsors)
+
 @app.route('/sw.js')
 def service_worker():
     response = make_response("""self.addEventListener ("fetch", function(event) {});""", 200)
