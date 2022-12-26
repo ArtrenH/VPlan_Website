@@ -3,6 +3,7 @@
 # course: Kurs, z.B. eth1, lat
 import json
 import urllib
+from flask import url_for
 
 
 class Lesson():
@@ -29,7 +30,6 @@ class Lesson():
                 self.time_data = json.load(f).get(self.lesson, "?")
         self.begin = self.time_data.get("begin", "?")
         self.end = self.time_data.get("end", "?")
-        self.link_start = f"/../{self.school_num}?date={self.date}"
 
     
     def render(self):
@@ -51,23 +51,21 @@ class Lesson():
             "end": self.end
         }
     
-    def get_room_link(self):
-        if self.room == "--":
+    def get_class_link(self):
+        if self.class_name == "--":
             return "#"
-        additional_params = urllib.parse.urlencode({'type': 'room', 'room': self.room})
-        return f"{self.link_start}&{additional_params}"
+        return url_for('handle_plan', schulnummer=self.school_num, date=self.date, type="klasse", klasse=self.class_name)
     
     def get_teacher_link(self):
         if self.teacher == "--":
             return "#"
-        additional_params = urllib.parse.urlencode({'type': 'teacher', 'teacher': self.teacher})
-        return f"{self.link_start}&{additional_params}"
+        return url_for('handle_plan', schulnummer=self.school_num, date=self.date, type="teacher", teacher=self.teacher)
     
-    def get_class_link(self):
-        if self.class_name == "--":
+    def get_room_link(self):
+        if self.room == "--":
             return "#"
-        additional_params = urllib.parse.urlencode({'type': 'klasse', 'klasse': self.class_name})
-        return f"{self.link_start}&{additional_params}"
+        return url_for('handle_plan', schulnummer=self.school_num, date=self.date, type="room", room=self.room)
+    
 
 class Zusatzinfo():
     def __init__(self, zusatzinfo_lst):

@@ -38,6 +38,7 @@ def find_zusatzinfo(soup):
 def find_times(plan, course):
     course_data = find_course(plan, course)
     time_data = course_data.find("KlStunden")
+    if not time_data: return {}
     time_data = {tag.text: {"lesson": tag.text, "begin": tag.get("ZeitVon", "?"), "end": tag.get("ZeitBis", "?")} for tag in time_data.find_all("KlSt")}
     return time_data
 
