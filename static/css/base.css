@@ -97,6 +97,10 @@ nav img {
     }
 }
 
+.vplan-wrapper {
+    position: relative;
+}
+
 .col .card {
     margin: 0;
 }
@@ -175,7 +179,19 @@ nav img {
     text-align: center;
     color: white !important;
     border: none !important;
+    width: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 0px !important;
+    line-height: 1.5;
+}
+
+.link button {
+    background-color: transparent;
+    border: none;
     width: 100%;
+    padding: 0px !important;
+    line-height: 1.5;
 }
 
 .link:focus {
@@ -184,6 +200,9 @@ nav img {
 }
 
 @media only screen and (max-width: 600px) {
+    .link {
+        width: 100%;
+    }
     .link:focus {
         outline: rgba(255, 255, 255, 0.08) solid 6px !important;
     }
@@ -450,6 +469,7 @@ input:focus+label {
     text-transform: capitalize;
     width: 100%;
     border-radius: 5px;
+    padding: 0px !important;
 }
 
 .modal-selection-btn:focus {
@@ -458,4 +478,15 @@ input:focus+label {
 
 #class-picker-modal .modal-content .row {
     margin-bottom: 0px;
+}
+
+#share-btn {
+    float: right;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    padding: 31px;
+    border-radius: 5px;
+    margin-right: .75rem;
 }
