@@ -39,7 +39,7 @@ function get_plan_url(url) {
                 }
             });*/
             if(isApple()) {
-                $('#share-btn').html('ios_share');
+                $('#share-btn span').html('ios_share');
             }
             M.toast({text: 'Plan geladen!', displayLength: 1000});
         },
