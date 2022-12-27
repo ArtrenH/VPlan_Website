@@ -101,7 +101,7 @@ def handle_plan(schulnummer):
         new_string_args = dict(request.args)
         del new_string_args["share"]
         return render_template('index.html',
-            dates=dates, teachers=teachers, rooms=rooms, klassen=klassen,
+            dates=dates, teachers=teachers, rooms=rooms, klassen=klassen_grouped,
             school_number=schulnummer, default_date=default_date,
             var_vorangezeigt="true", var_angefragt_link=urllib.parse.urlencode(new_string_args))
     # normal website
@@ -112,7 +112,7 @@ def handle_plan(schulnummer):
             return redirect(url_for('handle_plan', schulnummer="10001329"))
             #return {"error": "no school with this number found"}
         return render_template('index.html',
-            dates=dates, teachers=teachers, rooms=rooms, klassen=klassen,
+            dates=dates, teachers=teachers, rooms=rooms, klassen=klassen_grouped,
             school_number=schulnummer,
             default_date=default_date,
             var_vorangezeigt="false", var_angefragt_link="")

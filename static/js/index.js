@@ -1,5 +1,8 @@
+var ajax_response = null;
+
 if (vorangezeigt) {
-    $.ajax({
+    if (ajax_response !== null) {ajax_response.abort();}
+    ajax_response = $.ajax({
         type: 'GET',
         url: '/' + school_number + '?' + angefragt_link.replace(';', '&'),
         dataType: 'html',
@@ -11,8 +14,9 @@ if (vorangezeigt) {
 }
 
 function get_plan_url(url) {
+    if (ajax_response !== null) {ajax_response.abort();}
     M.toast({text: 'Lade Plan...', displayLength: 750});
-    $.ajax({
+    ajax_response = $.ajax({
         type: 'GET',
         url: url,
         dataType: 'html',

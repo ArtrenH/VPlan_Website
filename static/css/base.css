@@ -138,10 +138,6 @@ nav img {
     font-size: 20px;
 }
 
-.link:focus {
-    border: 3px solid white;
-}
-
 .desktop-view .link {
     margin: 6px;
 }
@@ -179,6 +175,11 @@ nav img {
     background-color: rgba(255, 255, 255, 0.08);
     text-align: center;
     color: white !important;
+    border: none !important;
+}
+
+.link:focus {
+    outline: white solid 6px;
 }
 
 .link a {
@@ -350,7 +351,7 @@ input:focus+label {
 }
 
 .plan_picker_btn:focus {
-    border: 3px solid white;
+    outline: 3px solid white;
 }
 
 .plan_picker_btn .material-symbols-outlined {
@@ -442,5 +443,9 @@ input:focus+label {
 }
 
 .modal-selection-btn:focus {
-    border: 3px solid white;
+    outline: 3px solid white;
+}
+
+#class-picker-modal .modal-content .row {
+    margin-bottom: 0px;
 }

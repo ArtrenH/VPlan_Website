@@ -71,11 +71,13 @@
     <div id="class-picker-modal" class="modal">
         <div class="modal-content">
             <h4>Klasse auswählen</h4>
+            {% for klassenstufe in klassen %}
             <div class="row">
-                {% for klasse in klassen %}
-                    <div class="col s6 m3 xl2"><button onclick="selected_type='klasse';selected_value='{{ klasse }}';get_plan();" class="modal-close modal-selection-btn btn dp01 waves-effect">{{ klasse }}</button></div>
+                {% for klasse in klassenstufe %}
+                <div class="col s6 m3 xl2"><button onclick="selected_type='klasse';selected_value='{{ klasse }}';get_plan();" class="modal-close modal-selection-btn btn dp01 waves-effect">{{ klasse }}</button></div>
                 {% endfor %}
             </div>
+            {% endfor %}
         </div>
         <div class="modal-footer">
             <button class="modal-close waves-effect btn-flat">Fertig</button>
