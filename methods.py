@@ -110,7 +110,7 @@ class Plan_Extractor():
             for class_lesson in class_lessons:
                 room_num = class_lesson.find("Ra").text.strip()
                 info = class_lesson.find("If").text.strip()
-                if room_num == room or room in info:
+                if room_num == room or room in info or room in room_num.split(" "): # last case: more than one room (example: "1208 1306")
                     room_lessons.append({**{"class": class_name}, **extract_data(class_lesson), "time_data": find_times(self.day_data, class_name)})
         return self.render(room_lessons)
 
@@ -148,12 +148,15 @@ class Plan_Extractor():
             lesson_num = class_lesson.find("St")
             if not lesson_num: continue
             lesson_num = lesson_num.text.strip()
-            room_num = class_lesson.find("Ra").text.strip()
-            if not room_num: continue
+            info = class_lesson.find("If").text.strip()
+            # there can be more than one room... (for example "1208 1306")
+            room_nums = class_lesson.find("Ra").text.strip().split(" ")
+            if not room_nums: continue
             if lesson_num not in lessons_rooms:
                 lessons_rooms[lesson_num] = []
-            if room_num not in lessons_rooms[lesson_num]:
-                lessons_rooms[lesson_num].append(room_num)
+            for room_num in room_nums:
+                if room_num not in lessons_rooms[lesson_num]:
+                    lessons_rooms[lesson_num].append(room_num)
         self.lessons_rooms = lessons_rooms
         return lessons_rooms
     

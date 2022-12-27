@@ -143,5 +143,50 @@ def sort_klassen(klassen_original):
         groups.append(cur_group)
     return groups
 
-def classify_rooms():
-    return
+
+def classify_rooms(rooms):
+    def get_house(room):
+        return [char for char in room if char != "-"][0]
+    def house_einteilung(rooms):
+        houses = {}
+        for room in rooms:
+            if room == "Aula":
+                houses["Aula"] = ["Aula"]
+                continue
+            if room.startswith("TH"):
+                houses["TH"] = ["TH1", "TH2", "TH3"]
+                continue
+            if get_house(room) not in houses:
+                houses[get_house(room)] = []
+            houses[get_house(room)].append(room)
+        return houses
+    def get_floor_and_number(room_str):
+        room = room_str
+        vorzeichen = ""
+        if room.startswith("-"):
+            vorzeichen = "-"
+            room = room[1:]
+        if len(room) == 3:
+            return (vorzeichen + "0", room[-2:])
+        if len(room) == 4:
+            return (vorzeichen + room[1], room[-2:])
+        return [][0]
+    def floor_einteilung(rooms):
+        if rooms == ["Aula"]:
+            return {"Aula": ["Aula"]}
+        if rooms == ["TH1", "TH2", "TH3"]:
+            return {"TH": ["TH1", "TH2", "TH3"]}
+        floors = {}
+        for room in rooms:
+            floor, number = get_floor_and_number(room)
+            if floor not in floors:
+                floors[floor] = []
+            floors[floor].append((number, room))
+        return floors
+    data = house_einteilung(rooms)
+    for house in data:
+        data[house] = floor_einteilung(data[house])
+        for floor in data[house]:
+            data[house][floor] = sorted(data[house][floor])
+    new_keys = sorted(data.keys(), key=lambda x: int(x) if x not in ["Aula", "TH"] else 10)
+    return {key: data[key] for key in new_keys}
