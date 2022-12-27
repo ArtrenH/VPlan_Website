@@ -179,6 +179,7 @@ nav img {
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 0px !important;
+    line-height: 1.5;
 }
 
 .link button {
@@ -186,6 +187,7 @@ nav img {
     border: none;
     width: 100%;
     padding: 0px !important;
+    line-height: 1.5;
 }
 
 .link:focus {
