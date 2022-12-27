@@ -97,6 +97,10 @@ nav img {
     }
 }
 
+.vplan-wrapper {
+    position: relative;
+}
+
 .col .card {
     margin: 0;
 }
@@ -474,4 +478,15 @@ input:focus+label {
 
 #class-picker-modal .modal-content .row {
     margin-bottom: 0px;
+}
+
+#share-btn {
+    float: right;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    padding: 31px;
+    border-radius: 5px;
+    margin-right: .75rem;
 }

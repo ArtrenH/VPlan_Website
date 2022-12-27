@@ -101,10 +101,11 @@ def handle_plan(schulnummer):
             creds = json.load(f)
         new_string_args = dict(request.args)
         del new_string_args["share"]
-        return render_template('index.html',
-            dates=dates, teachers=teachers, rooms=rooms, klassen=klassen_grouped,
-            school_number=schulnummer, default_date=default_date,
-            var_vorangezeigt="true", var_angefragt_link=urllib.parse.urlencode(new_string_args))
+        if len(new_string_args) > 0:
+            return render_template('index.html',
+                dates=dates, teachers=teachers, rooms=rooms, klassen=klassen_grouped,
+                school_number=schulnummer, default_date=default_date,
+                var_vorangezeigt="true", var_angefragt_link=urllib.parse.urlencode(new_string_args))
     # normal website
     if len(request.args) == 0:
         with open("creds.json", "r", encoding="utf-8") as f:

@@ -1,21 +1,26 @@
+function isApple() {
+    let platform = navigator?.userAgentData?.platform || navigator?.platform || 'unknown'
+    var isMacLike = /(Mac|iPhone|iPod|iPad)/i.test(platform);
+    var isIOS = /(iPhone|iPod|iPad)/i.test(platform);
+    return isMacLike || isIOS;
+}
+
+function copyLink() {
+    //navigator.clipboard.writeText(window.location.href);
+    navigator.share({title: "Better VPlan", url: window.location.href});
+}
+
 var ajax_response = null;
 
 if (vorangezeigt) {
     if (ajax_response !== null) {ajax_response.abort();}
-    ajax_response = $.ajax({
-        type: 'GET',
-        url: '/' + school_number + '?' + angefragt_link.replace(';', '&'),
-        dataType: 'html',
-        success: function(response) {
-            $('.vplan-wrapper').remove();
-            $('.loaded_content').append(response);
-        }
-    });
+    get_plan_url('/' + school_number + '?' + angefragt_link.replace(';', '&'));
 }
 
 function get_plan_url(url) {
     if (ajax_response !== null) {ajax_response.abort();}
     M.toast({text: 'Lade Plan...', displayLength: 750});
+    window.history.replaceState(null, "", url + "&share=true");
     ajax_response = $.ajax({
         type: 'GET',
         url: url,
@@ -33,6 +38,9 @@ function get_plan_url(url) {
                     get_plan_url($(event.currentTarget).prop("href"));
                 }
             });*/
+            if(isApple()) {
+                $('#share-btn').html('ios_share');
+            }
             M.toast({text: 'Plan geladen!', displayLength: 1000});
         },
         error: function(request, status, error) {
