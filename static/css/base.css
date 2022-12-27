@@ -486,7 +486,14 @@ input:focus+label {
     align-items: center;
     justify-content: center;
     aspect-ratio: 1;
-    padding: 31px;
+    padding: 30px;
     border-radius: 5px;
     margin-right: .75rem;
+    z-index: 1;
+}
+
+@media only screen and (max-width: 600px) {   
+    #share-btn {
+        padding: 20px;
+    }
 }

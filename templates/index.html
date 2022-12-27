@@ -2,15 +2,26 @@
 
 {% block links %}
 <script>
+    const zeroPad = (n, digits) => n.toString().padStart(digits, '0');
     const school_number = "{{ school_number }}";
     const vorangezeigt = {{ var_vorangezeigt }};
     const angefragt_link = "{{ var_angefragt_link|safe }}";
-    const default_date = "{{ default_date.0 }}";
     var available_dates = [{% for date in dates %}"{{ date.0 }}",{% endfor %}];
     
-    var selected_date = "{{ default_date.0 }}";
-    var selected_type;
-    var selected_value;
+    const url_params = new URLSearchParams(window.location.search);
+    const url_date = url_params.get('date');
+    const url_type = url_params.get('type');
+    const url_value = url_params.get('value');
+    
+    const default_date = url_date ? url_date : "{{ default_date.0 }}";
+    var selected_date = url_date ? url_date : "{{ default_date.0 }}";
+    var selected_type = url_type;
+    var selected_value = url_value;
+
+    var date = new Date(Date.parse(`${default_date.substring(0, 4)}-${default_date.substring(4, 6)}-${default_date.substring(6, 8)}`));
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('selected_time').innerHTML = `${zeroPad(date.getDate(), 2)}.${zeroPad(date.getMonth()+1, 2)}.${date.getFullYear()}`;
+    });
 </script>
 <script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 {% endblock %}
@@ -89,6 +100,7 @@
         </button>
     </div>
 </div>
+<button id="share-btn" class="btn dp01 waves-effect" onclick="copyLink();"><span class="material-symbols-outlined">share</span></button>
 <div class="loaded_content">
 </div>
 {% endblock %}

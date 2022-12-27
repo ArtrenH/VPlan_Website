@@ -6,8 +6,6 @@ function isApple() {
 }
 
 function copyLink() {
-    //navigator.clipboard.writeText(window.location.href);
-    // TODO: currently returning false even though it works
     if (navigator.canShare({title: "Better VPlan", url: window.location.href})) {
         navigator.share({title: "Better VPlan", url: window.location.href});
     } else {
@@ -66,8 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
             elem.scrollTo(0, 0);
         }
     });
-    const zeroPad = (n, digits) => n.toString().padStart(digits, '0');
-    var nextDate = new Date(Date.parse(`${default_date.substring(0, 4)}-${default_date.substring(4, 6)}-${default_date.substring(6, 8)}`));
+    var nextDate = date;
     var datepicker_elems = document.querySelectorAll('.datepicker');
     var datepicker_instances = M.Datepicker.init(datepicker_elems, {
         autoClose: true,

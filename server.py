@@ -96,6 +96,7 @@ def handle_plan(schulnummer):
     rooms = meta_data["rooms"]
 
     # sharable links that automatically load the plan
+    no_args = False
     if request.args.get("share", False) == "true":
         with open("creds.json", "r", encoding="utf-8") as f:
             creds = json.load(f)
@@ -106,8 +107,10 @@ def handle_plan(schulnummer):
                 dates=dates, teachers=teachers, rooms=rooms, klassen=klassen_grouped,
                 school_number=schulnummer, default_date=default_date,
                 var_vorangezeigt="true", var_angefragt_link=urllib.parse.urlencode(new_string_args))
+        else:
+            no_args = True
     # normal website
-    if len(request.args) == 0:
+    if len(request.args) == 0 or no_args:
         with open("creds.json", "r", encoding="utf-8") as f:
             creds = json.load(f)
         if schulnummer not in creds:
