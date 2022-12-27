@@ -184,7 +184,7 @@ def handle_room(schulnummer, args):
 def handle_free_rooms(schulnummer, args, all_rooms):
     date = args["date"]
     rooms = Plan_Extractor(schulnummer, date).free_rooms(all_rooms)
-    return render_template('free_rooms.html', date=convert_date_readable(date), lessons=rooms.items())
+    return render_template('free_rooms.html', date=convert_date_readable(date), lessons=rooms)
 
 ### Gefilterter Klassenplan ###
 @app.route('/<schulnummer>/<date>/plan/<klasse>/<kurse>')

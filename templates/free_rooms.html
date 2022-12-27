@@ -3,8 +3,8 @@
     <h4 class="headline">Freie Räume am {{ date }}</h4>
     <div class="row">
         {% for lesson in lessons %}
-            <div class="col s12"><b>Stunde {{ lesson.0 }}</b></div>
-            {% for room in lesson.1 %}
+            <div class="col s12"><b>{{ loop.index }}. Block</b></div>
+            {% for room in lesson %}
                 <div class="col s6 m3 xl2"><button onclick="selected_type='room';selected_value='{{ room }}';get_plan();" class="modal-close modal-selection-btn btn dp01 waves-effect">{{ room }}</button></div>
             {% endfor %}
             <br>
