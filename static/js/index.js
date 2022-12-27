@@ -8,7 +8,7 @@ function isApple() {
 function copyLink() {
     //navigator.clipboard.writeText(window.location.href);
     // TODO: currently returning false even though it works
-    if (navigator.canShare()) {
+    if (navigator.canShare({title: "Better VPlan", url: window.location.href})) {
         navigator.share({title: "Better VPlan", url: window.location.href});
     } else {
         navigator.clipboard.writeText(window.location.href);
