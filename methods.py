@@ -161,7 +161,13 @@ class Plan_Extractor():
         free_rooms = self.room_list()
         for lesson_num in free_rooms:
             free_rooms[lesson_num] = [room for room in all_rooms if room not in free_rooms[lesson_num]]
-        return free_rooms
+        free_rooms_blocks = []
+        for i in range(1, len(free_rooms)+1, 2):
+            if str(i+1) in free_rooms:
+                free_rooms_blocks.append(list(set(free_rooms[str(i)]) & set(free_rooms[str(i+1)])))
+            else:
+                free_rooms_blocks.append(free_rooms[str(i)])
+        return free_rooms_blocks
 
 
 def extract_metadata(school_num):
