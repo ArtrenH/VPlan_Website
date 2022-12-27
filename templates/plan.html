@@ -16,12 +16,12 @@
                         </div>
                         {% if lesson.subject != "---" %}
                         <div class="same-width {% if lesson.subject_changed %}changed{% endif %}">{{ lesson.subject }}{% if not lesson.subject %}​{% endif %}</div>
-                        <div class="same-width link {% if lesson.teacher_changed %}changed{% endif %}"><a href="{{ lesson.teacher_link }}"><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></a></div>
-                        <div class="same-width link {% if lesson.room_changed %}changed{% endif %}"><a href="{{ lesson.room_link }}">{{ lesson.room }}{% if not lesson.room %}​{% endif %}</a></div>
+                        <div class="same-width"><button {% if lesson.teacher and plan_type != "Lehrer" %}onclick="selected_type='teacher';selected_value='{{ lesson.teacher }}';get_plan();"{% endif %} class="link {% if lesson.teacher_changed %}changed{% endif %}"><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></button></div>
+                        <div class="same-width"><button {% if lesson.room and plan_type != "Raum" %}onclick="selected_type='room';selected_value='{{ lesson.room }}';get_plan();"{% endif %} class="link {% if lesson.room_changed %}changed{% endif %}">{{ lesson.room }}{% if not lesson.room %}​{% endif %}</button></div>
                         {% else %}
                         <div class="same-width changed mobile-cancellation" {% if plan_type == "Klasse" %}style="flex: 1;margin-left: 20px;"{% endif %}>X</div>
                         {% endif %}
-                        {% if plan_type != "Klasse" %}<div class="same-width link"><a href="{{ lesson.class_link }}">{{ lesson.class }}</a></div>{% endif %}
+                        {% if plan_type != "Klasse" %}<div class="same-width"><button onclick="selected_type='klasse';selected_value='{{ lesson.class }}';get_plan();" class="link">{{ lesson.class }}</button></div>{% endif %}
                     </div>
                     {% if (lesson.info != "--") and (lesson.info != "") %}
                         <p class="vert-padding dp01">{{ lesson.info }}</p>
@@ -42,13 +42,13 @@
                             {% if lesson.subject != "---" %}
                             <div class="desktop-subject{% if lesson.subject_changed %} changed{% endif %}">{{ lesson.subject }}{% if not lesson.subject %}​{% endif %}</div>
                             <div class="halfway-split">
-                                <button href="{{ lesson.teacher_link }}" class="link{% if lesson.teacher_changed %} changed{% endif %}"><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></button>
-                                <button href="{{ lesson.room_link }}" class="link{% if lesson.room_changed %} changed{% endif %}">{{ lesson.room }}{% if not lesson.room %}​{% endif %}</button>
+                                <button {% if lesson.teacher and plan_type != "Lehrer" %}onclick="selected_type='teacher';selected_value='{{ lesson.teacher }}';get_plan();"{% endif %} class="link{% if lesson.teacher_changed %} changed{% endif %}"><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></button>
+                                <button {% if lesson.room and plan_type != "Raum" %}onclick="selected_type='room';selected_value='{{ lesson.room }}';get_plan();"{% endif %} class="link{% if lesson.room_changed %} changed{% endif %}">{{ lesson.room }}{% if not lesson.room %}​{% endif %}</button>
                             </div>
                             {% else %}
                             <div class="changed desktop-cancellation">X</div>
                             {% endif %}
-                            {% if plan_type != "Klasse" %}<a href="{{ lesson.class_link }}" class="link">{{ lesson.class }}</a>{% endif %}
+                            {% if plan_type != "Klasse" %}<button onclick="selected_type='klasse';selected_value='{{ lesson.class }}';get_plan();" class="link">{{ lesson.class }}</button>{% endif %}
                         </div>
                     </div>
                     {% if (lesson.info != "--") and (lesson.info != "") %}

@@ -163,23 +163,33 @@ nav img {
     border-radius: 1px;
     background-color: #BB86FC !important;
     text-align: center;
-    font-weight: 600 !important;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .link {
-    outline:rgba(255, 255, 255, 0.08) solid 6px;
+    outline: rgba(255, 255, 255, 0.08) solid 6px;
     border-radius: 1px;
     background-color: rgba(255, 255, 255, 0.08);
     text-align: center;
     color: white !important;
     border: none !important;
+    width: 100%;
 }
 
 .link:focus {
-    outline: white solid 6px;
+    outline: white solid 6px !important;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+@media only screen and (max-width: 600px) {
+    .link:focus {
+        outline: rgba(255, 255, 255, 0.08) solid 6px !important;
+    }
+    .changed:focus {
+        outline:#BB86FC solid 7px !important;
+    }
 }
 
 .link a {

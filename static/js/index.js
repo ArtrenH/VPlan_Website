@@ -22,7 +22,8 @@ function get_plan_url(url) {
         dataType: 'html',
         success: function(response) {
             $('.loaded_content').html(response);
-            $('a.link').click(function(event) {
+            // Not needed as links are now replaced with buttons
+            /*$('a.link').click(function(event) {
                 event.preventDefault();
                 get_plan_url($(event.currentTarget).prop("href"));
             });
@@ -31,7 +32,7 @@ function get_plan_url(url) {
                     event.preventDefault();
                     get_plan_url($(event.currentTarget).prop("href"));
                 }
-            });
+            });*/
             M.toast({text: 'Plan geladen!', displayLength: 1000});
         },
         error: function(request, status, error) {

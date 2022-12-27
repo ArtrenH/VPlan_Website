@@ -23,7 +23,7 @@ def equal_dicts(d1, d2, ignore_keys):
     for k1, v1 in d1.items():
         if k1 not in ignored and (k1 not in d2 or d2[k1] != v1) and k1 != "info":
             return False
-    for k2, v2 in d2.items():
+    for k2, _ in d2.items():
         if k2 not in ignored and k2 not in d1 and k2 != "info":
             return False
     if set(d1["info"].split("; ")) == set(d2["info"].split("; ")):
@@ -33,11 +33,7 @@ def equal_dicts(d1, d2, ignore_keys):
         tmp_split2 = d2["info"].split(" ")
         for i, word in enumerate(tmp_split1):
             if word.startswith("St."):
-                tmp_st_word = "St."
-                if int(word[3:].replace(';', '')) < int(tmp_split2[i][3:].replace(';', '')):
-                    tmp_st_word += f"{word[3:].replace(';', '')}/{tmp_split2[i][3:]}"
-                else:
-                    tmp_st_word += f"{tmp_split2[i][3:].replace(';', '')}/{word[3:]}"
+                tmp_st_word = f"{int((int(int(word[3:].replace(';', ''))) - 1)/2 + 1)}. Block{';' if word[-1:] == ';' else ''}"
                 tmp_split1[i] = tmp_st_word
                 tmp_split2[i] = tmp_st_word
         d1["info"] = ' '.join(tmp_split1)
@@ -47,7 +43,6 @@ def equal_dicts(d1, d2, ignore_keys):
         return False
 
 def remove_duplicates(vplan_data):
-    #return vplan_data
     if len(vplan_data) < 2:
         return vplan_data
     new_vplan_data = []
