@@ -7,7 +7,7 @@ import os
 class PlanLoader():
     def __init__(self, school_number):
         self.school_number = school_number
-        with open("creds.json", "r") as f:
+        with open("creds.json", "r", encoding="utf-8") as f:
             self.creds = json.load(f)
         if self.school_number not in self.creds:
             raise Exception("School number not found in creds.json")
@@ -35,7 +35,7 @@ class PlanLoader():
         if not self.plan_txt:
             print("first run")
             self.vpdir()
-        with open(f"{self.data_folder}/vpdir.php", "w+") as f:
+        with open(f"{self.data_folder}/vpdir.php", "w+", encoding="utf-8") as f:
             f.write(self.plan_txt)
         plan_files = [elem for elem in self.plan_txt.split(";")[::2] if elem]
         print(plan_files)
@@ -45,7 +45,7 @@ class PlanLoader():
     def get_plan(self, plan_file):
         plan_url = f"https://{self.api_server}/{self.school_number}/mobil/mobdaten/{plan_file}"
         r = requests.get(plan_url, headers=self.headers)
-        with open(f"{self.data_folder}/{plan_file}", "w") as f:
+        with open(f"{self.data_folder}/{plan_file}", "w", encoding="utf-8") as f:
             f.write(r.text)
     
     def check_infinite(self):
