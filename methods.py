@@ -59,6 +59,8 @@ class Plan_Extractor():
         year, month, day = int(date[:4]), int(date[4:6]), int(date[6:])
         d = datetime(year, month, day)
         if d.weekday() > 4: raise DayOnWeekend(date)
+        self.data_folder = f"data/{self.school_num}_plans"
+        os.makedirs(self.data_folder, exist_ok=True)
         self.get()
         self.zusatzinfo = find_zusatzinfo(self.day_data)
         self.freie_tage = self.parse_freie_tage()
@@ -66,6 +68,10 @@ class Plan_Extractor():
         self.date_before = self.next_day(False)
     
     def get(self):
+        if f"PlanKl{self.date}.xml" in os.listdir(self.data_folder):
+            with open(f"{self.data_folder}/PlanKl{self.date}.xml", "r", encoding="utf-8") as f:
+                self.day_data = BeautifulSoup(f.read(), "xml")
+            return self.day_data
         plan_url = f"https://{self.credentials['api_server']}/{self.credentials['school_number']}/mobil/mobdaten/PlanKl{self.date}.xml"
         header_stripped = {"authorization": self.credentials["authorization"],}
         self.r = requests.get(plan_url, headers=header_stripped)
@@ -76,7 +82,7 @@ class Plan_Extractor():
             f.write(self.r.text)
         #self.day_data = BeautifulSoup(self.r.text, "html.parser")
         self.day_data = BeautifulSoup(self.r.text, "xml")
-        return self.r
+        return self.day_data
     
     def render(self, lessons):
         return Plan(self.school_num, self.date, lessons, self.zusatzinfo, date_after=self.date_after, date_before=self.date_before).render()
@@ -161,15 +167,22 @@ class MetaExtractor():
         self.school_num = school_num
         with open('creds.json', encoding="utf-8") as f:
             self.credentials = json.load(f).get(school_num, None)
+        self.data_folder = f"data/{self.school_num}_plans"
+        os.makedirs(self.data_folder, exist_ok=True)
         self.get()
     
     def get(self):
-        plan_url = f"https://{self.credentials['api_server']}/{self.credentials['school_number']}/mobil/mobdaten/Klassen.xml"
-        header_stripped = {"authorization": self.credentials["authorization"],}
-        self.r = requests.get(plan_url, headers=header_stripped)
+        if "Klassen.xml" in os.listdir(self.data_folder):
+            with open(f"{self.data_folder}/Klassen.xml", encoding="utf-8") as f:
+                klassen_xml = f.read()
+        else:
+            plan_url = f"https://{self.credentials['api_server']}/{self.credentials['school_number']}/mobil/mobdaten/Klassen.xml"
+            header_stripped = {"authorization": self.credentials["authorization"],}
+            self.r = requests.get(plan_url, headers=header_stripped)
+            klassen_xml = self.r.text
         #with open("data/klassen.xml", "w+") as f:
         #    f.write(self.r.text)
-        self.soup = BeautifulSoup(self.r.text, "xml")
+        self.soup = BeautifulSoup(klassen_xml, "xml")
 
     def course_list(self):
         courses = [elem.text for elem in self.soup.find_all("Kurz")]
@@ -258,6 +271,8 @@ class DateExtractor():
         self.school_num = school_num
         with open('creds.json', encoding="utf-8") as f:
             self.credentials = json.load(f).get(school_num, None)
+        self.data_folder = f"data/{self.school_num}_plans"
+        os.makedirs(self.data_folder, exist_ok=True)
         self.get()
 
     def random_data(self):
@@ -267,14 +282,19 @@ class DateExtractor():
         self.headers["content-type"] = f"multipart/form-data; boundary=-------Embt-Boundary--{self.hex_num}"
 
     def get(self):
-        self.headers = {}
-        self.hex_num = 0
-        self.random_data()
-        self.random_content_type()
-        data_url = f"https://{self.credentials['api_server']}/{self.school_num}/mobil/_phpmob/vpdir.php"
-        self.headers["authorization"] = self.credentials["authorization"]
-        r = requests.post(data_url, headers=self.headers, data=self.data)
-        data = r.text.split(";")[::2]
+        if "vpdir.php" in os.listdir(self.data_folder):
+            with open(f"data/{self.school_num}_plans/vpdir.php", encoding="utf-8") as f:
+                data = f.read()
+            data = data.split(";")[::2]
+        else:
+            self.headers = {}
+            self.hex_num = 0
+            self.random_data()
+            self.random_content_type()
+            data_url = f"https://{self.credentials['api_server']}/{self.school_num}/mobil/_phpmob/vpdir.php"
+            self.headers["authorization"] = self.credentials["authorization"]
+            r = requests.post(data_url, headers=self.headers, data=self.data)
+            data = r.text.split(";")[::2]
         data.remove("Klassen.xml")
         data.remove('')
         data.sort()
