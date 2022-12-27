@@ -42,9 +42,6 @@ function get_plan_url(url) {
                     get_plan_url($(event.currentTarget).prop("href"));
                 }
             });*/
-            if(isApple()) {
-                $('#share-btn span').html('ios_share');
-            }
             M.toast({text: 'Plan geladen!', displayLength: 1000});
         },
         error: function(request, status, error) {
@@ -58,6 +55,9 @@ function get_plan() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    if(isApple()) {
+        $('#share-btn span').html('ios_share');
+    }
     var modal_elems = document.querySelectorAll('.modal');
     var modal_instances = M.Modal.init(modal_elems, {
         onCloseStart: function(elem) {
