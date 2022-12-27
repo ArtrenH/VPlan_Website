@@ -3,6 +3,7 @@ from flask import Flask, redirect, render_template, make_response, url_for, requ
 import datetime
 from methods import MetaExtractor, Plan_Extractor, DateExtractor
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
+from vplan_utils import sort_klassen, classify_rooms
 from errors import DayOnWeekend, CredentialsNotFound
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user
 from dotenv import load_dotenv
@@ -90,6 +91,7 @@ def handle_plan(schulnummer):
     default_date = date_data.default_date()
     other_data = MetaExtractor(schulnummer)
     klassen = other_data.course_list()
+    klassen_grouped = sort_klassen(klassen)
     teachers = other_data.teacher_list()
     rooms = other_data.room_list()
     # sharable links that automatically load the plan

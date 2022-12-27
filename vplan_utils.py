@@ -73,3 +73,30 @@ def convert_date_readable(date):
     for translation in translation_arr:
         date_string = date_string.replace(translation[0], translation[1])
     return date_string
+
+def sort_klassen(klassen):
+    groups = []
+    while len(klassen) > 0:
+        cur_klasse = klassen[0]
+        if "/" in cur_klasse:
+            cur_group = [elem for elem in klassen if elem.split("/")[0] == cur_klasse.split("/")[0]]
+        elif "-" in cur_klasse:
+            cur_group = [elem for elem in klassen if elem.split("-")[0] == cur_klasse.split("-")[0]]
+        elif cur_klasse.isdigit():
+            cur_group = [elem for elem in klassen if elem.isdigit()]
+        elif not cur_klasse[0].isdigit():
+            identifier = "".join([char for char in cur_klasse if not char.isdigit()])
+            cur_group = [elem for elem in klassen if elem.startswith(identifier)]
+        elif cur_klasse[0].isdigit():
+            identifier = "".join([char for char in cur_klasse if char.isdigit()])
+            cur_group = [elem for elem in klassen if elem.startswith(identifier)]
+        else:
+            cur_group = [cur_klasse]
+        for elem in cur_group:
+            if elem in klassen:
+                del klassen[klassen.index(elem)]
+        groups.append(cur_group)
+    return groups
+
+def classify_rooms():
+    return
