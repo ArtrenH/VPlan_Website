@@ -29,6 +29,8 @@ def equal_dicts(d1, d2, ignore_keys):
     return True
 
 def remove_duplicates(vplan_data):
+    if len(vplan_data) < 2:
+        return vplan_data
     new_vplan_data = []
     tmp_vplan_data = sorted(vplan_data, key=lambda d: d['subject'])
     tmp_vplan_data = sorted(tmp_vplan_data, key=lambda d: d['class'])
