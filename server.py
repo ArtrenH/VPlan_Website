@@ -130,6 +130,7 @@ def handle_plan(schulnummer):
             if "value" not in request.args:
                 return f"value for {handle_pair[0]} fehlt"
             if request.args["value"] not in handle_pair[2]:
+                print(request.args["value"], handle_pair[2])
                 return handle_pair[0] + " not found"
             return handle_pair[1](schulnummer, request.args)
     if request.args["type"] == "free_rooms":
