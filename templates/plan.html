@@ -17,7 +17,13 @@
                         {% if lesson.subject != "---" %}
                         <div class="same-width {% if lesson.subject_changed %}changed{% endif %}">{{ lesson.subject }}{% if not lesson.subject %}​{% endif %}</div>
                         <div class="same-width"><button {% if lesson.teacher and plan_type != "Lehrer" %}onclick="selected_type='teacher';selected_value='{{ lesson.teacher }}';get_plan();"{% endif %} class="link {% if lesson.teacher_changed %}changed{% endif %}"><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></button></div>
-                        <div class="same-width"><button {% if lesson.room and plan_type != "Raum" %}onclick="selected_type='room';selected_value='{{ lesson.room }}';get_plan();"{% endif %} class="link {% if lesson.room_changed %}changed{% endif %}">{{ lesson.room }}{% if not lesson.room %}​{% endif %}</button></div>
+                        <div class="same-width">
+                            <div class="link">
+                                {% for room in lesson.room.split(' ') %}
+                                    <button {% if room and plan_type != "Raum" %}onclick="selected_type='room';selected_value='{{ room }}';get_plan();"{% endif %} class="{% if lesson.room_changed %}changed{% endif %}">{{ room }}{% if not room %}​{% endif %}</button>
+                                {% endfor %}
+                            </div>
+                        </div>
                         {% else %}
                         <div class="same-width changed mobile-cancellation" {% if plan_type == "Klasse" %}style="flex: 1;margin-left: 20px;"{% endif %}>X</div>
                         {% endif %}
@@ -43,7 +49,11 @@
                             <div class="desktop-subject{% if lesson.subject_changed %} changed{% endif %}">{{ lesson.subject }}{% if not lesson.subject %}​{% endif %}</div>
                             <div class="halfway-split">
                                 <button {% if lesson.teacher and plan_type != "Lehrer" %}onclick="selected_type='teacher';selected_value='{{ lesson.teacher }}';get_plan();"{% endif %} class="link{% if lesson.teacher_changed %} changed{% endif %}"><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></button>
-                                <button {% if lesson.room and plan_type != "Raum" %}onclick="selected_type='room';selected_value='{{ lesson.room }}';get_plan();"{% endif %} class="link{% if lesson.room_changed %} changed{% endif %}">{{ lesson.room }}{% if not lesson.room %}​{% endif %}</button>
+                                <div class="link">
+                                    {% for room in lesson.room.split(' ') %}
+                                        <button {% if room and plan_type != "Raum" %}onclick="selected_type='room';selected_value='{{ room }}';get_plan();"{% endif %} class="{% if lesson.room_changed %}changed{% endif %}">{{ room }}{% if not room %}​{% endif %}</button>
+                                    {% endfor %}
+                                </div>
                             </div>
                             {% else %}
                             <div class="changed desktop-cancellation">X</div>
