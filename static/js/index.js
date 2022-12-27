@@ -7,7 +7,13 @@ function isApple() {
 
 function copyLink() {
     //navigator.clipboard.writeText(window.location.href);
-    navigator.share({title: "Better VPlan", url: window.location.href});
+    // TODO: currently returning false even though it works
+    if (navigator.canShare()) {
+        navigator.share({title: "Better VPlan", url: window.location.href});
+    } else {
+        navigator.clipboard.writeText(window.location.href);
+        M.toast({text: 'Link kopiert!'});
+    }
 }
 
 var ajax_response = null;
