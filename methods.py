@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from pprint import pprint
 from models import Plan
 from errors import DayOnWeekend, CredentialsNotFound
+from vplan_utils import sort_klassen
 
 """
 needs something like this:
@@ -161,7 +162,32 @@ class Plan_Extractor():
         for lesson_num in free_rooms:
             free_rooms[lesson_num] = [room for room in all_rooms if room not in free_rooms[lesson_num]]
         return free_rooms
-        
+
+
+def extract_metadata(school_num):
+    if os.path.exists(f"data/{school_num}_plans/meta.json"):
+        with open(f"data/{school_num}_plans/meta.json", "r", encoding="utf-8") as f:
+            meta_data = json.load(f)
+        return meta_data
+    date_data = DateExtractor(school_num)
+    dates = date_data.read_data()
+    default_date = date_data.default_date()
+    other_data = MetaExtractor(school_num)
+    klassen = other_data.course_list()
+    klassen_grouped = school_num(klassen)
+    teachers = other_data.teacher_list()
+    rooms = other_data.room_list()
+    meta_data = {
+        "dates": dates,
+        "default_date": default_date,
+        "klassen": klassen,
+        "klassen_grouped": klassen_grouped,
+        "teachers": teachers,
+        "rooms": rooms
+    }
+    return meta_data
+
+
 class MetaExtractor():
     def __init__(self, school_num):
         self.school_num = school_num
@@ -192,7 +218,7 @@ class MetaExtractor():
         if f"{self.school_num}_teachers.json" in os.listdir("data"):
             with open(f"data/{self.school_num}_teachers.json", encoding="utf-8") as f:
                 teachers = json.load(f)
-            return teachers.values()
+            return list(teachers.values())
         teachers = {}
         for elem in self.soup.find_all("UeNr"):
             cur_teacher = elem.get("UeLe")
@@ -207,7 +233,7 @@ class MetaExtractor():
             cur_teacher = elem.get("KLe")
             if cur_teacher and cur_teacher not in teachers:
                 teachers[cur_teacher] = {"kuerzel": cur_teacher, "faecher": []}
-        teachers = teachers.values()
+        teachers = list(teachers.values())
         return teachers
 
     def room_list(self):

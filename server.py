@@ -1,7 +1,7 @@
 import json
 from flask import Flask, redirect, render_template, make_response, url_for, request, session
 import datetime
-from methods import MetaExtractor, Plan_Extractor, DateExtractor
+from methods import MetaExtractor, Plan_Extractor, DateExtractor, extract_metadata
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
 from vplan_utils import sort_klassen, classify_rooms
 from errors import DayOnWeekend, CredentialsNotFound
@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 import os
 import urllib
 from pprint import pprint
+import time
 load_dotenv()
 
 app = Flask(__name__)
@@ -86,14 +87,14 @@ def handle_plan(schulnummer):
     if not schulnummer.isdigit():
         return redirect("/name/" + schulnummer, code=302)
     # data for selection
-    date_data = DateExtractor(schulnummer)
-    dates = date_data.read_data()
-    default_date = date_data.default_date()
-    other_data = MetaExtractor(schulnummer)
-    klassen = other_data.course_list()
-    klassen_grouped = sort_klassen(klassen)
-    teachers = other_data.teacher_list()
-    rooms = other_data.room_list()
+    meta_data = extract_metadata(schulnummer)
+    dates = meta_data["dates"]
+    default_date = meta_data["default_date"]
+    klassen = meta_data["klassen"]
+    klassen_grouped = meta_data["klassen_grouped"]
+    teachers = meta_data["teachers"]
+    rooms = meta_data["rooms"]
+
     # sharable links that automatically load the plan
     if request.args.get("share", False) == "true":
         with open("creds.json", "r", encoding="utf-8") as f:

@@ -3,6 +3,8 @@ import json
 from tqdm import tqdm
 import time
 import os
+from methods import DateExtractor, MetaExtractor
+from vplan_utils import sort_klassen
 
 class PlanLoader():
     def __init__(self, school_number):
@@ -55,11 +57,31 @@ class PlanLoader():
                 print("error")
                 cur_val = False
             if cur_val:
-                try: self.get_plans()
-                except: print("error")
+                self.get_plans()
+                self.aktualisiere_files()
             else: print("no change")
             time.sleep(30)
 
+    def aktualisiere_files(self):
+        date_data = DateExtractor(self.school_number)
+        dates = date_data.read_data()
+        default_date = date_data.default_date()
+        other_data = MetaExtractor(self.school_number)
+        klassen = other_data.course_list()
+        klassen_grouped = sort_klassen(klassen)
+        teachers = other_data.teacher_list()
+        rooms = other_data.room_list()
+        data = {
+            "dates": dates,
+            "default_date": default_date,
+            "klassen": klassen,
+            "klassen_grouped": klassen_grouped,
+            "teachers": teachers,
+            "rooms": rooms
+        }
+        with open(f"{self.data_folder}/meta.json", "w+", encoding="utf-8") as f:
+            json.dump(data, f, indent=4)
+        print("Metadaten aktualisiert")
 
 if __name__ == "__main__":
     p = PlanLoader("10001329")
