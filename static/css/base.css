@@ -379,6 +379,29 @@ input:focus+label {
     border: none;
 }
 
+.plan_picker_btn::after {
+    content: attr(data-explanation);
+    font-size: clamp(3rem, 5vw, 6rem);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -200%);
+    transition: transform 200ms ease;
+}
+
+.plan_picker_btn:hover::after {
+    transform: translate(-50%, -50%);
+}
+
+.plan_picker_btn span {
+    opacity: 1;
+    transition: opacity 200ms ease;
+}
+
+.plan_picker_btn:hover span {
+    opacity: 0;
+}
+
 .plan_picker_btn:focus {
     outline: 3px solid white;
 }

@@ -12,7 +12,7 @@
     const url_date = url_params.get('date');
     const url_type = url_params.get('type');
     const url_value = url_params.get('value');
-    
+
     const default_date = url_date ? url_date : "{{ default_date.0 }}";
     var selected_date = url_date ? url_date : "{{ default_date.0 }}";
     var selected_type = url_type;
@@ -30,14 +30,14 @@
 <div class="row plan_picker">
     <!-- Datum -->
     <div class="col s6 l3">
-        <button class="plan_picker_btn dp01 waves-effect datepicker" tabindex="0">
+        <button class="plan_picker_btn dp01 waves-effect datepicker" tabindex="0" data-explanation="Datum">
             <span class="material-symbols-outlined">calendar_month</span>
             <span id="selected_time">{{ default_date.1 }}</span>
-        </butt>
+        </button>
     </div>
     <!-- Lehrer -->
     <div class="col s6 l3">
-        <button data-target="teacher-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
+        <button data-target="teacher-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0" data-explanation="Lehrer">
             <span class="material-symbols-outlined">school</span>
         </button>
     </div>
@@ -56,7 +56,7 @@
     </div>
     <!-- Raum -->
     <div class="col s6 l3">
-        <button data-target="room-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
+        <button data-target="room-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0" data-explanation="Raum">
             <span class="material-symbols-outlined">location_on</span>
         </button>
     </div>
@@ -75,7 +75,7 @@
     </div>
     <!-- Klasse -->
     <div class="col s6 l3">
-        <button data-target="class-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
+        <button data-target="class-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0" data-explanation="Klasse">
             <span class="material-symbols-outlined">grade</span>
         </button>
     </div>
@@ -94,8 +94,9 @@
             <button class="modal-close waves-effect btn-flat">Fertig</button>
         </div>
     </div>
+    <!-- Freie Räume -->
     <div class="col s12">
-        <button class="dp01 waves-effect plan_picker_btn free_room_btn" tabindex="0" onclick="selected_type='free_rooms';selected_value='';get_plan()">
+        <button class="dp01 waves-effect plan_picker_btn free_room_btn" tabindex="0" onclick="selected_type='free_rooms';selected_value='';get_plan()" data-explanation="Freie Räume">
             <span class="material-symbols-outlined">door_open</span>
         </button>
     </div>
