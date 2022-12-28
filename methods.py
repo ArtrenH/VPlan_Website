@@ -183,7 +183,7 @@ def extract_metadata(school_num):
     default_date = date_data.default_date()
     other_data = MetaExtractor(school_num)
     klassen = other_data.course_list()
-    klassen_grouped = school_num(klassen)
+    klassen_grouped = sort_klassen(klassen)
     teachers = other_data.teacher_list()
     rooms = other_data.room_list()
     meta_data = {
