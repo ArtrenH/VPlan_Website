@@ -381,12 +381,13 @@ input:focus+label {
 
 .plan_picker_btn::after {
     content: attr(data-explanation);
-    font-size: clamp(3rem, 5vw, 6rem);
+    font-size: clamp(2rem, 4.5vw, 6rem);
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -200%);
+    transform: translate(-50%, -400%);
     transition: transform 200ms ease;
+    white-space: nowrap;
 }
 
 .plan_picker_btn:hover::after {
