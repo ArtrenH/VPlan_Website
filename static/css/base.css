@@ -236,6 +236,14 @@ div.link.changed {
     outline: none !important;
 }
 
+div.changed {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 2px;
+}
+
 @media only screen and (max-width: 600px) {
     .link {
         width: 100%;
@@ -336,7 +344,7 @@ div.link.changed {
 
 .floating-arrow  {
     position: fixed;
-    bottom: 0;
+    bottom: 50%;
     width: 60px;
     aspect-ratio: 1;
     border: none;
@@ -346,6 +354,7 @@ div.link.changed {
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 99999;
 }
 
 .floating-arrow span {

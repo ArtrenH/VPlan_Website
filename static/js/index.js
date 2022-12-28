@@ -1,3 +1,20 @@
+function setDate(date) {
+    selected_date = `${date.getFullYear()}${zeroPad(date.getMonth()+1, 2)}${zeroPad(date.getDate(), 2)}`;
+    document.getElementById('selected_time').innerHTML = `${zeroPad(date.getDate(), 2)}.${zeroPad(date.getMonth()+1, 2)}.${date.getFullYear()}`;
+}
+
+function change_day(day_amount) {
+    let tmp_date;
+    tmp_date = available_dates[(available_dates.indexOf(selected_date)+day_amount)];
+    if (typeof tmp_date === 'undefined') {
+        M.toast({text: 'Für dieses Datum existiert kein Vertretungsplan!', classes:"error-toast", displayLength: 1000})
+        return;
+    }
+    let new_date = new Date(Date.parse(`${tmp_date.substring(0, 4)}-${tmp_date.substring(4, 6)}-${tmp_date.substring(6, 8)}`));
+    datepicker_instance.setDate(new_date);
+    setDate(new_date);
+}
+
 function isApple() {
     let platform = navigator?.userAgentData?.platform || navigator?.platform || 'unknown'
     var isMacLike = /(Mac|iPhone|iPod|iPad)/i.test(platform);
@@ -54,6 +71,7 @@ function get_plan() {
     get_plan_url(`/${school_number}?date=${selected_date}&type=${selected_type}&value=${selected_value}`);
 }
 
+var datepicker_instance;
 document.addEventListener('DOMContentLoaded', function() {
     if(isApple()) {
         $('#share-btn span').html('ios_share');
@@ -71,15 +89,15 @@ document.addEventListener('DOMContentLoaded', function() {
         defaultDate: nextDate,
         setDefaultDate: true,
         onSelect: function(date) {
-            selected_date = `${date.getFullYear()}${zeroPad(date.getMonth()+1, 2)}${zeroPad(date.getDate(), 2)}`;
-            document.getElementById('selected_time').innerHTML = `${zeroPad(date.getDate(), 2)}.${zeroPad(date.getMonth()+1, 2)}.${date.getFullYear()}`;
-            get_plan(selected_type, selected_value);
+            setDate(date);
+            get_plan();
         },
         firstDay: 1,
         disableDayFn: function(date) {
             return !available_dates.includes(`${date.getFullYear()}${zeroPad(date.getMonth()+1, 2)}${zeroPad(date.getDate(), 2)}`);
         }
     });
+    datepicker_instance = datepicker_instances[0];
     var autocomplete_elems = document.querySelectorAll('.autocomplete');
     var autocomplete_instances = M.Autocomplete.init(autocomplete_elems, {
         data: teacher_autocomplete_data,
