@@ -22,6 +22,9 @@
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('selected_time').innerHTML = `${zeroPad(date.getDate(), 2)}.${zeroPad(date.getMonth()+1, 2)}.${date.getFullYear()}`;
     });
+
+    var teacher_autocomplete_data = { {% for teacher in teachers %}'{{ teacher.anrede }} {{ teacher.name }}': null,{% endfor %}};
+    var teacher_kuerzel_map = { {% for teacher in teachers %}'{{ teacher.anrede }} {{ teacher.name }}': '{{ teacher.kuerzel }}',{% endfor %}};
 </script>
 <script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 {% endblock %}
@@ -45,6 +48,11 @@
         <div class="modal-content">
             <h4>Lehrer auswählen</h4>
             <div class="row">
+                <div class="input-field col s12">
+                    <span class="material-symbols-outlined prefix">search</span>
+                    <input type="text" id="autocomplete-input" class="autocomplete">
+                    <label for="autocomplete-input">Lehrer Suchen</label>
+                </div>
                 {% for teacher in teachers %}
                     <div class="col s12 m6 xl4"><button onclick="selected_type='teacher';selected_value='{{ teacher.kuerzel }}';get_plan();" class="modal-close modal-selection-btn btn dp01 waves-effect">{% if teacher.name %}{{ teacher.anrede }} {{ teacher.name }}{% else %}{{ teacher.kuerzel }}{% endif %}</button></div>
                 {% endfor %}

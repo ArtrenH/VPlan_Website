@@ -10,7 +10,7 @@ function copyLink() {
         navigator.share({title: "Better VPlan", url: window.location.href});
     } else {
         navigator.clipboard.writeText(window.location.href);
-        M.toast({text: 'Link kopiert!'});
+        M.toast({text: 'Link kopiert!', classes:"success-toast", displayLength: 1000});
     }
 }
 
@@ -23,7 +23,7 @@ if (vorangezeigt) {
 
 function get_plan_url(url) {
     if (ajax_response !== null) {ajax_response.abort();}
-    M.toast({text: 'Lade Plan...', displayLength: 750});
+    M.toast({text: 'Lade Plan...', displayLength: 750, classes:"neutral-toast"});
     window.history.replaceState(null, "", url + "&share=true");
     ajax_response = $.ajax({
         type: 'GET',
@@ -42,10 +42,10 @@ function get_plan_url(url) {
                     get_plan_url($(event.currentTarget).prop("href"));
                 }
             });*/
-            M.toast({text: 'Plan geladen!', displayLength: 1000});
+            M.toast({text: 'Plan geladen!', displayLength: 1000, classes:"success-toast"});
         },
         error: function(request, status, error) {
-            M.toast({text: 'Beim laden des Plans ist ein Fehler aufgetreten!', displayLength: 2000});
+            M.toast({text: 'Beim laden des Plans ist ein Fehler aufgetreten!', displayLength: 2000, classes:"error-toast"});
         }
     });
 }
@@ -80,4 +80,15 @@ document.addEventListener('DOMContentLoaded', function() {
             return !available_dates.includes(`${date.getFullYear()}${zeroPad(date.getMonth()+1, 2)}${zeroPad(date.getDate(), 2)}`);
         }
     });
+    var autocomplete_elems = document.querySelectorAll('.autocomplete');
+    var autocomplete_instances = M.Autocomplete.init(autocomplete_elems, {
+        data: teacher_autocomplete_data,
+        limit: 6,
+        onAutocomplete: function(option) {
+            selected_type = "teacher";
+            selected_value = teacher_kuerzel_map[option];
+            get_plan();
+            $('#teacher-picker-modal .modal-close:not(.dp01)').click();
+        }
+    })
 });

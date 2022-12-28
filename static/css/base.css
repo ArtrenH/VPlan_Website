@@ -1,3 +1,13 @@
+.unselectable, label, .prefix {
+    -webkit-user-select: none !important;
+    -khtml-user-drag: none !important;
+    -moz-user-select: none !important;
+    -moz-user-select: -moz-none !important;
+    -ms-user-select: none !important;
+    -o-user-select: none !important;
+    user-select: none !important;
+}
+
 @media only screen and (max-width: 500px) {
     .container {
         width: 95%;
@@ -161,21 +171,29 @@ nav img {
     align-items: center;
 }
 
-.changed {
+button.changed {
     outline:#BB86FC solid 7px !important;
-    outline-offset: -1px;
     border-radius: 1px;
+    outline-offset: -1px;
+}
+
+.changed button {
+    outline:#BB86FC solid 7px !important;
+    border-radius: 1px;
+    outline-offset: -1px;
+}
+
+div:not(.link).changed {
+    outline:#BB86FC solid 7px !important;
+    border-radius: 1px;
+    outline-offset: -1px;
+}
+
+.changed {
     background-color: #BB86FC !important;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .link {
-    outline: rgba(255, 255, 255, 0.08) solid 6px;
-    border-radius: 1px;
-    background-color: rgba(255, 255, 255, 0.08);
     text-align: center;
     color: white !important;
     border: none !important;
@@ -184,19 +202,38 @@ nav img {
     margin-bottom: 10px;
     padding: 0px !important;
     line-height: 1.5;
+    background-color: rgba(255, 255, 255, 0.08);
+    outline: rgba(255, 255, 255, 0.08) solid 6px;
+    border-radius: 1px;
+}
+
+button.link {
+    background-color: rgba(255, 255, 255, 0.08);
+    outline: rgba(255, 255, 255, 0.08) solid 6px;
+    border-radius: 1px;
 }
 
 .link button {
+    outline: none;
     background-color: transparent;
+    border-radius: 1px;
     border: none;
     width: 100%;
     padding: 0px !important;
     line-height: 1.5;
 }
 
-.link:focus {
+button.link:focus {
     outline: white solid 6px !important;
-    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.link button:focus {
+    outline: white solid 6px !important;
+    border-radius: 1px;
+}
+
+div.link.changed {
+    outline: none !important;
 }
 
 @media only screen and (max-width: 600px) {
@@ -496,7 +533,7 @@ input:focus+label {
     padding: 0px !important;
 }
 
-.modal-selection-btn:focus {
+.modal-selection-btn:focus, #share-btn:focus {
     outline: 3px solid white;
 }
 
@@ -520,4 +557,32 @@ input:focus+label {
     #share-btn {
         padding: 20px;
     }
+}
+
+.neutral-toast {
+    outline: 2px solid #595959;
+}
+
+.error-toast {
+    outline: 2px solid #fc8686;
+}
+
+.success-toast {
+    outline: 2px solid #94fc86;
+}
+
+.input-field .prefix.active {
+    color: #BB86FC;
+}
+
+input:focus.autocomplete {
+    box-shadow: none !important;
+}
+
+.highlight {
+    color: #BB86FC !important;
+}
+
+.dropdown-content li:hover, .dropdown-content li.active {
+    background-color: rgb(40, 40, 40);
 }
