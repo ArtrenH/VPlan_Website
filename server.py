@@ -14,7 +14,8 @@ import time
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY") if os.getenv("SECRET_KEY") else "DEBUG_KEY"
+SECRET_KEY = os.urandom(32)
+app.secret_key = SECRET_KEY
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = 32140800
 
