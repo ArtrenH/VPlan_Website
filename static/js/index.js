@@ -59,6 +59,7 @@ function get_plan_url(url) {
                     get_plan_url($(event.currentTarget).prop("href"));
                 }
             });*/
+            M.Toast.dismissAll();
             M.toast({text: 'Plan geladen!', displayLength: 1000, classes:"success-toast"});
         },
         error: function(request, status, error) {

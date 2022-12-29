@@ -344,7 +344,7 @@ div.changed {
 
 .floating-arrow  {
     position: fixed;
-    bottom: 50%;
+    bottom: 0;
     width: 60px;
     aspect-ratio: 1;
     border: none;
