@@ -138,7 +138,7 @@ def handle_plan(schulnummer):
             return handle_pair[1](schulnummer, request.args)
     if request.args["type"] == "free_rooms":
         return handle_free_rooms(schulnummer, request.args, rooms)
-    return "ok"
+    return "<div class='row'><p class='flow-text col s12'>Bitte wähle einen Lehrer, einen Raum, eine Klasse oder den \"Freie Räume\"-Button aus um einen Plan zu sehen.</p></div>"
 
 @app.route('/name/<schulname>')
 @login_required
