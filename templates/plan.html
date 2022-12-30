@@ -16,11 +16,11 @@
                         </div>
                         {% if lesson.subject != "---" %}
                         <div class="same-width {% if lesson.subject_changed %}changed{% endif %}">{{ lesson.subject }}{% if not lesson.subject %}​{% endif %}</div>
-                        <div class="same-width"><button {% if lesson.teacher and plan_type != "Lehrer" %}onclick="selected_type='teacher';selected_value='{{ lesson.teacher }}';get_plan();"{% endif %} class="link {% if lesson.teacher_changed %}changed{% endif %}"><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></button></div>
+                        <div class="same-width"><button {% if lesson.teacher and plan_type != "Lehrer" %}onclick="selected_type='teacher';selected_value='{{ lesson.teacher }}';get_plan();"{% endif %} class="link{% if lesson.teacher_changed %} changed{% endif %}"{% if plan_type == "Lehrer" %} disabled{% endif %}><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></button></div>
                         <div class="same-width">
                             <div class="link {% if lesson.room_changed %}changed{% endif %}">
                                 {% for room in lesson.room.split(' ') %}
-                                    <button {% if room and plan_type != "Raum" %}onclick="selected_type='room';selected_value='{{ room }}';get_plan();"{% endif %}>{{ room }}{% if not room %}​{% endif %}</button>
+                                    <button {% if plan_type == "Raum" %}disabled{% endif %} {% if room and plan_type != "Raum" %}onclick="selected_type='room';selected_value='{{ room }}';get_plan();"{% endif %}>{{ room }}{% if not room %}​{% endif %}</button>
                                 {% endfor %}
                             </div>
                         </div>
@@ -48,10 +48,10 @@
                             {% if lesson.subject != "---" %}
                             <div class="desktop-subject{% if lesson.subject_changed %} changed{% endif %}">{{ lesson.subject }}{% if not lesson.subject %}​{% endif %}</div>
                             <div class="halfway-split">
-                                <button {% if lesson.teacher and plan_type != "Lehrer" %}onclick="selected_type='teacher';selected_value='{{ lesson.teacher }}';get_plan();"{% endif %} class="link{% if lesson.teacher_changed %} changed{% endif %}"><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></button>
+                                <button {% if lesson.teacher and plan_type != "Lehrer" %}onclick="selected_type='teacher';selected_value='{{ lesson.teacher }}';get_plan();"{% endif %} class="link{% if lesson.teacher_changed %} changed{% endif %}"{% if plan_type == "Lehrer" %} disabled{% endif %}><b>{{ lesson.teacher }}{% if not lesson.teacher %}​{% endif %}</b></button>
                                 <div class="link {% if lesson.room_changed %}changed{% endif %}">
                                     {% for room in lesson.room.split(' ') %}
-                                        <button {% if room and plan_type != "Raum" %}onclick="selected_type='room';selected_value='{{ room }}';get_plan();"{% endif %}>{{ room }}{% if not room %}​{% endif %}</button>
+                                        <button {% if plan_type == "Raum" %}disabled {% endif %}{% if room and plan_type != "Raum" %}onclick="selected_type='room';selected_value='{{ room }}';get_plan();"{% endif %}>{{ room }}{% if not room %}​{% endif %}</button>
                                     {% endfor %}
                                 </div>
                             </div>

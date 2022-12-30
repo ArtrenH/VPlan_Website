@@ -7,6 +7,7 @@ from flask_login import LoginManager, UserMixin, login_required, logout_user, lo
 from dotenv import load_dotenv
 import os
 import urllib
+from flask_compress import Compress
 load_dotenv()
 
 app = Flask(__name__)
@@ -17,6 +18,8 @@ app.config["PERMANENT_SESSION_LIFETIME"] = 32140800
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+compress = Compress()
+compress.init_app(app)
 
 users = {'schueler': {'pw': 'IsfibeT'}}
 
