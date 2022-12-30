@@ -1,16 +1,12 @@
 import json
 from flask import Flask, redirect, render_template, make_response, url_for, request, session
-import datetime
-from methods import MetaExtractor, Plan_Extractor, DateExtractor, extract_metadata
+from methods import Plan_Extractor, extract_metadata
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
-from vplan_utils import sort_klassen, classify_rooms
 from errors import DayOnWeekend, CredentialsNotFound
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user
 from dotenv import load_dotenv
 import os
 import urllib
-from pprint import pprint
-import time
 load_dotenv()
 
 app = Flask(__name__)
@@ -54,7 +50,7 @@ def index():
     with open("creds.json", "r", encoding="utf-8") as f:
         tmp_data = json.load(f)
         return render_template('start.html', available_schools=[[item["school_name"], item["display_name"]] for item in tmp_data.values()])
-    return redirect(url_for('handle_plan', schulnummer="10001329"))
+    # return redirect(url_for('handle_plan', schulnummer="10001329"))
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
@@ -222,17 +218,6 @@ def robots():
     response.mimetype = "text/plain"
     return response
 
-"""@app.route('/<schulnummer>/<date>/plan/<klasse>')
-def courses(schulnummer, date, klasse):
-    klasse = klasse.replace("_", "/")
-    data = methods.load_courses(schulnummer, klasse)
-    return render_template('courses.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), courses=add_spacers(remove_duplicates(data)))"""
-
-#@app.route("/<schulnummer>/<group>")
-#def courses(schulnummer, group):
-    #return load_courses(sch)
-
-
 if __name__ == '__main__':
     app.run(port=5010)
-#app.run(host='0.0.0.0', port=5010)
+    #app.run(host='0.0.0.0', port=5010)
