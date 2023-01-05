@@ -65,7 +65,6 @@ class PlanLoader():
     def aktualisiere_files(self):
         date_data = DateExtractor(self.school_number)
         dates = date_data.read_data()
-        default_date = date_data.default_date()
         other_data = MetaExtractor(self.school_number)
         klassen = other_data.course_list()
         klassen_grouped = sort_klassen(klassen)
@@ -73,7 +72,6 @@ class PlanLoader():
         rooms = other_data.room_list()
         data = {
             "dates": dates,
-            "default_date": default_date,
             "klassen": klassen,
             "klassen_grouped": klassen_grouped,
             "teachers": teachers,

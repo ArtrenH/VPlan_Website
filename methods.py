@@ -183,7 +183,6 @@ def extract_metadata(school_num):
         return meta_data
     date_data = DateExtractor(school_num)
     dates = date_data.read_data()
-    default_date = date_data.default_date()
     other_data = MetaExtractor(school_num)
     klassen = other_data.course_list()
     klassen_grouped = sort_klassen(klassen)
@@ -191,7 +190,6 @@ def extract_metadata(school_num):
     rooms = other_data.room_list()
     meta_data = {
         "dates": dates,
-        "default_date": default_date,
         "klassen": klassen,
         "klassen_grouped": klassen_grouped,
         "teachers": teachers,
@@ -356,21 +354,22 @@ class DateExtractor():
     def read_data(self):
         self.formatted_dates = [datetime.strptime(elem, "%Y%m%d").strftime("%d.%m.%Y") for elem in self.data]
         return list(zip(self.data, self.formatted_dates))
-    
-    def default_date(self):
-        today = datetime.now().date()
-        dates = [datetime.strptime(elem, "%Y%m%d").date() for elem in self.data]
-        if today in dates:
-            return [today.strftime("%Y%m%d"), today.strftime("%d.%m.%Y")]
-        future = sorted([elem for elem in dates if elem > today])
-        if len(future) > 0:
-            return [future[0].strftime("%Y%m%d"), future[0].strftime("%d.%m.%Y")]
-        past = sorted([elem for elem in dates if elem < today])
-        if len(past) > 0:
-            return [past[-1].strftime("%Y%m%d"), past[-1].strftime("%d.%m.%Y")]
-        return None
         
-
+def get_default_date(date_list):
+    now = datetime.now()
+    if now.hour > 17:
+        now += timedelta(days=1)
+    today = now.date()
+    dates = [datetime.strptime(elem, "%Y%m%d").date() for elem in date_list]
+    if today in dates:
+        return [today.strftime("%Y%m%d"), today.strftime("%d.%m.%Y")]
+    future = sorted([elem for elem in dates if elem > today])
+    if len(future) > 0:
+        return [future[0].strftime("%Y%m%d"), future[0].strftime("%d.%m.%Y")]
+    past = sorted([elem for elem in dates if elem < today])
+    if len(past) > 0:
+        return [past[-1].strftime("%Y%m%d"), past[-1].strftime("%d.%m.%Y")]
+    return None
 
 
 if __name__ == "__main__":

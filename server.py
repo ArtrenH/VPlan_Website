@@ -1,6 +1,6 @@
 import json
 from flask import Flask, redirect, render_template, make_response, url_for, request, session
-from methods import Plan_Extractor, extract_metadata
+from methods import Plan_Extractor, extract_metadata, get_default_date
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
 from errors import DayOnWeekend, CredentialsNotFound
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user
@@ -89,7 +89,7 @@ def handle_plan(schulnummer):
     # data for selection
     meta_data = extract_metadata(schulnummer)
     dates = meta_data["dates"]
-    default_date = meta_data["default_date"]
+    default_date = get_default_date([elem[0] for elem in dates])
     klassen = meta_data["klassen"]
     klassen_grouped = meta_data["klassen_grouped"]
     teachers = meta_data["teachers"]
