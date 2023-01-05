@@ -151,53 +151,63 @@ def schulname(schulname):
         #return {"error": "no school with this name found"}
     return redirect("/"+ cur_schulnummer[0], code=302)
 
-@app.route('/<schulnummer>/<date>')
-@login_required
-def schulplan(schulnummer, date):
-    return Plan_Extractor(schulnummer, date).r.content
+#@app.route('/<schulnummer>/<date>')
+#@login_required
+#def schulplan(schulnummer, date):
+#    return Plan_Extractor(schulnummer, date).r.content
 
 ### KLASSENPLAN ###
 def handle_klasse(schulnummer, args):
     date, klasse = args["date"], args["value"]
     klasse = klasse.replace("_", "/")
     try:
-        data = Plan_Extractor(schulnummer, date).get_plan_normal(klasse)
+        plan_data = Plan_Extractor(schulnummer, date)
+        data = plan_data.get_plan_normal(klasse)
+        timestamp = plan_data.get_timestamp()
     except CredentialsNotFound:
         return "no credentials for your school"
     except DayOnWeekend:
         return "day is on the weekend"
     lessons = data["lessons"]
     zusatzinfo = data["zusatzinfo"]
-    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
+    return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo, timestamp=timestamp)
 
 ### LEHRERPLAN ###
 def handle_teacher(schulnummer, args):
     date, kuerzel = args["date"], args["value"]
-    data = Plan_Extractor(schulnummer, date).teacher_lessons(kuerzel)
+    plan_data = Plan_Extractor(schulnummer, date)
+    data = plan_data.teacher_lessons(kuerzel)
+    timestamp = plan_data.get_timestamp()
     lessons = data["lessons"]
     zusatzinfo = data["zusatzinfo"]
-    return render_template('plan.html', plan_type="Lehrer", plan_value=kuerzel, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
+    return render_template('plan.html', plan_type="Lehrer", plan_value=kuerzel, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo, timestamp=timestamp)
 
 ### RAUMPLAN ###
 def handle_room(schulnummer, args):
     date, room_num = args["date"], args["value"]
-    data = Plan_Extractor(schulnummer, date).room_lessons(room_num)
+    plan_data = Plan_Extractor(schulnummer, date)
+    data = plan_data.room_lessons(room_num)
+    timestamp = plan_data.get_timestamp()
     lessons = data["lessons"]
     zusatzinfo = data["zusatzinfo"]
-    return render_template('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
+    return render_template('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo, timestamp=timestamp)
 
 ### FREE ROOMS ###
 def handle_free_rooms(schulnummer, args, all_rooms):
     date = args["date"]
-    rooms = Plan_Extractor(schulnummer, date).free_rooms(all_rooms)
-    return render_template('free_rooms.html', date=convert_date_readable(date), lessons=rooms)
+    plan_data = Plan_Extractor(schulnummer, date)
+    rooms = plan_data.free_rooms(all_rooms)
+    timestamp = plan_data.get_timestamp()
+    return render_template('free_rooms.html', date=convert_date_readable(date), lessons=rooms, timestamp=timestamp)
 
 ### Gefilterter Klassenplan ###
 @app.route('/<schulnummer>/<date>/plan/<klasse>/<kurse>')
 @login_required
 def plan(schulnummer, date, klasse, kurse):
     kurse = kurse.split(",")
-    data = Plan_Extractor(schulnummer, date).get_plan_filtered_courses(klasse, kurse)
+    plan_data = Plan_Extractor(schulnummer, date)
+    data = plan_data.get_plan_filtered_courses(klasse, kurse)
+    timestamp = plan_data.get_timestamp()
     lessons = data["lessons"]
     zusatzinfo = data["zusatzinfo"]
     return render_template('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)

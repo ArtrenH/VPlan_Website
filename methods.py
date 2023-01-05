@@ -125,7 +125,7 @@ class Plan_Extractor():
         return self.render(lessons)
     
     def get_plan_filtered_courses(self, course, courses):
-        normal_plan= self.get_plan_normal(course)
+        normal_plan = self.get_plan_normal(course)
         return self.render([lesson for lesson in normal_plan[0] if lesson["subject_name"] in courses or lesson["subject"] in courses])
     
     def parse_freie_tage(self):
@@ -171,6 +171,9 @@ class Plan_Extractor():
             else:
                 free_rooms_blocks.append(free_rooms[str(i)])
         return free_rooms_blocks
+    
+    def get_timestamp(self):
+        return self.day_data.find("zeitstempel").text.strip()
 
 
 def extract_metadata(school_num):
@@ -252,6 +255,19 @@ class MetaExtractor():
             return rooms
         rooms = list(set([elem.text for elem in self.soup.find_all("Ra") if elem.text]))
         return rooms
+    
+    def group_list(self, klasse):
+        kl = [elem for elem in self.soup.find_all("Kl") if elem.find("Kurz") and elem.find("Kurz").text.strip() == klasse]
+        if not kl: return []
+        else: kl = kl[0]
+        kurse = kl.find("Kurse")
+        kurse = [elem.find("KKz") for elem in kurse.find_all("Ku")]
+        kurse = [(elem.text.strip(), elem.get("KLe", "")) for elem in kurse if elem]
+        unterricht = kl.find("Unterricht")
+        unterricht = [elem.find("UeNr") for elem in unterricht.find_all("Ue")]
+        unterricht = [(elem.get("UeFa", ""), elem.get("UeLe", ""), elem.get("UeGr", ""), elem.text.strip()) for elem in unterricht if elem]
+        print(kurse)
+        print(unterricht)
     
     ### Basically useless now... ###
     def free_days(self):
@@ -358,11 +374,8 @@ class DateExtractor():
 
 
 if __name__ == "__main__":
-    with open("data/10001329_rooms.json", encoding="utf-8") as f:
-        rooms = json.load(f)
-    p = Plan_Extractor("10001329", "20221221")
-    p = p.free_rooms(rooms)
-    pprint(p)
+    m = MetaExtractor("10001329")
+    m.course_list("JG12")
     #c = MetaExtractor("10001329").current_school_days_str()
     #print(len(c))
     #c = DateExtractor("10001329").default_date()
