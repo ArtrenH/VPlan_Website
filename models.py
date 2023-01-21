@@ -1,3 +1,5 @@
+# coding=utf-8
+
 # Namenserklärungen:
 # group: Klasse, z.B. JG12, 6/1
 # course: Kurs, z.B. eth1, lat

@@ -1,3 +1,5 @@
+# coding=utf-8
+
 class DayOnWeekend(Exception):
     def __init__(self, date):
         super().__init__(f"Your requested date {date} is on the weekend.")

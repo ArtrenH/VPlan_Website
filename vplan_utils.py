@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import datetime
 
 def add_spacers(vplan_data):

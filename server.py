@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import json
 from flask import Flask, redirect, render_template, make_response, url_for, request, session
 from methods import Plan_Extractor, extract_metadata, get_default_date
