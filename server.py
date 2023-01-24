@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import json
+from bson import ObjectId
 from flask import Flask, redirect, render_template, make_response, url_for, request, session
 from methods import Plan_Extractor, extract_metadata, get_default_date
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
@@ -10,6 +11,8 @@ from dotenv import load_dotenv
 import os
 import urllib
 from flask_compress import Compress
+import pymongo
+from werkzeug.security import generate_password_hash, check_password_hash
 load_dotenv()
 
 app = Flask(__name__)
@@ -20,35 +23,30 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = 32140800
 
 login_manager = LoginManager()
+login_manager.login_view = 'login'
 login_manager.init_app(app)
 compress = Compress()
 compress.init_app(app)
 
-users = {'schueler': {'pw': 'IsfibeT'}}
+db = pymongo.MongoClient(os.getenv("MONGO_URL") if os.getenv("MONGO_URL") else "", 27017).vplan
+
+users = db.user
 
 class User(UserMixin):
-    pass
+    def __init__(self, mongo_id):
+        self.mongo_id = mongo_id
+
+    def get_id(self):
+        return self.mongo_id
 
 @login_manager.user_loader
-def user_loader(username):
-    if username not in users:
+def user_loader(user_id):
+    tmp_user = users.find_one({'_id': ObjectId(user_id)})
+    if tmp_user is None:
+        print("no user found")
         return
-    user = User()
-    user.id = username
-    return user
-
-@login_manager.request_loader
-def request_loader(request):
-    username = request.form.get('username')
-    if username not in users:
-        return
-    user = User()
-    user.id = username
-
-    if request.form['pw'] == users[username]['pw']:
-        user.is_authenticated = True
-
-    return user
+    tmp_user = User(user_id)
+    return tmp_user
 
 @app.route('/')
 @login_required
@@ -64,20 +62,42 @@ def unauthorized_callback():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        try:
-            username = request.form.get('username')
-            if request.form.get('pw') == users[username]['pw']:
-                user = User()
-                user.id = username
-                login_user(user)
-                session.permanent = True
-                return redirect(url_for('index'))
-            else:
-                return render_template('login.html', errors="Benutzername oder Passwort waren inkorrekt! Bitte versuchen Sie es erneut.", hide_logout=True)
-        except Exception:
-            return render_template('login.html', errors="Benutzername oder Passwort waren inkorrekt! Bitte versuchen Sie es erneut.", hide_logout=True)
-    return render_template('login.html', hide_logout=True)
+    if request.method != 'POST':
+        return render_template('login.html', hide_logout=True)
+
+    nickname = request.form.get('nickname')
+    password = request.form.get('pw')
+    
+    user = users.find_one({'nickname': nickname})
+
+    if user is not None and check_password_hash(user["password_hash"], password):
+        tmp_user = User(str(user["_id"]))
+        login_user(tmp_user)
+        session.permanent = True
+        return redirect(url_for('index'))
+    else:
+        return render_template('login.html', errors="Benutzername oder Passwort waren falsch! Bitte versuch es erneut.", hide_logout=True)
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method != 'POST':
+        return render_template('signup.html', hide_logout=True)
+
+    nickname = request.form.get("nickname")
+    password = request.form.get("pw")
+
+    tmp_user = users.find_one({'nickname': nickname})
+    if tmp_user is not None:
+        return render_template('signup.html', hide_logout=True, errors="Dieser Nutzername ist schon vergeben, wähle bitte einen anderen.")
+
+    tmp_id = users.insert_one({
+        'nickname': nickname,
+        'password_hash': generate_password_hash(password, method='sha256')
+    })
+    tmp_user = User(str(tmp_id.inserted_id))
+    login_user(tmp_user)
+    session.permanent = True
+    return redirect(url_for('index'))
 
 @app.route('/logout')
 def logout():

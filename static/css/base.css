@@ -582,10 +582,6 @@ input:focus+label {
     outline: 2px solid #fc8686;
 }
 
-.success-toast {
-    outline: 2px solid #94fc86;
-}
-
 .input-field .prefix.active {
     color: #BB86FC;
 }
@@ -600,4 +596,14 @@ input:focus.autocomplete {
 
 .dropdown-content li:hover, .dropdown-content li.active {
     background-color: rgb(40, 40, 40);
+}
+
+.password-checkbox {
+    margin-top: -20px;
+    margin-bottom: 20px;
+}
+
+[type=checkbox]:checked+span:not(.lever):before {
+    border-right: 2px solid #4caf50 !important;
+    border-bottom: 2px solid #4caf50 !important;
 }
