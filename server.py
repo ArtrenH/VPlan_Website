@@ -13,7 +13,8 @@ from flask_compress import Compress
 load_dotenv()
 
 app = Flask(__name__)
-SECRET_KEY = os.urandom(32)
+#SECRET_KEY = os.urandom(32)
+SECRET_KEY = os.getenv("SECRET_KEY") if os.getenv("SECRET_KEY") else "DEBUG_KEY"
 app.secret_key = SECRET_KEY
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = 32140800
