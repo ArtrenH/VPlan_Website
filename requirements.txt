@@ -20,4 +20,3 @@ python-dotenv==0.21.0
 tqdm==4.64.1
 Flask-Compress==1.13
 pymongo==4.3.3
-Flask-Minify==0.41
