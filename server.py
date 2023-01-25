@@ -9,13 +9,38 @@ from errors import DayOnWeekend, CredentialsNotFound
 from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
 from dotenv import load_dotenv
 import os
+import contextlib
+import hashlib
 import urllib
 from flask_compress import Compress
 import pymongo
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash, safe_join
 load_dotenv()
 
-app = Flask(__name__)
+class AddStaticFileHashFlask(Flask):
+    def __init__(self, *args, **kwargs):
+        super(AddStaticFileHashFlask, self).__init__(*args, **kwargs)
+        self._file_hash_cache = {}
+    def inject_url_defaults(self, endpoint, values):
+        super(AddStaticFileHashFlask, self).inject_url_defaults(endpoint, values)
+        if endpoint == "static" and "filename" in values:
+            filepath = safe_join(self.static_folder, values["filename"])
+            if os.path.isfile(filepath):
+                cache = self._file_hash_cache.get(filepath)
+                mtime = os.path.getmtime(filepath)
+                if cache != None:
+                    cached_mtime, cached_hash = cache
+                    if cached_mtime == mtime:
+                        values["h"] = cached_hash
+                        return
+                h = hashlib.md5()
+                with contextlib.closing(open(filepath, "rb")) as f:
+                    h.update(f.read())
+                h = h.hexdigest()
+                self._file_hash_cache[filepath] = (mtime, h)
+                values["h"] = h
+
+app = AddStaticFileHashFlask(__name__)
 #SECRET_KEY = os.urandom(32)
 SECRET_KEY = os.getenv("SECRET_KEY") if os.getenv("SECRET_KEY") else "DEBUG_KEY"
 app.secret_key = SECRET_KEY
