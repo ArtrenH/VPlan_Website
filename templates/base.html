@@ -1,3 +1,5 @@
+{% set title_s %}{% block title %}Startseite{% endblock %}{% endset %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +25,7 @@
     <meta name="msapplication-TileColor" content="#121212">
     <meta name="msapplication-config" content="{{ url_for('static', filename='images/icons/browser-config.xml') }}">
     <meta name="theme-color" content="#121212">
-    <title>Better VPlan - {% if plan_type %}{{ plan_type }} {{ plan_value }}{% else %}Startseite{% endif %}</title>
+    <title>Better VPlan - {% if plan_type %}{{ plan_type }} {{ plan_value }}{% else %}{{ title_s }}{% endif %}</title>
 
     <!-- Compiled and minified CSS -->
     <link href="{{ url_for('static', filename='css/materialize.min.css') }}" rel="stylesheet" type="text/css">
@@ -69,10 +71,11 @@
     <nav class="dp02">
         <div class="nav-wrapper">
             <a href="/">
-                <img src="{{ url_for('static', filename='images/better_vp_white.svg') }}" alt="Logo" width="64" height="64">
+                <img src="{{ url_for('static', filename='images/better_vp_white.svg') }}" alt="Logo" width="64" height="64" class="unselectable">
             </a>
             <ul id="nav-bar" class="right">
-                {% if not hide_logout %}<li><a href="{{ url_for('logout') }}">Logout</a></li>{% endif %}
+                <li><a href="{{ url_for('about') }}">Über uns</a></li>
+                {% if logged_in %}<li><a href="{{ url_for('logout') }}">Logout</a></li>{% endif %}
             </ul>
         </div>
     </nav>
@@ -80,7 +83,7 @@
     <div class="container">
         <h4 class="global_headline">{% if plan_type %}
             Plan für {{ plan_type }} <span class='custom_badge'>{{ plan_value }}</span> am <span class='custom_badge'>{{ date }}</span>
-        {% else %}{% block title %}Startseite{% endblock %}{% endif %}</h4>
+        {% else %}{{ title_s }}{% endif %}</h4>
         {% block content %}
         {% endblock %}
     </div>

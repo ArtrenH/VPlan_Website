@@ -607,3 +607,21 @@ input:focus.autocomplete {
     border-right: 2px solid #4caf50 !important;
     border-bottom: 2px solid #4caf50 !important;
 }
+
+.dev-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.dev-wrapper img {
+    margin-top: 30px;
+}
+
+.about-pfp {
+    width: 50%;
+    inset: auto;
+    aspect-ratio: 1;
+    border-radius: 50%;
+}
