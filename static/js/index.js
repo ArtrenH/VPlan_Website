@@ -48,17 +48,8 @@ function get_plan_url(url) {
         dataType: 'html',
         success: function(response) {
             $('.loaded_content').html(response);
-            // Not needed as links are now replaced with buttons
-            /*$('a.link').click(function(event) {
-                event.preventDefault();
-                get_plan_url($(event.currentTarget).prop("href"));
-            });
-            $('a.link').keyup(function(event) {
-                if (e.which == 32 || e.which == 13) {
-                    event.preventDefault();
-                    get_plan_url($(event.currentTarget).prop("href"));
-                }
-            });*/
+            var collapsible_elems = document.querySelectorAll('.collapsible');
+            var collapsible_instances = M.Collapsible.init(collapsible_elems, {});
             M.Toast.dismissAll();
             M.toast({text: 'Plan geladen!', displayLength: 1000, classes:"success-toast"});
         },

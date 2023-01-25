@@ -625,3 +625,25 @@ input:focus.autocomplete {
     aspect-ratio: 1;
     border-radius: 50%;
 }
+
+.wf-loading .material-icons, .wf-materialicons-n4-inactive .material-icons, .wf-loading .material-symbols-outlined, .wf-materialicons-n4-inactive .material-symbols-outlined { 
+    opacity: 0;
+}
+
+.collapsible {
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    box-shadow: none;
+    border-radius: 5px;
+    overflow: hidden;
+    padding: 0 0 !important;
+}
+
+.collapsible li:last-child .collapsible-header, .collapsible li:last-child .collapsible-body {
+    border-bottom: 0;
+}
+
+.collapsible-header, .collapsible-body {
+    border-color: rgba(255, 255, 255, 0.1);
+}

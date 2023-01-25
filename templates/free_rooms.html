@@ -1,14 +1,19 @@
 
 <div class="row vplan-wrapper">
     <h4 class="headline">Freie Räume am {{ date }}</h4>
-    <span>Stand der Daten: {{ timestamp }}</span>
-    <div class="row">
-        {% for lesson in lessons %}
-            <div class="col s12"><b>{{ loop.index }}. Block</b></div>
-            {% for room in lesson %}
-                <div class="col s6 m3 xl2"><button onclick="selected_type='room';selected_value='{{ room }}';get_plan();" class="modal-close modal-selection-btn btn dp01 waves-effect">{{ room }}</button></div>
-            {% endfor %}
-            <br>
-        {% endfor %}
-    </div>
+    <span class="col s12">Stand der Daten: {{ timestamp }}</span>
+    <ul class="collapsible col s12">
+    {% for lesson in lessons %}
+        <li>
+            <div class="collapsible-header dp01">{{ loop.index }}. Block</div>
+            <div class="collapsible-body">
+                <div class="row">
+                {% for room in lesson %}
+                    <div class="col s6 m3 xl2"><button onclick="selected_type='room';selected_value='{{ room }}';get_plan();" class="modal-close modal-selection-btn btn dp01 waves-effect">{{ room }}</button></div>
+                {% endfor %}
+                </div>
+            </div>
+        </li>
+    {% endfor %}
+    </ul>
 </div>

@@ -15,6 +15,7 @@ import urllib
 from flask_compress import Compress
 import pymongo
 from werkzeug.security import generate_password_hash, check_password_hash, safe_join
+from random import choice
 load_dotenv()
 
 class AddStaticFileHashFlask(Flask):
@@ -75,8 +76,40 @@ def user_loader(user_id):
 def render_template_wrapper(*args, **kwargs):
     tmp_user = users.find_one({"_id": ObjectId(current_user.get_id())})
     logged_in = tmp_user is not None
+    random_greeting = "Startseite"
+    greetings = [
+        "Grüß Gott {name}!",
+        "Moin {name}!",
+        "Moinsen {name}!",
+        "Yo Moinsen {name}!",
+        "Servus {name}!",
+        "Hi {name}!",
+        "Hey {name}!",
+        "Hallo {name}!",
+        "Hallöchen {name}!",
+        "Hallöchen Popöchen {name}!",
+        "Halli-Hallo {name}!",
+        "Hey, was geht ab {name}?",
+        "Alles fit im Schritt {name}?",
+        "Tachchen {name}!",
+        "Na, alles fit {name}?",
+        "Alles Klärchen {name}?",
+        "Na du Nappel?",
+        "Tach du Ei!",
+        "Jo Digga {name}!",
+        "Heyho {name}!",
+        "Ahoihoi {name}!",
+        "Aloha {name}!",
+        "Alles cool im Pool {name}?",
+        "Alles klar in Kanada {name}?",
+        "Alles Roger in Kambodscha {name}?",
+        "Hallöchen mit Öchen {name}!",
+        "{name} joined the game"
+    ]
+    if logged_in:
+        random_greeting = choice(greetings).format(name=tmp_user["nickname"])
 
-    return render_template(logged_in=logged_in, *args, **kwargs)
+    return render_template(logged_in=logged_in, random_greeting=random_greeting, *args, **kwargs)
 
 @app.route('/')
 @login_required
