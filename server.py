@@ -13,6 +13,7 @@ import urllib
 from flask_compress import Compress
 import pymongo
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_minify import Minify
 load_dotenv()
 
 app = Flask(__name__)
@@ -27,6 +28,7 @@ login_manager.login_view = 'login'
 login_manager.init_app(app)
 compress = Compress()
 compress.init_app(app)
+Minify(app=app)
 
 db = pymongo.MongoClient(os.getenv("MONGO_URL") if os.getenv("MONGO_URL") else "", 27017).vplan
 
