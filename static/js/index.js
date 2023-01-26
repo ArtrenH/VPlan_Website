@@ -44,7 +44,7 @@ function get_plan_url(url) {
     window.history.replaceState(null, "", url + "&share=true");
     ajax_response = $.ajax({
         type: 'GET',
-        url: url,
+        url: "/api" + url,
         dataType: 'html',
         success: function(response) {
             $('.loaded_content').html(response);

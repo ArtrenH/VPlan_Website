@@ -86,7 +86,7 @@
             </a>
             <ul id="nav-bar" class="right">
                 <li><a href="{{ url_for('about') }}">Über uns</a></li>
-                {% if logged_in %}<li><a href="{{ url_for('logout') }}">Logout</a></li>{% endif %}
+                {% if logged_in %}<li><a href="{{ url_for('authorization.logout') }}">Logout</a></li>{% endif %}
             </ul>
         </div>
     </nav>

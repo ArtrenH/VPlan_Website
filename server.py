@@ -2,7 +2,7 @@
 
 import json
 from bson import ObjectId
-from flask import Flask, redirect, render_template, make_response, url_for, request, session
+from flask import Flask, redirect, render_template, make_response, url_for, request, session, jsonify
 from methods import Plan_Extractor, extract_metadata, get_default_date
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
 from errors import DayOnWeekend, CredentialsNotFound
@@ -16,6 +16,7 @@ from flask_compress import Compress
 import pymongo
 from werkzeug.security import generate_password_hash, check_password_hash, safe_join
 from random import choice
+from modules.utils import render_template_wrapper, User, users
 load_dotenv()
 
 class AddStaticFileHashFlask(Flask):
@@ -54,17 +55,6 @@ login_manager.init_app(app)
 compress = Compress()
 compress.init_app(app)
 
-db = pymongo.MongoClient(os.getenv("MONGO_URL") if os.getenv("MONGO_URL") else "", 27017).vplan
-
-users = db.user
-
-class User(UserMixin):
-    def __init__(self, mongo_id):
-        self.mongo_id = mongo_id
-
-    def get_id(self):
-        return self.mongo_id
-
 @login_manager.user_loader
 def user_loader(user_id):
     tmp_user = users.find_one({'_id': ObjectId(user_id)})
@@ -73,103 +63,22 @@ def user_loader(user_id):
     tmp_user = User(user_id)
     return tmp_user
 
-def render_template_wrapper(*args, **kwargs):
-    tmp_user = users.find_one({"_id": ObjectId(current_user.get_id())})
-    logged_in = tmp_user is not None
-    random_greeting = "Startseite"
-    greetings = [
-        "Grüß Gott {name}!",
-        "Moin {name}!",
-        "Moinsen {name}!",
-        "Yo Moinsen {name}!",
-        "Servus {name}!",
-        "Hi {name}!",
-        "Hey {name}!",
-        "Hallo {name}!",
-        "Hallöchen {name}!",
-        "Halli-Hallo {name}!",
-        "Hey, was geht ab {name}?",
-        "Tachchen {name}!",
-        "Na, alles fit, {name}?",
-        "Alles Klärchen, {name}?",
-        "Jo Digga {name}!",
-        "Heyho {name}!",
-        "Ahoihoi {name}!",
-        "Aloha {name}!",
-        "Alles cool im Pool, {name}?",
-        "Alles klar in Kanada, {name}?",
-        "Alles Roger in Kambodscha, {name}?",
-        "Hallöchen mit Öchen {name}!",
-        "{name} joined the game",
-        "Alles nice im Reis?",
-        "Alles cool in Suhl?"
-    ]
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return redirect(url_for("authorization.login"))
 
-    if logged_in:
-        random_greeting = choice(greetings).format(name=tmp_user["nickname"])
 
-    return render_template(logged_in=logged_in, random_greeting=random_greeting, *args, **kwargs)
+from modules.authorization import authorization
+app.register_blueprint(authorization)
+
 
 @app.route('/')
 @login_required
 def index():
     with open("creds.json", "r", encoding="utf-8") as f:
         tmp_data = json.load(f)
-        return render_template_wrapper('start.html', available_schools=[[item["school_name"], item["display_name"]] for item in tmp_data.values()])
+        return render_template_wrapper('start.html', available_schools=[[item["school_name"], item["display_name"], key] for key, item in tmp_data.items()])
 
-@login_manager.unauthorized_handler
-def unauthorized_callback():
-    return redirect(url_for("login"))
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method != 'POST':
-        return render_template_wrapper('login.html')
-
-    nickname = request.form.get('nickname')
-    password = request.form.get('pw')
-    
-    user = users.find_one({'nickname': nickname})
-
-    if user is not None and check_password_hash(user["password_hash"], password):
-        tmp_user = User(str(user["_id"]))
-        login_user(tmp_user)
-        session.permanent = True
-        return redirect(url_for('index'))
-    else:
-        return render_template_wrapper('login.html', errors="Benutzername oder Passwort waren falsch! Bitte versuch es erneut.")
-
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method != 'POST':
-        return render_template_wrapper('signup.html')
-
-    nickname = request.form.get("nickname")
-    password = request.form.get("pw")
-
-    tmp_user = users.find_one({'nickname': nickname})
-    if tmp_user is not None:
-        return render_template_wrapper('signup.html', errors="Dieser Nutzername ist schon vergeben, wähle bitte einen anderen.")
-        
-    if (len(nickname) < 3) or (len(nickname) > 15):
-        return render_template_wrapper('signup.html', errors="Der Name muss zwischen 3 und 15 Zeichen lang sein.")
-    
-    if len(password) < 10:
-        return render_template_wrapper('signup.html', errors="Das Passwort muss mindestens 10 Zeichen lang sein.")
-
-    tmp_id = users.insert_one({
-        'nickname': nickname,
-        'password_hash': generate_password_hash(password, method='sha256')
-    })
-    tmp_user = User(str(tmp_id.inserted_id))
-    login_user(tmp_user)
-    session.permanent = True
-    return redirect(url_for('index'))
-
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('login'))
 
 @app.route('/about')
 def about():
@@ -184,65 +93,7 @@ def about():
         }
     ])
 
-@app.route('/<schulnummer>')
-@login_required
-def handle_plan(schulnummer):
-    if not schulnummer.isdigit():
-        return redirect("/name/" + schulnummer, code=302)
-    # data for selection
-    meta_data = extract_metadata(schulnummer)
-    dates = meta_data["dates"]
-    default_date = get_default_date([elem[0] for elem in dates])
-    klassen = meta_data["klassen"]
-    klassen_grouped = meta_data["klassen_grouped"]
-    teachers = meta_data["teachers"]
-    rooms = meta_data["rooms"]
-
-    # sharable links that automatically load the plan
-    no_args = False
-    if request.args.get("share", False) == "true":
-        with open("creds.json", "r", encoding="utf-8") as f:
-            creds = json.load(f)
-        new_string_args = dict(request.args)
-        del new_string_args["share"]
-        if len(new_string_args) > 0:
-            return render_template_wrapper('index.html',
-                dates=dates, teachers=teachers, rooms=rooms, klassen=klassen_grouped,
-                school_number=schulnummer, default_date=default_date,
-                var_vorangezeigt="true", var_angefragt_link=urllib.parse.urlencode(new_string_args))
-        else:
-            no_args = True
-    # normal website
-    if len(request.args) == 0 or no_args:
-        with open("creds.json", "r", encoding="utf-8") as f:
-            creds = json.load(f)
-        if schulnummer not in creds:
-            return redirect(url_for('handle_plan', schulnummer="10001329"))
-            #return {"error": "no school with this number found"}
-        return render_template_wrapper('index.html',
-            dates=dates, teachers=teachers, rooms=rooms, klassen=klassen_grouped,
-            school_number=schulnummer,
-            default_date=default_date,
-            var_vorangezeigt="false", var_angefragt_link="")
-    # actual plans depending on type of plan (klasse, teacher, room)
-    if "type" not in request.args:
-        return "type fehlt"
-    if "date" not in request.args:
-        return "date fehlt"
-    if request.args["date"] not in [date[0] for date in dates]:
-        return "date ungültig"
-    for handle_pair in [("klasse", handle_klasse, klassen), ("teacher", handle_teacher, [teacher["kuerzel"] for teacher in teachers]), ("room", handle_room, rooms)]: # order is important
-        if request.args["type"] == handle_pair[0]:
-            if "value" not in request.args:
-                return f"value for {handle_pair[0]} fehlt"
-            if request.args["value"] not in handle_pair[2]:
-                print(request.args["value"], handle_pair[2])
-                return handle_pair[0] + " not found"
-            return handle_pair[1](schulnummer, request.args)
-    if request.args["type"] == "free_rooms":
-        return handle_free_rooms(schulnummer, request.args, rooms)
-    return "<div class='row'><p class='flow-text col s12'>Bitte wähle einen Lehrer, einen Raum, eine Klasse oder den \"Freie Räume\"-Button aus um einen Plan zu sehen.</p></div>"
-
+# Find school by name
 @app.route('/name/<schulname>')
 @login_required
 def schulname(schulname):
@@ -250,70 +101,103 @@ def schulname(schulname):
         creds = json.load(f)
     cur_schulnummer = [creds[elem]["school_number"] for elem in creds if creds[elem]["school_name"] == schulname]
     if len(cur_schulnummer) == 0:
+        print(url_for('handle_plan', schulnummer="10001329"))
         return redirect(url_for('handle_plan', schulnummer="10001329"))
         #return {"error": "no school with this name found"}
     return redirect("/"+ cur_schulnummer[0], code=302)
 
-#@app.route('/<schulnummer>/<date>')
-#@login_required
-#def schulplan(schulnummer, date):
-#    return Plan_Extractor(schulnummer, date).r.content
-
-### KLASSENPLAN ###
-def handle_klasse(schulnummer, args):
-    date, klasse = args["date"], args["value"]
-    klasse = klasse.replace("_", "/")
-    try:
-        plan_data = Plan_Extractor(schulnummer, date)
-        data = plan_data.get_plan_normal(klasse)
-        timestamp = plan_data.get_timestamp()
-    except CredentialsNotFound:
-        return "no credentials for your school"
-    except DayOnWeekend:
-        return "day is on the weekend"
-    lessons = data["lessons"]
-    zusatzinfo = data["zusatzinfo"]
-    return render_template_wrapper('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo, timestamp=timestamp)
-
-### LEHRERPLAN ###
-def handle_teacher(schulnummer, args):
-    date, kuerzel = args["date"], args["value"]
-    plan_data = Plan_Extractor(schulnummer, date)
-    data = plan_data.teacher_lessons(kuerzel)
-    timestamp = plan_data.get_timestamp()
-    lessons = data["lessons"]
-    zusatzinfo = data["zusatzinfo"]
-    return render_template_wrapper('plan.html', plan_type="Lehrer", plan_value=kuerzel, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo, timestamp=timestamp)
-
-### RAUMPLAN ###
-def handle_room(schulnummer, args):
-    date, room_num = args["date"], args["value"]
-    plan_data = Plan_Extractor(schulnummer, date)
-    data = plan_data.room_lessons(room_num)
-    timestamp = plan_data.get_timestamp()
-    lessons = data["lessons"]
-    zusatzinfo = data["zusatzinfo"]
-    return render_template_wrapper('plan.html', plan_type="Raum", plan_value=room_num, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo, timestamp=timestamp)
-
-### FREE ROOMS ###
-def handle_free_rooms(schulnummer, args, all_rooms):
-    date = args["date"]
-    plan_data = Plan_Extractor(schulnummer, date)
-    rooms = plan_data.free_rooms(all_rooms)
-    timestamp = plan_data.get_timestamp()
-    return render_template_wrapper('free_rooms.html', date=convert_date_readable(date), lessons=rooms, timestamp=timestamp)
-
-### Gefilterter Klassenplan ###
-@app.route('/<schulnummer>/<date>/plan/<klasse>/<kurse>')
+# homepage for a school
+@app.route('/<schulnummer>')
 @login_required
-def plan(schulnummer, date, klasse, kurse):
-    kurse = kurse.split(",")
-    plan_data = Plan_Extractor(schulnummer, date)
-    data = plan_data.get_plan_filtered_courses(klasse, kurse)
+def handle_plan(schulnummer):
+    with open("creds.json", "r", encoding="utf-8") as f:
+        creds = json.load(f)
+    if schulnummer not in creds:
+        return "Schule nicht gefunden!"
+    if not schulnummer.isdigit():
+        return redirect("/name/" + schulnummer, code=302)
+    # data for selection
+    meta_data = extract_metadata(schulnummer)
+    default_date = get_default_date([elem[0] for elem in meta_data["dates"]])
+
+    # sharable links that automatically load the plan
+    no_args = False
+    if request.args.get("share", False) == "true":
+        new_string_args = dict(request.args)
+        del new_string_args["share"]
+        if len(new_string_args) > 0:
+            return render_template_wrapper('index.html',
+                **meta_data,
+                school_number=schulnummer, default_date=default_date,
+                var_vorangezeigt="true", var_angefragt_link=urllib.parse.urlencode(new_string_args))
+        else:
+            no_args = True
+    # normal website
+    if len(request.args) == 0 or no_args:
+        return render_template_wrapper('index.html',
+            **meta_data,
+            school_number=schulnummer, default_date=default_date,
+            var_vorangezeigt="false", var_angefragt_link="")
+    return "<div class='row'><p class='flow-text col s12'>Bitte wähle einen Lehrer, einen Raum, eine Klasse oder den \"Freie Räume\"-Button aus um einen Plan zu sehen.</p></div>"
+
+
+# api for plans
+@app.route("/api/<school_number>")
+@login_required
+def api_response(school_number, return_json=False):
+    args = request.args
+    # First validation
+    if "type" not in args:
+        return "type fehlt"
+    if "date" not in args:
+        return "date fehlt"
+    date = args["date"]
+    # Freie Räume
+    if args["type"] == "free_rooms":
+        plan_data = Plan_Extractor(school_number, date)
+        meta_data = extract_metadata(school_number)
+        rooms = plan_data.free_rooms(meta_data["rooms"])
+        timestamp = plan_data.get_timestamp()
+        ctx_data = {"date": convert_date_readable(date), "lessons": rooms, "timestamp": timestamp}
+        if return_json:
+            return jsonify(ctx_data)
+        return render_template_wrapper('free_rooms.html', **ctx_data)
+    # check if value is given
+    if "value" not in args:
+        return "value fehlt"
+    # Klasse, Lehrer, Raum -> get plan with the right function, return it alongside some metadata
+    plan_data = Plan_Extractor(school_number, date)
+    handlers = {
+        "klasse": {"function": plan_data.get_plan_normal, "name": "Klasse"},
+        "teacher": {"function": plan_data.teacher_lessons, "name": "Lehrer"},
+        "room": {"function": plan_data.room_lessons, "name": "Raum"},
+    }
+    if args["type"] not in handlers:
+        return "type unbekannt"
+    function = handlers[args["type"]]["function"]
+    data = function(args["value"])
     timestamp = plan_data.get_timestamp()
-    lessons = data["lessons"]
-    zusatzinfo = data["zusatzinfo"]
-    return render_template_wrapper('plan.html', plan_type="Klasse", plan_value=klasse, date=convert_date_readable(date), plan=add_spacers(remove_duplicates(lessons)), zusatzinfo=zusatzinfo)
+    plan_type = handlers[args["type"]]["name"]
+    plan_value = args["value"]
+    ctx_data = {
+        "plan_type": plan_type,
+        "plan_value": plan_value,
+        "date": convert_date_readable(date),
+        "plan": add_spacers(remove_duplicates(data["lessons"])),
+        "zusatzinfo": data["zusatzinfo"],
+        "timestamp": timestamp
+    }
+    if return_json:
+        return jsonify(ctx_data)
+    return render_template_wrapper(
+        'plan.html',
+        **ctx_data
+    )
+
+@app.route('/api/json/<school_number>')
+@login_required
+def api_response_json(school_number):
+    return api_response(school_number, return_json=True)
 
 
 @app.route('/sponsors')
@@ -333,6 +217,8 @@ def robots():
     response = make_response("""User-agent: *\nDisallow: /""", 200)
     response.mimetype = "text/plain"
     return response
+
+
 
 if __name__ == '__main__':
     app.run(port=5010)
