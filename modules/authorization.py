@@ -1,17 +1,10 @@
-import os
-import pymongo
-
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, request, redirect, url_for, session
 from flask_login import login_required, current_user, login_user, logout_user
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from modules.utils import render_template_wrapper, User, users
 
-
 authorization = Blueprint('authorization', __name__, template_folder='templates')
-
-
-
 
 @authorization.route('/login', methods=['GET', 'POST'])
 def login():

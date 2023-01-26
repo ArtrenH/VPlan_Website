@@ -2,22 +2,21 @@
 
 import json
 from bson import ObjectId
-from flask import Flask, redirect, render_template, make_response, url_for, request, session, jsonify
+from flask import Flask, redirect, make_response, url_for, request, jsonify
 from methods import Plan_Extractor, extract_metadata, get_default_date
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
-from errors import DayOnWeekend, CredentialsNotFound
-from flask_login import LoginManager, UserMixin, login_required, logout_user, login_user, current_user
-from dotenv import load_dotenv
+from flask_login import LoginManager, login_required
 import os
 import contextlib
 import hashlib
 import urllib
 from flask_compress import Compress
-import pymongo
-from werkzeug.security import generate_password_hash, check_password_hash, safe_join
-from random import choice
-from modules.utils import render_template_wrapper, User, users
+from werkzeug.security import safe_join
+from dotenv import load_dotenv
 load_dotenv()
+
+from modules.utils import render_template_wrapper, User, users
+from modules.authorization import authorization
 
 class AddStaticFileHashFlask(Flask):
     def __init__(self, *args, **kwargs):
@@ -67,10 +66,7 @@ def user_loader(user_id):
 def unauthorized_callback():
     return redirect(url_for("authorization.login"))
 
-
-from modules.authorization import authorization
 app.register_blueprint(authorization)
-
 
 @app.route('/')
 @login_required
@@ -78,7 +74,6 @@ def index():
     with open("creds.json", "r", encoding="utf-8") as f:
         tmp_data = json.load(f)
         return render_template_wrapper('start.html', available_schools=[[item["school_name"], item["display_name"], key] for key, item in tmp_data.items()])
-
 
 @app.route('/about')
 def about():
@@ -140,7 +135,6 @@ def handle_plan(schulnummer):
             var_vorangezeigt="false", var_angefragt_link="")
     return "<div class='row'><p class='flow-text col s12'>Bitte wähle einen Lehrer, einen Raum, eine Klasse oder den \"Freie Räume\"-Button aus um einen Plan zu sehen.</p></div>"
 
-
 # api for plans
 @app.route("/api/<school_number>")
 @login_required
@@ -199,7 +193,6 @@ def api_response(school_number, return_json=False):
 def api_response_json(school_number):
     return api_response(school_number, return_json=True)
 
-
 @app.route('/sponsors')
 def sponsors():
     with open("data/sponsors.json", "r", encoding="utf-8") as f:
@@ -217,8 +210,6 @@ def robots():
     response = make_response("""User-agent: *\nDisallow: /""", 200)
     response.mimetype = "text/plain"
     return response
-
-
 
 if __name__ == '__main__':
     app.run(port=5010)

@@ -12,7 +12,6 @@ load_dotenv()
 db = pymongo.MongoClient(os.getenv("MONGO_URL") if os.getenv("MONGO_URL") else "", 27017).vplan
 users = db.user
 
-
 def render_template_wrapper(*args, **kwargs):
     tmp_user = users.find_one({"_id": ObjectId(current_user.get_id())})
     logged_in = tmp_user is not None
