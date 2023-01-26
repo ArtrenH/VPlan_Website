@@ -7,11 +7,11 @@
     <div class="row">
         {% if errors %}<span class="error-popup col">{{ errors }} <button onclick="this.parentNode.remove();">X</button></span>{% endif %}
         <div class="input-field col s12">
-            <input id="nickname" name="nickname" type="text" class="validate">
+            <input id="nickname" name="nickname" type="text" class="validate" minlength="3" maxlength="15">
             <label for="nickname">Name</label>
         </div>
         <div class="input-field col s12">
-            <input id="pw" name="pw" type="password" class="validate">
+            <input id="pw" name="pw" type="password" class="validate" minlength="10">
             <label for="pw">Passwort</label>
         </div>
         <label class="col s12 password-checkbox">
