@@ -150,6 +150,12 @@ def signup():
     tmp_user = users.find_one({'nickname': nickname})
     if tmp_user is not None:
         return render_template_wrapper('signup.html', errors="Dieser Nutzername ist schon vergeben, wähle bitte einen anderen.")
+        
+    if (len(nickname) < 3) or (len(nickname) > 15):
+        return render_template_wrapper('signup.html', errors="Der Name muss zwischen 3 und 15 Zeichen lang sein.")
+    
+    if len(password) < 10:
+        return render_template_wrapper('signup.html', errors="Das Passwort muss mindestens 10 Zeichen lang sein.")
 
     tmp_id = users.insert_one({
         'nickname': nickname,
