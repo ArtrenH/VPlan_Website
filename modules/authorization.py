@@ -9,7 +9,7 @@ authorization = Blueprint('authorization', __name__, template_folder='templates'
 @authorization.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method != 'POST':
-        return render_template_wrapper('login.html')
+        return render_template_wrapper('login')
 
     nickname = request.form.get('nickname')
     password = request.form.get('pw')
@@ -22,25 +22,25 @@ def login():
         session.permanent = True
         return redirect(url_for('index'))
     else:
-        return render_template_wrapper('login.html', errors="Benutzername oder Passwort waren falsch! Bitte versuch es erneut.")
+        return render_template_wrapper('login', errors="Benutzername oder Passwort waren falsch! Bitte versuch es erneut.")
 
 @authorization.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method != 'POST':
-        return render_template_wrapper('signup.html')
+        return render_template_wrapper('signup')
 
     nickname = request.form.get("nickname")
     password = request.form.get("pw")
 
     tmp_user = users.find_one({'nickname': nickname})
     if tmp_user is not None:
-        return render_template_wrapper('signup.html', errors="Dieser Nutzername ist schon vergeben, wähle bitte einen anderen.")
+        return render_template_wrapper('signup', errors="Dieser Nutzername ist schon vergeben, wähle bitte einen anderen.")
         
     if (len(nickname) < 3) or (len(nickname) > 15):
-        return render_template_wrapper('signup.html', errors="Der Name muss zwischen 3 und 15 Zeichen lang sein.")
+        return render_template_wrapper('signup', errors="Der Name muss zwischen 3 und 15 Zeichen lang sein.")
     
     if len(password) < 10:
-        return render_template_wrapper('signup.html', errors="Das Passwort muss mindestens 10 Zeichen lang sein.")
+        return render_template_wrapper('signup', errors="Das Passwort muss mindestens 10 Zeichen lang sein.")
 
     tmp_id = users.insert_one({
         'nickname': nickname,

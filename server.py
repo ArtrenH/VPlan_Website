@@ -5,41 +5,15 @@ from bson import ObjectId
 from flask import Flask, redirect, make_response, url_for, request, jsonify
 from methods import Plan_Extractor, extract_metadata, get_default_date
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
-from flask_login import LoginManager, login_required
+from flask_login import LoginManager, login_required, current_user, login_user, logout_user
 import os
-import contextlib
-import hashlib
 import urllib
 from flask_compress import Compress
-from werkzeug.security import safe_join
 from dotenv import load_dotenv
 load_dotenv()
 
-from modules.utils import render_template_wrapper, User, users
+from modules.utils import render_template_wrapper, User, AddStaticFileHashFlask, get_user, users
 from modules.authorization import authorization
-
-class AddStaticFileHashFlask(Flask):
-    def __init__(self, *args, **kwargs):
-        super(AddStaticFileHashFlask, self).__init__(*args, **kwargs)
-        self._file_hash_cache = {}
-    def inject_url_defaults(self, endpoint, values):
-        super(AddStaticFileHashFlask, self).inject_url_defaults(endpoint, values)
-        if endpoint == "static" and "filename" in values:
-            filepath = safe_join(self.static_folder, values["filename"])
-            if os.path.isfile(filepath):
-                cache = self._file_hash_cache.get(filepath)
-                mtime = os.path.getmtime(filepath)
-                if cache != None:
-                    cached_mtime, cached_hash = cache
-                    if cached_mtime == mtime:
-                        values["h"] = cached_hash
-                        return
-                h = hashlib.md5()
-                with contextlib.closing(open(filepath, "rb")) as f:
-                    h.update(f.read())
-                h = h.hexdigest()
-                self._file_hash_cache[filepath] = (mtime, h)
-                values["h"] = h
 
 app = AddStaticFileHashFlask(__name__)
 #SECRET_KEY = os.urandom(32)
@@ -56,28 +30,27 @@ compress.init_app(app)
 
 @login_manager.user_loader
 def user_loader(user_id):
-    tmp_user = users.find_one({'_id': ObjectId(user_id)})
+    tmp_user = get_user(user_id)
     if tmp_user is None:
         return
     tmp_user = User(user_id)
     return tmp_user
 
+app.register_blueprint(authorization)
 @login_manager.unauthorized_handler
 def unauthorized_callback():
     return redirect(url_for("authorization.login"))
-
-app.register_blueprint(authorization)
 
 @app.route('/')
 @login_required
 def index():
     with open("creds.json", "r", encoding="utf-8") as f:
         tmp_data = json.load(f)
-        return render_template_wrapper('start.html', available_schools=[[item["school_name"], item["display_name"], key] for key, item in tmp_data.items()])
+        return render_template_wrapper('start', available_schools=[[item["school_name"], item["display_name"], key] for key, item in tmp_data.items()])
 
 @app.route('/about')
 def about():
-    return render_template_wrapper('about.html', devs=[
+    return render_template_wrapper('about', devs=[
         {
             "name": "_qrtrenH#4634",
             "pfp": url_for('static', filename='images/about/_qrtrenH.jpeg')
@@ -101,6 +74,29 @@ def schulname(schulname):
         #return {"error": "no school with this name found"}
     return redirect("/"+ cur_schulnummer[0], code=302)
 
+@app.route('/authorize/<schulnummer>', methods=['GET', 'POST'])
+@login_required
+def authorize_school(schulnummer):
+    if request.method != 'POST':
+        return render_template_wrapper('authorize_school', schulnummer=schulnummer)
+
+    username = request.form.get('username')
+    pw = request.form.get('pw')
+    with open("creds.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+        try:
+            school_creds = data[schulnummer]
+        except Exception:
+            return render_template_wrapper('authorize_school', schulnummer=schulnummer, errors="Die angegebene Schule konnte nicht gefunden werden. Bitte überprüfe die Schulnummer und versuche es erneut. (Falls deine Schule im vorigen Schritt nicht zur Auswahl stand, schreib uns auf Discord)")
+        if school_creds["username"] == username and school_creds["password"] == pw:
+            tmp_user = get_user(current_user.get_id())
+            tmp_authorized_schools = tmp_user.get("authorized_schools", [])
+            tmp_authorized_schools.append(schulnummer)
+            users.update_one({'_id': ObjectId(current_user.get_id())}, {"$set": {'authorized_schools': tmp_authorized_schools}})
+            return redirect(url_for('handle_plan', schulnummer=schulnummer))
+        else:
+            return render_template_wrapper('authorize_school', schulnummer=schulnummer, errors="Benutzername oder Passwort waren falsch! Bitte versuch es erneut.")
+
 # homepage for a school
 @app.route('/<schulnummer>')
 @login_required
@@ -111,6 +107,10 @@ def handle_plan(schulnummer):
         return "Schule nicht gefunden!"
     if not schulnummer.isdigit():
         return redirect("/name/" + schulnummer, code=302)
+    tmp_user = get_user(current_user.get_id())
+    print(tmp_user.get("authorized_schools", []))
+    if schulnummer not in tmp_user.get("authorized_schools", []) and not tmp_user.get("admin", False):
+        return redirect(url_for('authorize_school', schulnummer=schulnummer))
     # data for selection
     meta_data = extract_metadata(schulnummer)
     default_date = get_default_date([elem[0] for elem in meta_data["dates"]])
@@ -121,7 +121,7 @@ def handle_plan(schulnummer):
         new_string_args = dict(request.args)
         del new_string_args["share"]
         if len(new_string_args) > 0:
-            return render_template_wrapper('index.html',
+            return render_template_wrapper('index',
                 **meta_data,
                 school_number=schulnummer, default_date=default_date,
                 var_vorangezeigt="true", var_angefragt_link=urllib.parse.urlencode(new_string_args))
@@ -129,7 +129,7 @@ def handle_plan(schulnummer):
             no_args = True
     # normal website
     if len(request.args) == 0 or no_args:
-        return render_template_wrapper('index.html',
+        return render_template_wrapper('index',
             **meta_data,
             school_number=schulnummer, default_date=default_date,
             var_vorangezeigt="false", var_angefragt_link="")
@@ -155,7 +155,7 @@ def api_response(school_number, return_json=False):
         ctx_data = {"date": convert_date_readable(date), "lessons": rooms, "timestamp": timestamp}
         if return_json:
             return jsonify(ctx_data)
-        return render_template_wrapper('free_rooms.html', **ctx_data)
+        return render_template_wrapper('free_rooms', **ctx_data)
     # check if value is given
     if "value" not in args:
         return "value fehlt"
@@ -184,7 +184,7 @@ def api_response(school_number, return_json=False):
     if return_json:
         return jsonify(ctx_data)
     return render_template_wrapper(
-        'plan.html',
+        'plan',
         **ctx_data
     )
 
@@ -197,7 +197,7 @@ def api_response_json(school_number):
 def sponsors():
     with open("data/sponsors.json", "r", encoding="utf-8") as f:
         sponsors = json.load(f)
-    return render_template_wrapper('sponsors.html', sponsors=sponsors)
+    return render_template_wrapper('sponsors', sponsors=sponsors)
 
 @app.route('/sw.js')
 def service_worker():
