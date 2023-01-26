@@ -87,25 +87,24 @@ def render_template_wrapper(*args, **kwargs):
         "Hey {name}!",
         "Hallo {name}!",
         "Hallöchen {name}!",
-        "Hallöchen Popöchen {name}!",
         "Halli-Hallo {name}!",
         "Hey, was geht ab {name}?",
-        "Alles fit im Schritt {name}?",
         "Tachchen {name}!",
-        "Na, alles fit {name}?",
-        "Alles Klärchen {name}?",
-        "Na du Nappel?",
-        "Tach du Ei!",
+        "Na, alles fit, {name}?",
+        "Alles Klärchen, {name}?",
         "Jo Digga {name}!",
         "Heyho {name}!",
         "Ahoihoi {name}!",
         "Aloha {name}!",
-        "Alles cool im Pool {name}?",
-        "Alles klar in Kanada {name}?",
-        "Alles Roger in Kambodscha {name}?",
+        "Alles cool im Pool, {name}?",
+        "Alles klar in Kanada, {name}?",
+        "Alles Roger in Kambodscha, {name}?",
         "Hallöchen mit Öchen {name}!",
-        "{name} joined the game"
+        "{name} joined the game",
+        "Alles nice im Reis?",
+        "Alles cool in Suhl?"
     ]
+
     if logged_in:
         random_greeting = choice(greetings).format(name=tmp_user["nickname"])
 
