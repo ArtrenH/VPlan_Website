@@ -392,6 +392,7 @@ button:disabled {
 
 input:focus {
     border-color: #BB86FC !important;
+    box-shadow: 0 1px 0 0 #BB86FC !important
 }
 
 input:focus+label {
