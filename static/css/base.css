@@ -601,7 +601,6 @@ input:focus.autocomplete {
 
 .password-checkbox {
     margin-top: -20px;
-    margin-bottom: 20px;
 }
 
 [type=checkbox]:checked+span:not(.lever):before {
