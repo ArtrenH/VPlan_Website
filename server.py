@@ -109,7 +109,7 @@ def handle_plan(schulnummer):
         return redirect("/name/" + schulnummer, code=302)
     tmp_user = get_user(current_user.get_id())
     print(tmp_user.get("authorized_schools", []))
-    if schulnummer not in tmp_user.get("authorized_schools", []) and not tmp_user.get("admin", False):
+    if not (schulnummer in tmp_user.get("authorized_schools", []) or tmp_user.get("admin", False)):
         return redirect(url_for('authorize_school', schulnummer=schulnummer))
     # data for selection
     meta_data = extract_metadata(schulnummer)
@@ -146,6 +146,9 @@ def api_response(school_number, return_json=False):
     if "date" not in args:
         return "date fehlt"
     date = args["date"]
+    tmp_user = get_user(current_user.get_id())
+    if not (school_number in tmp_user.get("authorized_schools", []) or tmp_user.get("admin", False)):
+        return redirect(url_for('authorize_school', schulnummer=school_number))
     # Freie Räume
     if args["type"] == "free_rooms":
         plan_data = Plan_Extractor(school_number, date)
@@ -191,6 +194,9 @@ def api_response(school_number, return_json=False):
 @app.route('/api/json/<school_number>')
 @login_required
 def api_response_json(school_number):
+    tmp_user = get_user(current_user.get_id())
+    if not (school_number in tmp_user.get("authorized_schools", []) or tmp_user.get("admin", False)):
+        return redirect(url_for('authorize_school', schulnummer=school_number))
     return api_response(school_number, return_json=True)
 
 @app.route('/sponsors')
