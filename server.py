@@ -91,8 +91,9 @@ def authorize_school(schulnummer):
         if school_creds["username"] == username and school_creds["password"] == pw:
             tmp_user = get_user(current_user.get_id())
             tmp_authorized_schools = tmp_user.get("authorized_schools", [])
-            tmp_authorized_schools.append(schulnummer)
-            users.update_one({'_id': ObjectId(current_user.get_id())}, {"$set": {'authorized_schools': tmp_authorized_schools}})
+            if schulnummer not in tmp_authorized_schools:
+                tmp_authorized_schools.append(schulnummer)
+                users.update_one({'_id': ObjectId(current_user.get_id())}, {"$set": {'authorized_schools': tmp_authorized_schools}})
             return redirect(url_for('handle_plan', schulnummer=schulnummer))
         else:
             return render_template_wrapper('authorize_school', schulnummer=schulnummer, errors="Benutzername oder Passwort waren falsch! Bitte versuch es erneut.")
