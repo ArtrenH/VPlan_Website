@@ -44,6 +44,8 @@ def signup():
 
     tmp_id = users.insert_one({
         'nickname': nickname,
+        'admin': False,
+        'authorized_schools': [],
         'password_hash': generate_password_hash(password, method='sha256')
     })
     tmp_user = User(str(tmp_id.inserted_id))
