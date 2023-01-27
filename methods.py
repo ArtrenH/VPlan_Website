@@ -189,7 +189,6 @@ class Plan_Extractor():
     def current_lesson(self):
         current_time = datetime.now()
         cur_seconds = current_time.hour * 3600 + current_time.minute * 60 + current_time.second
-        print(current_time.strftime("%Y%m%d"))
         if current_time.strftime("%Y%m%d") != self.date:
             return 1
         # pause vor nem Block: nächster Block

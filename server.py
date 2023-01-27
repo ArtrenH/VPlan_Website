@@ -56,7 +56,7 @@ def about():
             "pfp": url_for('static', filename='images/about/_qrtrenH.jpeg')
         },
         {
-            "name": "B̴͌͘r̸̛̐ö̴́̎t̵̤̋",
+            "name": "B̴͌͘r̸̛̐ö̴́̎t̵̤̋#5090",
             "pfp": url_for('static', filename='images/about/Brot.png')
         }
     ])
