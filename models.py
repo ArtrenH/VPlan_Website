@@ -50,7 +50,8 @@ class Lesson():
             "teacher_link": self.get_teacher_link(),
             "class_link": self.get_class_link(),
             "begin": self.begin,
-            "end": self.end
+            "end": self.end,
+            "course_id": self.course_id
         }
     
     def get_class_link(self):

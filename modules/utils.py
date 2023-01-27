@@ -84,3 +84,8 @@ class AddStaticFileHashFlask(Flask):
 
 def get_user(user_id):
     return users.find_one({'_id': ObjectId(user_id)})
+
+
+def set_user_preferences(user_id, preferences):
+    users.update_one({'_id': ObjectId(user_id)}, {'$set': {'preferences': preferences}})
+    return "Success"

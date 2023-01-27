@@ -3,7 +3,7 @@
 import json
 from bson import ObjectId
 from flask import Flask, redirect, make_response, url_for, request, jsonify
-from methods import Plan_Extractor, extract_metadata, get_default_date
+from methods import Plan_Extractor, MetaExtractor, extract_metadata, get_default_date
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
 import os
@@ -12,7 +12,7 @@ from flask_compress import Compress
 from dotenv import load_dotenv
 load_dotenv()
 
-from modules.utils import render_template_wrapper, User, AddStaticFileHashFlask, get_user, users
+from modules.utils import render_template_wrapper, User, AddStaticFileHashFlask, get_user, set_user_preferences, users
 from modules.authorization import authorization
 
 app = AddStaticFileHashFlask(__name__)
@@ -168,9 +168,19 @@ def api_response(school_number, return_json=False):
     plan_data = Plan_Extractor(school_number, date)
     handlers = {
         "klasse": {"function": plan_data.get_plan_normal, "name": "Klasse"},
+        "klasse_preferences": {"function": plan_data.get_plan_filtered_courses, "name": "Klasse"},
         "teacher": {"function": plan_data.teacher_lessons, "name": "Lehrer"},
         "room": {"function": plan_data.room_lessons, "name": "Raum"},
     }
+    # gespeicherte automatische Filterung
+    if args["type"] == "klasse_preferences":
+        preferences = tmp_user.get("preferences", {})
+        preferences = preferences.get(school_number, {}).get(args["value"], {})
+        if preferences != {}:
+            plan_data.set_preferences(preferences)
+        else:
+            handlers["klasse_preferences"]["function"] = plan_data.get_plan_normal
+    # Tatsächliches Laden des Plans
     if args["type"] not in handlers:
         return "type unbekannt"
     function = handlers[args["type"]]["function"]
@@ -200,6 +210,46 @@ def api_response_json(school_number):
     if not (school_number in tmp_user.get("authorized_schools", []) or tmp_user.get("admin", False)):
         return redirect(url_for('authorize_school', schulnummer=school_number))
     return api_response(school_number, return_json=True)
+
+@app.route("/api/<school_number>/group_list")
+@login_required
+def api_group_list(school_number):
+    tmp_user = get_user(current_user.get_id())
+    if not (school_number in tmp_user.get("authorized_schools", []) or tmp_user.get("admin", False)):
+        return redirect(url_for('authorize_school', schulnummer=school_number))
+    args = request.args
+    if "course" not in args:
+        return "Klasse fehlt"
+    klasse = args["course"]
+    course_list = MetaExtractor(school_number).group_list(klasse)
+    return jsonify(course_list)
+
+@app.route("/preferences/<school_number>", methods=["GET", "POST"])
+@login_required
+def preferences(school_number):
+    tmp_user = get_user(current_user.get_id())
+    if not (school_number in tmp_user.get("authorized_schools", []) or tmp_user.get("admin", False)):
+        return redirect(url_for('authorize_school', schulnummer=school_number))
+    args = request.args
+    if "course" not in args:
+        return "Klasse fehlt"
+    klasse = args["course"]
+    course_list = MetaExtractor(school_number).group_list(klasse)
+    if request.method == "GET":
+        return jsonify(course_list)
+    #elif request.method == "POST":
+    data = request.get_json()
+    if not isinstance(data, list):
+        return "invalid json"
+    for item in data:
+        if not item in [elem[-1] for elem in course_list]:
+            return f"{item} is not a valid course!"
+    data = list(set(data))
+    user_preferences = tmp_user.get("preferences", {})
+    user_preferences[school_number][klasse] = data
+    set_user_preferences(current_user.get_id(), user_preferences)
+    return "Preferences saved!"
+
 
 @app.route('/sponsors')
 def sponsors():

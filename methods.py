@@ -126,9 +126,13 @@ class Plan_Extractor():
             lessons.append({**{"class": course}, **extract_data(std), "time_data": time_data})
         return self.render(lessons)
     
-    def get_plan_filtered_courses(self, course, courses):
+    def set_preferences(self, preferences):
+        self.preferences = preferences
+    
+    def get_plan_filtered_courses(self, course):
+        courses = self.preferences
         normal_plan = self.get_plan_normal(course)
-        return self.render([lesson for lesson in normal_plan[0] if lesson["subject_name"] in courses or lesson["subject"] in courses])
+        return self.render([lesson for lesson in normal_plan["lessons"] if lesson["course_id"] in courses])
     
     def parse_freie_tage(self):
         datestamps = ["20" + elem.text for elem in self.day_data.find("FreieTage").find_all("ft")]
@@ -252,10 +256,6 @@ class MetaExtractor():
         #with open("data/klassen.xml", "w+") as f:
         #    f.write(self.r.text)
         self.soup = BeautifulSoup(klassen_xml, "xml")
-
-    def course_list(self):
-        courses = [elem.text for elem in self.soup.find_all("Kurz")]
-        return courses
     
     def teacher_list(self):
         if f"{self.school_num}_teachers.json" in os.listdir("data"):
@@ -287,6 +287,10 @@ class MetaExtractor():
         rooms = list(set([elem.text for elem in self.soup.find_all("Ra") if elem.text]))
         return rooms
     
+    def course_list(self):
+        courses = [elem.text for elem in self.soup.find_all("Kurz")]
+        return courses
+
     def group_list(self, klasse):
         kl = [elem for elem in self.soup.find_all("Kl") if elem.find("Kurz") and elem.find("Kurz").text.strip() == klasse]
         if not kl: return []
@@ -297,8 +301,7 @@ class MetaExtractor():
         unterricht = kl.find("Unterricht")
         unterricht = [elem.find("UeNr") for elem in unterricht.find_all("Ue")]
         unterricht = [(elem.get("UeFa", ""), elem.get("UeLe", ""), elem.get("UeGr", ""), elem.text.strip()) for elem in unterricht if elem]
-        print(kurse)
-        print(unterricht)
+        return unterricht
     
     def default_times(self):
         if not self.soup.find("KlStunden"):
@@ -369,8 +372,10 @@ def get_default_date(date_list):
 
 
 if __name__ == "__main__":
-    m = Plan_Extractor("10001329", "20230127")
-    c = m.current_lesson()
+    m = MetaExtractor("10001329")
+    c = m.course_list()
+    c = m.group_list("JG12")
+    print(c)
     #c = MetaExtractor("10001329").current_school_days_str()
     #print(len(c))
     #c = DateExtractor("10001329").default_date()
