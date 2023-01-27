@@ -178,6 +178,9 @@ class Plan_Extractor():
         return self.day_data.find("zeitstempel").text.strip()
     
     def default_times(self):
+        print("getting default times...")
+        if not self.day_data.find("KlStunden"):
+            return []
         klstunden = self.day_data.find("KlStunden").find_all("KlSt")
         klstunden = [{
             "lesson": elem.text.strip(),
@@ -298,6 +301,8 @@ class MetaExtractor():
         print(unterricht)
     
     def default_times(self):
+        if not self.soup.find("KlStunden"):
+            return []
         klstunden = self.soup.find("KlStunden").find_all("KlSt")
         klstunden = [{
             "lesson": elem.text.strip(),
