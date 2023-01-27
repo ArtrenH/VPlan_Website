@@ -647,3 +647,20 @@ input:focus.autocomplete {
 .collapsible-header, .collapsible-body {
     border-color: rgba(255, 255, 255, 0.1);
 }
+
+.preferences-nav span {
+    vertical-align: middle;
+}
+
+.dropdown-content {
+    background: #232323;
+    color: white;
+}
+
+.dropdown-content li:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#preferences-dropdown .material-symbols-outlined {
+    margin-right: 10px;
+}

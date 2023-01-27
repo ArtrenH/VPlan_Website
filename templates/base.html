@@ -86,10 +86,34 @@
             </a>
             <ul id="nav-bar" class="right">
                 <li><a href="{{ url_for('about') }}">Über uns</a></li>
-                {% if logged_in %}<li><a href="{{ url_for('authorization.logout') }}">Logout</a></li>{% endif %}
+                {% if logged_in %}
+                <li class="preferences-nav"><a href="javascript:void(0);" class="dropdown-trigger" role="button" data-target="preferences-dropdown"><span class="material-symbols-outlined">settings</span></a></li>
+                <ul id='preferences-dropdown' class='dropdown-content'>
+                    <li><a href="javascript:void(0);" data-target="todo" class="modal-trigger"><span class="material-symbols-outlined">star</span>Favoriten wählen</a></li>
+                    <li><a href="javascript:void(0);" data-target="preferences_modal" class="modal-trigger"><span class="material-symbols-outlined">account_circle</span>Unterricht wählen</a></li>
+                    <li><a href="{{ url_for('authorization.logout') }}" class="waves-effect"><span class="material-symbols-outlined">logout</span>Logout</a></li>
+                </ul>
+                {% endif %}
             </ul>
         </div>
     </nav>
+    {% if logged_in %}
+    <div id="preferences_modal" class="modal preference_modal">
+        <div class="modal-content">
+            <h4>Klasse auswählen</h4>
+            <!-- Select Menu (all classes) -->
+            <p class="flow-text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Molestias ducimus vero, ipsa sapiente, voluptate aperiam quam vel iure debitis nesciunt facere adipisci expedita accusantium aliquam aspernatur labore rerum et placeat!</p>
+
+            <h4>Fächer auswählen</h4>
+            <!-- Checkbox grid -->
+            <!-- Check all + Check none -->
+            <p class="flow-text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Molestias ducimus vero, ipsa sapiente, voluptate aperiam quam vel iure debitis nesciunt facere adipisci expedita accusantium aliquam aspernatur labore rerum et placeat!</p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-close waves-effect btn-flat">Fertig</button>
+        </div>
+    </div>
+    {% endif %}
     
     <div class="container">
         <h4 class="global_headline">{% if plan_type %}
