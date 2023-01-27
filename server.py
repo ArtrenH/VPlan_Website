@@ -156,7 +156,8 @@ def api_response(school_number, return_json=False):
         meta_data = extract_metadata(school_number)
         rooms = plan_data.free_rooms(meta_data["rooms"])
         timestamp = plan_data.get_timestamp()
-        ctx_data = {"date": convert_date_readable(date), "lessons": rooms, "timestamp": timestamp}
+        default_lesson = plan_data.current_lesson()
+        ctx_data = {"date": convert_date_readable(date), "lessons": rooms, "timestamp": timestamp, "default_lesson": default_lesson}
         if return_json:
             return jsonify(ctx_data)
         return render_template_wrapper('free_rooms', **ctx_data)

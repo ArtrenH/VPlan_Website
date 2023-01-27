@@ -72,12 +72,14 @@ class PlanLoader():
         klassen_grouped = sort_klassen(klassen)
         teachers = other_data.teacher_list()
         rooms = other_data.room_list()
+        default_times = other_data.default_times()
         data = {
             "dates": dates,
             "klassen": klassen,
             "klassen_grouped": klassen_grouped,
             "teachers": teachers,
-            "rooms": rooms
+            "rooms": rooms,
+            "default_times": default_times
         }
         with open(f"{self.data_folder}/meta.json", "w+", encoding="utf-8") as f:
             json.dump(data, f, indent=4)

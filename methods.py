@@ -60,8 +60,8 @@ class Plan_Extractor():
             self.credentials = json.load(f).get(school_num, None)
         if not self.credentials: raise CredentialsNotFound(school_num)
         year, month, day = int(date[:4]), int(date[4:6]), int(date[6:])
-        d = datetime(year, month, day)
-        if d.weekday() > 4: raise DayOnWeekend(date)
+        self.d = datetime(year, month, day)
+        if self.d.weekday() > 4: raise DayOnWeekend(date)
         self.data_folder = f"data/{self.school_num}_plans"
         os.makedirs(self.data_folder, exist_ok=True)
         self.get()
@@ -176,6 +176,33 @@ class Plan_Extractor():
     
     def get_timestamp(self):
         return self.day_data.find("zeitstempel").text.strip()
+    
+    def default_times(self):
+        klstunden = self.day_data.find("KlStunden").find_all("KlSt")
+        klstunden = [{
+            "lesson": elem.text.strip(),
+            "start": elem.get("ZeitVon"),
+            "end": elem.get("ZeitBis")
+        } for elem in klstunden]
+        return klstunden
+    
+    def current_lesson(self):
+        current_time = datetime.now()
+        cur_seconds = current_time.hour * 3600 + current_time.minute * 60 + current_time.second
+        print(current_time.strftime("%Y%m%d"))
+        if current_time.strftime("%Y%m%d") != self.date:
+            return 1
+        # pause vor nem Block: nächster Block
+        # im Block: aktueller Block
+        current_time = datetime.now().strftime("%H:%M")
+        default_times = self.default_times()
+        lesson_ends_seconds = [int(time["end"].split(":")[0]) * 3600 + int(time["end"].split(":")[1]) * 60 for time in default_times]
+        cur_lesson = 1
+        for lesson in lesson_ends_seconds:
+            if cur_seconds < lesson:
+                break
+            cur_lesson += 1
+        return (cur_lesson+1) // 2
 
 
 def extract_metadata(school_num):
@@ -190,12 +217,14 @@ def extract_metadata(school_num):
     klassen_grouped = sort_klassen(klassen)
     teachers = other_data.teacher_list()
     rooms = other_data.room_list()
+    default_times = other_data.default_times()
     meta_data = {
         "dates": dates,
         "klassen": klassen,
         "klassen_grouped": klassen_grouped,
         "teachers": teachers,
-        "rooms": rooms
+        "rooms": rooms,
+        "default_times": default_times
     }
     return meta_data
 
@@ -269,6 +298,14 @@ class MetaExtractor():
         print(kurse)
         print(unterricht)
     
+    def default_times(self):
+        klstunden = self.soup.find("KlStunden").find_all("KlSt")
+        klstunden = [{
+            "lesson": elem.text.strip(),
+            "start": elem.get("ZeitVon"),
+            "end": elem.get("ZeitBis")
+        } for elem in klstunden]
+        return klstunden    
 
 class DateExtractor():
     def __init__(self, school_num):
@@ -328,8 +365,8 @@ def get_default_date(date_list):
 
 
 if __name__ == "__main__":
-    m = MetaExtractor("10001329")
-    m.course_list("JG12")
+    m = Plan_Extractor("10001329", "20230127")
+    c = m.current_lesson()
     #c = MetaExtractor("10001329").current_school_days_str()
     #print(len(c))
     #c = DateExtractor("10001329").default_date()
