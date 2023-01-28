@@ -4,7 +4,7 @@ import json
 from bson import ObjectId
 from flask import Flask, redirect, make_response, url_for, request, jsonify
 from methods import Plan_Extractor, MetaExtractor, extract_metadata, get_default_date
-from vplan_utils import add_spacers, remove_duplicates, convert_date_readable
+from vplan_utils import add_spacers, remove_duplicates, convert_date_readable, sort_klassen
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
 import os
 import urllib
@@ -211,18 +211,6 @@ def api_response_json(school_number):
         return redirect(url_for('authorize_school', schulnummer=school_number))
     return api_response(school_number, return_json=True)
 
-@app.route("/api/<school_number>/group_list")
-@login_required
-def api_group_list(school_number):
-    tmp_user = get_user(current_user.get_id())
-    if not (school_number in tmp_user.get("authorized_schools", []) or tmp_user.get("admin", False)):
-        return redirect(url_for('authorize_school', schulnummer=school_number))
-    args = request.args
-    if "course" not in args:
-        return "Klasse fehlt"
-    klasse = args["course"]
-    course_list = MetaExtractor(school_number).group_list(klasse)
-    return jsonify(course_list)
 
 @app.route("/preferences/<school_number>", methods=["GET", "POST"])
 @login_required
@@ -232,9 +220,15 @@ def preferences(school_number):
         return redirect(url_for('authorize_school', schulnummer=school_number))
     args = request.args
     if "course" not in args:
-        return "Klasse fehlt"
+        # return list of courses
+        if request.method == "GET":
+            course_list = MetaExtractor(school_number).course_list()
+            return jsonify(sort_klassen(course_list))
+        else:
+            return "Klasse fehlt"
     klasse = args["course"]
     course_list = MetaExtractor(school_number).group_list(klasse)
+    # return list of groups
     if request.method == "GET":
         return jsonify(course_list)
     #elif request.method == "POST":
