@@ -432,30 +432,6 @@ input:focus+label {
     border: none;
 }
 
-.plan_picker_btn::after {
-    content: attr(data-explanation);
-    font-size: clamp(2rem, 4.5vw, 6rem);
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -400%);
-    transition: transform 200ms ease;
-    white-space: nowrap;
-}
-
-.plan_picker_btn:hover::after {
-    transform: translate(-50%, -50%);
-}
-
-.plan_picker_btn span {
-    opacity: 1;
-    transition: opacity 200ms ease;
-}
-
-.plan_picker_btn:hover span {
-    opacity: 0;
-}
-
 .plan_picker_btn:focus {
     outline: 3px solid white;
 }
@@ -465,7 +441,7 @@ input:focus+label {
 }
 
 .free_room_btn {
-    aspect-ratio: 10;
+    aspect-ratio: 6.5;
 }
 
 @media only screen and (max-width: 992px) {   

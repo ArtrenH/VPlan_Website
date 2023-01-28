@@ -34,14 +34,14 @@
 <div class="row plan_picker">
     <!-- Datum -->
     <div class="col s6 l3">
-        <button class="plan_picker_btn dp01 waves-effect datepicker" tabindex="0" data-explanation="Datum">
+        <button class="plan_picker_btn dp01 waves-effect datepicker" tabindex="0">
             <span class="material-symbols-outlined">calendar_month</span>
             <span class="icon_description" id="selected_time">{{ default_date.1 }}</span>
         </button>
     </div>
     <!-- Lehrer -->
     <div class="col s6 l3">
-        <button data-target="teacher-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0" data-explanation="Lehrer">
+        <button data-target="teacher-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
             <span class="material-symbols-outlined">school</span>
             <span class="icon_description">Lehrerplan</span>
         </button>
@@ -66,7 +66,7 @@
     </div>
     <!-- Raum -->
     <div class="col s6 l3">
-        <button data-target="room-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0" data-explanation="Raum">
+        <button data-target="room-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
             <span class="material-symbols-outlined">location_on</span>
             <span class="icon_description">Raumplan</span>
         </button>
@@ -86,7 +86,7 @@
     </div>
     <!-- Klasse -->
     <div class="col s6 l3">
-        <button data-target="class-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0" data-explanation="Klasse">
+        <button data-target="class-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
             <span class="material-symbols-outlined">grade</span>
             <span class="icon_description">Klassenplan</span>
         </button>
@@ -108,7 +108,7 @@
     </div>
     <!-- Freie Räume -->
     <div class="col s12">
-        <button class="dp01 waves-effect plan_picker_btn free_room_btn" tabindex="0" onclick="selected_type='free_rooms';selected_value='';get_plan()" data-explanation="Freie Räume">
+        <button class="dp01 waves-effect plan_picker_btn free_room_btn" tabindex="0" onclick="selected_type='free_rooms';selected_value='';get_plan()">
             <span class="material-symbols-outlined">door_open</span>
             <span class="icon_description">Freie Räume</span>
         </button>
