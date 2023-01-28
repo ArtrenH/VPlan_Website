@@ -6,10 +6,12 @@ from flask import Flask, redirect, make_response, url_for, request, jsonify
 from methods import Plan_Extractor, MetaExtractor, extract_metadata, get_default_date
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable, sort_klassen
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
+from flask_compress import Compress
+from flask_wtf.csrf import CSRFProtect
 import os
 import urllib
-from flask_compress import Compress
 from dotenv import load_dotenv
+
 load_dotenv()
 
 from modules.utils import render_template_wrapper, User, AddStaticFileHashFlask, get_user, set_user_preferences, users
@@ -25,8 +27,13 @@ app.config["PERMANENT_SESSION_LIFETIME"] = 32140800
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
+
 compress = Compress()
 compress.init_app(app)
+
+csrf = CSRFProtect(app)
+csrf.init_app(app)
+
 
 @login_manager.user_loader
 def user_loader(user_id):
