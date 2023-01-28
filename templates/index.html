@@ -12,9 +12,6 @@
     {% endif %}
     var selected_type = angefragt_values['type'];
     var selected_value = angefragt_values['value'];
-    if (selected_type == "klasse") {
-        preferences = false;
-    }
     const default_date = angefragt_values['date'] ? angefragt_values['date'] : "{{ default_date.0 }}";
     var selected_date = angefragt_values['date'] ? angefragt_values['date'] : "{{ default_date.0 }}";
     var available_dates = [{% for date in dates %}"{{ date.0 }}",{% endfor %}];
@@ -114,7 +111,7 @@
         </button>
     </div>
 </div>
-<button id="expand-btn" class="btn dp01 waves-effect" onclick="togglePreferences();"><span class="material-symbols-outlined">add</span></button>
+<button id="expand-btn" class="btn dp01 waves-effect" onclick="togglePreferences();get_plan();"><span class="material-symbols-outlined">add</span></button>
 <div class="loaded_content">
 </div>
 <button class="floating-arrow arrow-left waves-effect" onclick="change_day(-1);"><span class="material-symbols-outlined">arrow_back_ios_new</span></button>

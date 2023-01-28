@@ -35,9 +35,6 @@ var ajax_response = null;
 
 if (vorangezeigt) {
     if (ajax_response !== null) {ajax_response.abort();}
-    if (!preferences) {
-        document.querySelector('#expand-btn span').innerHTML ="remove";
-    }
     get_plan();
 }
 
@@ -73,6 +70,9 @@ var datepicker_instance;
 document.addEventListener('DOMContentLoaded', function() {
     if(isApple()) {
         $('#share-btn span').html('ios_share');
+    }
+    if (angefragt_values['type'] == "klasse") {
+        togglePreferences();
     }
     var modal_elems = document.querySelectorAll('.index-modal');
     var modal_instances = M.Modal.init(modal_elems, {
@@ -120,5 +120,4 @@ function togglePreferences() {
     if (!preferences && selected_type == "klasse_preferences") {
         selected_type = "klasse";
     }
-    get_plan();
 }
