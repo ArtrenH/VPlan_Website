@@ -131,7 +131,7 @@ class Plan_Extractor():
     
     def get_plan_filtered_courses(self, course):
         group_list = MetaExtractor(self.school_num).group_list(course)
-        unselected_courses = [elem[3] for elem in group_list if elem[3] not in self.preferences]
+        unselected_courses = [elem[0] for elem in group_list if elem[0] not in self.preferences]
         normal_plan = self.get_plan_normal(course)
         return self.render([lesson for lesson in normal_plan["lessons"] if lesson["course_id"] not in unselected_courses])
     
@@ -292,13 +292,14 @@ class MetaExtractor():
         courses = [elem.text for elem in self.soup.find_all("Kurz")]
         return courses
 
-    def group_list(self, klasse):
-        kl = [elem for elem in self.soup.find_all("Kl") if elem.find("Kurz") and elem.find("Kurz").text.strip() == klasse]
+    def group_list(self, course):
+        kl = [elem for elem in self.soup.find_all("Kl") if elem.find("Kurz") and elem.find("Kurz").text.strip() == course]
         if not kl: return []
         else: kl = kl[0]
         kurse = kl.find("Kurse")
         kurse = [elem.find("KKz") for elem in kurse.find_all("Ku")]
         kurse = [(elem.text.strip(), elem.get("KLe", "")) for elem in kurse if elem]
+        return kurse
         unterricht = kl.find("Unterricht")
         unterricht = [elem.find("UeNr") for elem in unterricht.find_all("Ue")]
         unterricht = [(elem.get("UeFa", ""), elem.get("UeLe", ""), elem.get("UeGr", ""), elem.text.strip()) for elem in unterricht if elem]

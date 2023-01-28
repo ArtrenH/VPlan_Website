@@ -53,11 +53,14 @@ def about():
     return render_template_wrapper('about', devs=[
         {
             "name": "_qrtrenH#4634",
-            "pfp": url_for('static', filename='images/about/_qrtrenH.jpeg')
+            "pfp": url_for('static', filename='images/about/_qrtrenH.jpeg'),
+            "bereal_link": "https://bere.al/artrenh"
+            
         },
         {
             "name": "B̴͌͘r̸̛̐ö̴́̎t̵̤̋#5090",
-            "pfp": url_for('static', filename='images/about/Brot.png')
+            "pfp": url_for('static', filename='images/about/Brot.png'),
+            "bereal_link": "https://bere.al/officialbrot"
         }
     ])
 
@@ -227,10 +230,9 @@ def preferences(school_number):
     klasse = args["course"]
     user_preferences = tmp_user.get("preferences", {})
     current_preferences = user_preferences.get(school_number, {}).get(klasse, [])
-    group_list = MetaExtractor(school_number).group_list(klasse)
     group_list = []
     for elem in MetaExtractor(school_number).group_list(klasse):
-        if elem[-1] in current_preferences:
+        if elem[0] in current_preferences:
             group_list.append(list(elem) + [True])
         else:
             group_list.append(list(elem) + [False])
@@ -242,13 +244,13 @@ def preferences(school_number):
     if not isinstance(data, list):
         return "invalid json"
     for item in data:
-        if not item in [elem[3] for elem in group_list]:
+        if not item in [elem[0] for elem in group_list]:
             return f"{item} is not a valid course!"
     data = list(set(data))
     user_preferences = tmp_user.get("preferences", {})
     if not school_number in user_preferences:
         user_preferences[school_number] = {}
-    user_preferences[school_number][klasse] = data
+    user_preferences[school_number][klasse]
     set_user_preferences(current_user.get_id(), user_preferences)
     return "Preferences saved!"
 

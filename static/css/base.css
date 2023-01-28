@@ -474,7 +474,7 @@ input:focus+label {
     }
 }
 
-#selected_time {
+.icon_description {
     font-size: clamp(1rem, 2vw, 3rem);
     margin-bottom: clamp(-1rem, -2vw, -3rem);
 }
@@ -484,7 +484,7 @@ input:focus+label {
         font-size: 10vw;
     }
     
-    #selected_time {
+    #icon_description {
         font-size: 4vw;
         margin-bottom: -4vw;
     }

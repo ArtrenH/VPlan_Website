@@ -44,7 +44,8 @@ def render_template_wrapper(template_name, *args, **kwargs):
         "Hallöchen mit Öchen {name}!",
         "{name} joined the game",
         "Alles nice im Reis?",
-        "Alles cool in Suhl?"
+        "Alles cool in Suhl?",
+        "Howdy {name}!",
     ]
 
     if logged_in:
