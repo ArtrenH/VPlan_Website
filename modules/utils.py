@@ -83,7 +83,10 @@ class AddStaticFileHashFlask(Flask):
                 values["h"] = h
 
 def get_user(user_id):
-    return users.find_one({'_id': ObjectId(user_id)})
+    try:
+        return users.find_one({'_id': ObjectId(user_id)})
+    except Exception:
+        return
 
 
 def set_user_preferences(user_id, preferences):
