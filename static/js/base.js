@@ -52,23 +52,25 @@ function save_preferences() {
 
 navigator.serviceWorker && navigator.serviceWorker.register("/sw.js").then(function(registration) {});
 document.addEventListener('DOMContentLoaded', function() {
-    $.ajax({
-        type: 'GET',
-        url: `/preferences/${school_number}`,
-        dataType: 'html',
-        success: function(response) {
-            $('#class_select').html(`<option value="" disabled selected>Wähle eine Klasse</option>`);
-            let option_elems = '';
-            for (const klassenstufe of $.parseJSON(response)) {
-                for (const klasse of klassenstufe) {
-                    option_elems += `<option value="${klasse}">${klasse}</option>\n`;
+    if (typeof school_number !== 'undefined') {
+        $.ajax({
+            type: 'GET',
+            url: `/preferences/${school_number}`,
+            dataType: 'html',
+            success: function(response) {
+                $('#class_select').html(`<option value="" disabled selected>Wähle eine Klasse</option>`);
+                let option_elems = '';
+                for (const klassenstufe of $.parseJSON(response)) {
+                    for (const klasse of klassenstufe) {
+                        option_elems += `<option value="${klasse}">${klasse}</option>\n`;
+                    }
                 }
+                $('#class_select').append(option_elems);
+                init_selects();
+                
             }
-            $('#class_select').append(option_elems);
-            init_selects();
-            
-        }
-    });
+        });
+    }
     var dropdown_elems = document.querySelectorAll('.dropdown-trigger');
     var dropdown_instances = M.Dropdown.init(dropdown_elems, {
         coverTrigger: false,
