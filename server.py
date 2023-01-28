@@ -69,7 +69,6 @@ def schulname(schulname):
         creds = json.load(f)
     cur_schulnummer = [creds[elem]["school_number"] for elem in creds if creds[elem]["school_name"] == schulname]
     if len(cur_schulnummer) == 0:
-        print(url_for('handle_plan', schulnummer="10001329"))
         return redirect(url_for('handle_plan', schulnummer="10001329"))
         #return {"error": "no school with this name found"}
     return redirect("/"+ cur_schulnummer[0], code=302)
@@ -109,7 +108,6 @@ def handle_plan(schulnummer):
     if not schulnummer.isdigit():
         return redirect("/name/" + schulnummer, code=302)
     tmp_user = get_user(current_user.get_id())
-    print(tmp_user.get("authorized_schools", []))
     if not (schulnummer in tmp_user.get("authorized_schools", []) or tmp_user.get("admin", False)):
         return redirect(url_for('authorize_school', schulnummer=schulnummer))
     # data for selection
