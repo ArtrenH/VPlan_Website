@@ -3,6 +3,7 @@ from flask_login import login_required, current_user, login_user, logout_user
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from modules.utils import render_template_wrapper, User, users
+import time
 
 authorization = Blueprint('authorization', __name__, template_folder='templates')
 
@@ -46,7 +47,8 @@ def signup():
         'nickname': nickname,
         'admin': False,
         'authorized_schools': [],
-        'password_hash': generate_password_hash(password, method='sha256')
+        'password_hash': generate_password_hash(password, method='sha256'),
+        "time_joined": time.time()
     })
     tmp_user = User(str(tmp_id.inserted_id))
     login_user(tmp_user)
