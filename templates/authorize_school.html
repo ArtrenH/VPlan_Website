@@ -4,6 +4,7 @@
 
 {% block content %}
 <form method='POST'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <div class="row">
         {% if errors %}<span class="error-popup col">{{ errors }} <button onclick="this.parentNode.remove();">X</button></span>{% endif %}
         <div class="input-field col s12">
