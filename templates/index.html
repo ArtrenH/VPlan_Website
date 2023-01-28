@@ -39,6 +39,28 @@
             <span class="icon_description" id="selected_time">{{ default_date.1 }}</span>
         </button>
     </div>
+    <!-- Klasse -->
+    <div class="col s6 l3">
+        <button data-target="class-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
+            <span class="material-symbols-outlined">grade</span>
+            <span class="icon_description">Klassenplan</span>
+        </button>
+    </div>
+    <div id="class-picker-modal" class="modal index-modal">
+        <div class="modal-content">
+            <h4>Klasse auswählen</h4>
+            {% for klassenstufe in klassen_grouped %}
+            <div class="row">
+                {% for klasse in klassenstufe %}
+                <div class="col s6 m3 xl2"><button onclick="selected_type='klasse';selected_value='{{ klasse }}';get_plan();" class="modal-close modal-selection-btn btn dp01 waves-effect">{{ klasse }}</button></div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="modal-footer">
+            <button class="modal-close waves-effect btn-flat">Fertig</button>
+        </div>
+    </div>
     <!-- Lehrer -->
     <div class="col s6 l3">
         <button data-target="teacher-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
@@ -79,28 +101,6 @@
                     <div class="col s6 m3 xl2"><button onclick="selected_type='room';selected_value='{{ room }}';get_plan();" class="modal-close modal-selection-btn btn dp01 waves-effect">{{ room }}</button></div>
                 {% endfor %}
             </div>
-        </div>
-        <div class="modal-footer">
-            <button class="modal-close waves-effect btn-flat">Fertig</button>
-        </div>
-    </div>
-    <!-- Klasse -->
-    <div class="col s6 l3">
-        <button data-target="class-picker-modal" class="plan_picker_btn dp01 waves-effect modal-trigger" tabindex="0">
-            <span class="material-symbols-outlined">grade</span>
-            <span class="icon_description">Klassenplan</span>
-        </button>
-    </div>
-    <div id="class-picker-modal" class="modal index-modal">
-        <div class="modal-content">
-            <h4>Klasse auswählen</h4>
-            {% for klassenstufe in klassen_grouped %}
-            <div class="row">
-                {% for klasse in klassenstufe %}
-                <div class="col s6 m3 xl2"><button onclick="selected_type='klasse';selected_value='{{ klasse }}';get_plan();" class="modal-close modal-selection-btn btn dp01 waves-effect">{{ klasse }}</button></div>
-                {% endfor %}
-            </div>
-            {% endfor %}
         </div>
         <div class="modal-footer">
             <button class="modal-close waves-effect btn-flat">Fertig</button>
