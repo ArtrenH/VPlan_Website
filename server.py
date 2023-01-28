@@ -250,7 +250,7 @@ def preferences(school_number):
     user_preferences = tmp_user.get("preferences", {})
     if not school_number in user_preferences:
         user_preferences[school_number] = {}
-    user_preferences[school_number][klasse]
+    user_preferences[school_number][klasse] = data
     set_user_preferences(current_user.get_id(), user_preferences)
     return "Preferences saved!"
 

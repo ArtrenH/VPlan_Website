@@ -133,7 +133,7 @@ class Plan_Extractor():
         group_list = MetaExtractor(self.school_num).group_list(course)
         unselected_courses = [elem[0] for elem in group_list if elem[0] not in self.preferences]
         normal_plan = self.get_plan_normal(course)
-        return self.render([lesson for lesson in normal_plan["lessons"] if lesson["course_id"] not in unselected_courses])
+        return self.render([lesson for lesson in normal_plan["lessons"] if lesson["subject_name"] not in unselected_courses])
     
     def parse_freie_tage(self):
         datestamps = ["20" + elem.text for elem in self.day_data.find("FreieTage").find_all("ft")]
