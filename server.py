@@ -238,13 +238,15 @@ def preferences(school_number):
             group_list.append(list(elem) + [False])
     # return list of groups
     if request.method == "GET":
+        group_list = sorted(group_list, key=lambda x: (x[0].upper() != x[0], x))
         return jsonify(group_list)
     #elif request.method == "POST":
     data = request.get_json()
     if not isinstance(data, list):
         return "invalid json"
+    group_list = [elem[0] for elem in group_list]
     for item in data:
-        if not item in [elem[0] for elem in group_list]:
+        if not item in group_list:
             return f"{item} is not a valid course!"
     data = list(set(data))
     user_preferences = tmp_user.get("preferences", {})
