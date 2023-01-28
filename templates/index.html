@@ -12,9 +12,6 @@
     {% endif %}
     var selected_type = angefragt_values['type'];
     var selected_value = angefragt_values['value'];
-    if (selected_type == "klasse") {
-        preferences = false;
-    }
     const default_date = angefragt_values['date'] ? angefragt_values['date'] : "{{ default_date.0 }}";
     var selected_date = angefragt_values['date'] ? angefragt_values['date'] : "{{ default_date.0 }}";
     var available_dates = [{% for date in dates %}"{{ date.0 }}",{% endfor %}];
@@ -24,8 +21,8 @@
         document.getElementById('selected_time').innerHTML = `${zeroPad(date.getDate(), 2)}.${zeroPad(date.getMonth()+1, 2)}.${date.getFullYear()}`;
     });
 
-    var teacher_autocomplete_data = { {% for teacher in teachers %}'{{ teacher.anrede }} {{ teacher.name }}': null,{% endfor %}};
-    var teacher_kuerzel_map = { {% for teacher in teachers %}'{{ teacher.anrede }} {{ teacher.name }}': '{{ teacher.kuerzel }}',{% endfor %}};
+    var teacher_autocomplete_data = { {% for teacher in teachers %}'{{ teacher.anrede }} {{ teacher.name }} ({{ teacher.kuerzel }})': null,{% endfor %}};
+    var teacher_kuerzel_map = { {% for teacher in teachers %}'{{ teacher.anrede }} {{ teacher.name }} ({{ teacher.kuerzel }})': '{{ teacher.kuerzel }}',{% endfor %}};
 </script>
 <script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 {% endblock %}
@@ -114,7 +111,7 @@
         </button>
     </div>
 </div>
-<button id="expand-btn" class="btn dp01 waves-effect" onclick="togglePreferences();"><span class="material-symbols-outlined">add</span></button>
+<button id="expand-btn" class="btn dp01 waves-effect" onclick="togglePreferences();get_plan();"><span class="material-symbols-outlined">add</span></button>
 <div class="loaded_content">
 </div>
 <button class="floating-arrow arrow-left waves-effect" onclick="change_day(-1);"><span class="material-symbols-outlined">arrow_back_ios_new</span></button>
