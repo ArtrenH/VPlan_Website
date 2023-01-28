@@ -211,6 +211,12 @@ class Plan_Extractor():
             cur_lesson += 1
         return (cur_lesson+1) // 2
 
+    def get_week(self):
+        return {
+            "1": "A",
+            "2": "B"
+        }.get(self.day_data.find("woche").text.strip(), "?")
+
 
 def extract_metadata(school_num):
     if os.path.exists(f"data/{school_num}_plans/meta.json"):
@@ -374,10 +380,12 @@ def get_default_date(date_list):
 
 
 if __name__ == "__main__":
-    m = MetaExtractor("10001329")
-    c = m.course_list()
-    c = m.group_list("JG12")
-    print(c)
+    p = Plan_Extractor("10001329", "20230127")
+    print(p.get_week())
+    #m = MetaExtractor("10001329")
+    #c = m.course_list()
+    #c = m.group_list("JG12")
+    #print(c)
     #c = MetaExtractor("10001329").current_school_days_str()
     #print(len(c))
     #c = DateExtractor("10001329").default_date()

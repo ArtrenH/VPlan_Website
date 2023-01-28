@@ -186,16 +186,14 @@ def api_response(school_number, return_json=False):
         return "type unbekannt"
     function = handlers[args["type"]]["function"]
     data = function(args["value"])
-    timestamp = plan_data.get_timestamp()
-    plan_type = handlers[args["type"]]["name"]
-    plan_value = args["value"]
     ctx_data = {
-        "plan_type": plan_type,
-        "plan_value": plan_value,
+        "plan_type": handlers[args["type"]]["name"],
+        "plan_value": args["value"],
         "date": convert_date_readable(date),
         "plan": add_spacers(remove_duplicates(data["lessons"])),
         "zusatzinfo": data["zusatzinfo"],
-        "timestamp": timestamp
+        "timestamp": plan_data.get_timestamp(),
+        "week": plan_data.get_week()
     }
     if return_json:
         return jsonify(ctx_data)
