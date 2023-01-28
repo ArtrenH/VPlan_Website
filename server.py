@@ -227,10 +227,18 @@ def preferences(school_number):
         else:
             return "Klasse fehlt"
     klasse = args["course"]
-    course_list = MetaExtractor(school_number).group_list(klasse)
+    user_preferences = tmp_user.get("preferences", {})
+    current_preferences = user_preferences.get(school_number, {}).get(klasse, [])
+    group_list = MetaExtractor(school_number).group_list(klasse)
+    group_list = []
+    for elem in MetaExtractor(school_number).group_list(klasse):
+        if elem[-1] in current_preferences:
+            group_list.append(list(elem) + [True])
+        else:
+            group_list.append(list(elem) + [False])
     # return list of groups
     if request.method == "GET":
-        return jsonify(course_list)
+        return jsonify(group_list)
     #elif request.method == "POST":
     data = request.get_json()
     if not isinstance(data, list):
