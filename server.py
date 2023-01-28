@@ -244,7 +244,7 @@ def preferences(school_number):
     if not isinstance(data, list):
         return "invalid json"
     for item in data:
-        if not item in [elem[-1] for elem in group_list]:
+        if not item in [elem[3] for elem in group_list]:
             return f"{item} is not a valid course!"
     data = list(set(data))
     user_preferences = tmp_user.get("preferences", {})
