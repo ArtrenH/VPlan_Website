@@ -682,3 +682,7 @@ input:focus.autocomplete {
     border-right: 2px solid white !important;
     border-bottom: 2px solid white !important;
 }
+
+.checkbox-grid {
+    min-height: 30vh !important;
+}

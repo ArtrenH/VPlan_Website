@@ -16,6 +16,7 @@ function init_selects() {
                     url: `/preferences/${school_number}?course=${encodeURIComponent(selected_class)}`,
                     dataType: 'html',
                     success: function(response) {
+                        $('#all_checkbox').css('display', 'block');
                         $('.checkbox-grid').html('');
                         for (const group of $.parseJSON(response)) {
                             let checkbox_elem = `<label class="col s6 m4 l3"><input id="${group[3]}" type="checkbox" class="filled-in" ${group[4] ? "checked=\"checked\"" : ""}><span>${group[2] != '' ? group[2] : group[0]} ${group[1]}</span></label>`;
