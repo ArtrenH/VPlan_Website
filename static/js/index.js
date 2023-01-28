@@ -35,7 +35,10 @@ var ajax_response = null;
 
 if (vorangezeigt) {
     if (ajax_response !== null) {ajax_response.abort();}
-    get_plan_url('/' + school_number + '?' + angefragt_link.replace(';', '&'));
+    if (!preferences) {
+        document.querySelector('#expand-btn span').innerHTML ="remove";
+    }
+    get_plan();
 }
 
 function get_plan_url(url) {
@@ -60,7 +63,10 @@ function get_plan_url(url) {
 }
 
 function get_plan() {
-    get_plan_url(`/${school_number}?date=${selected_date}&type=${selected_type}&value=${selected_value}`);
+    if (selected_type == 'klasse' && preferences) {
+        selected_type = 'klasse_preferences';
+    }
+    get_plan_url(`/${school_number}?date=${selected_date}&type=${selected_type}&value=${encodeURIComponent(selected_value)}`);
 }
 
 var datepicker_instance;
@@ -68,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if(isApple()) {
         $('#share-btn span').html('ios_share');
     }
-    var modal_elems = document.querySelectorAll('.modal');
+    var modal_elems = document.querySelectorAll('.index-modal');
     var modal_instances = M.Modal.init(modal_elems, {
         onCloseStart: function(elem) {
             elem.scrollTo(0, 0);
@@ -100,5 +106,19 @@ document.addEventListener('DOMContentLoaded', function() {
             get_plan();
             $('#teacher-picker-modal .modal-close:not(.dp01)').click();
         }
-    })
+    });
 });
+
+var preferences = true;
+function togglePreferences() {
+    if ($('#expand-btn span').text() == "remove") {
+        $('#expand-btn span').text("add")
+    } else {
+        $('#expand-btn span').text("remove")
+    }
+    preferences = !preferences;
+    if (!preferences && selected_type == "klasse_preferences") {
+        selected_type = "klasse";
+    }
+    get_plan();
+}

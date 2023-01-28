@@ -549,7 +549,7 @@ input:focus+label {
     padding: 0px !important;
 }
 
-.modal-selection-btn:focus, #share-btn:focus {
+.modal-selection-btn:focus, #expand-btn:focus {
     outline: 3px solid white;
 }
 
@@ -557,7 +557,7 @@ input:focus+label {
     margin-bottom: 0px;
 }
 
-#share-btn {
+#expand-btn {
     float: right;
     display: flex;
     align-items: center;
@@ -570,7 +570,7 @@ input:focus+label {
 }
 
 @media only screen and (max-width: 600px) {   
-    #share-btn {
+    #expand-btn {
         padding: 20px;
     }
 }
@@ -581,6 +581,10 @@ input:focus+label {
 
 .error-toast {
     outline: 2px solid #fc8686;
+}
+
+.success-toast {
+    outline: 2px solid #4caf50;
 }
 
 .input-field .prefix.active {
@@ -663,4 +667,18 @@ input:focus.autocomplete {
 
 #preferences-dropdown .material-symbols-outlined {
     margin-right: 10px;
+}
+
+.preference_modal .modal-footer {
+    margin-top: 20px;
+}
+
+[type=checkbox].filled-in:checked+span:not(.lever):after {
+    border: 2px solid #BB86FC;
+    background-color: #BB86FC;
+}
+
+[type=checkbox].filled-in:checked+span:not(.lever):before {
+    border-right: 2px solid white !important;
+    border-bottom: 2px solid white !important;
 }

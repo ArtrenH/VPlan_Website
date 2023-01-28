@@ -125,7 +125,7 @@ def handle_plan(schulnummer):
             return render_template_wrapper('index',
                 **meta_data,
                 school_number=schulnummer, default_date=default_date,
-                var_vorangezeigt="true", var_angefragt_link=urllib.parse.urlencode(new_string_args))
+                var_vorangezeigt="true", var_angefragt_values=new_string_args)
         else:
             no_args = True
     # normal website

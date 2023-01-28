@@ -5,18 +5,20 @@
     const zeroPad = (n, digits) => n.toString().padStart(digits, '0');
     const school_number = "{{ school_number }}";
     const vorangezeigt = {{ var_vorangezeigt }};
-    const angefragt_link = "{{ var_angefragt_link|safe }}";
+    const angefragt_values = {{ var_angefragt_values|safe }};
     var available_dates = [{% for date in dates %}"{{ date.0 }}",{% endfor %}];
     
-    const url_params = new URLSearchParams(window.location.search);
-    const url_date = url_params.get('date');
-    const url_type = url_params.get('type');
-    const url_value = url_params.get('value');
+    const vorangefragt_date = angefragt_values['date'];
+    const vorangefragt_type = angefragt_values['type'];
+    const vorangefragt_value = angefragt_values['value'];
 
-    const default_date = url_date ? url_date : "{{ default_date.0 }}";
-    var selected_date = url_date ? url_date : "{{ default_date.0 }}";
-    var selected_type = url_type;
-    var selected_value = url_value;
+    const default_date = vorangefragt_date ? vorangefragt_date : "{{ default_date.0 }}";
+    var selected_date = vorangefragt_date ? vorangefragt_date : "{{ default_date.0 }}";
+    var selected_type = vorangefragt_type;
+    var selected_value = vorangefragt_value;
+    if (selected_type == "klasse") {
+        preferences = false;
+    }
 
     var date = new Date(Date.parse(`${default_date.substring(0, 4)}-${default_date.substring(4, 6)}-${default_date.substring(6, 8)}`));
     document.addEventListener('DOMContentLoaded', function() {
@@ -44,7 +46,7 @@
             <span class="material-symbols-outlined">school</span>
         </button>
     </div>
-    <div id="teacher-picker-modal" class="modal">
+    <div id="teacher-picker-modal" class="modal index-modal">
         <div class="modal-content">
             <h4>Lehrer auswählen</h4>
             <div class="row">
@@ -68,7 +70,7 @@
             <span class="material-symbols-outlined">location_on</span>
         </button>
     </div>
-    <div id="room-picker-modal" class="modal">
+    <div id="room-picker-modal" class="modal index-modal">
         <div class="modal-content">
             <h4>Raum auswählen</h4>
             <div class="row">
@@ -87,7 +89,7 @@
             <span class="material-symbols-outlined">grade</span>
         </button>
     </div>
-    <div id="class-picker-modal" class="modal">
+    <div id="class-picker-modal" class="modal index-modal">
         <div class="modal-content">
             <h4>Klasse auswählen</h4>
             {% for klassenstufe in klassen_grouped %}
@@ -109,7 +111,7 @@
         </button>
     </div>
 </div>
-<button id="share-btn" class="btn dp01 waves-effect" onclick="copyLink();"><span class="material-symbols-outlined">share</span></button>
+<button id="expand-btn" class="btn dp01 waves-effect" onclick="togglePreferences();"><span class="material-symbols-outlined">add</span></button>
 <div class="loaded_content">
 </div>
 <button class="floating-arrow arrow-left waves-effect" onclick="change_day(-1);"><span class="material-symbols-outlined">arrow_back_ios_new</span></button>

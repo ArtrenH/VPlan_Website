@@ -100,17 +100,26 @@
     {% if logged_in %}
     <div id="preferences_modal" class="modal preference_modal">
         <div class="modal-content">
-            <h4>Klasse auswählen</h4>
+            <h4>Unterricht wählen</h4>
             <!-- Select Menu (all classes) -->
-            <p class="flow-text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Molestias ducimus vero, ipsa sapiente, voluptate aperiam quam vel iure debitis nesciunt facere adipisci expedita accusantium aliquam aspernatur labore rerum et placeat!</p>
-
-            <h4>Fächer auswählen</h4>
-            <!-- Checkbox grid -->
-            <!-- Check all + Check none -->
-            <p class="flow-text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Molestias ducimus vero, ipsa sapiente, voluptate aperiam quam vel iure debitis nesciunt facere adipisci expedita accusantium aliquam aspernatur labore rerum et placeat!</p>
+            <div class="row">
+                <div class="input-field col s12">
+                    <select id="class_select">
+                        <option value="" disabled selected>Wähle eine Klasse</option>
+                    </select>
+                    <label for="class_select">Klassenwahl</label>
+                </div>
+                <label class="col s6 m4 l3"><input type="checkbox" class="filled-in" onchange="$('.checkbox-grid input').attr('checked', this.checked);"><span>Alle checken</span></label>
+                <div class="col s12 checkbox-grid row">
+                    <!-- Checkbox grid -->
+                    <!-- Check all + Check none -->
+                    <p class="flow-text">Wähle eine Klasse, um für diese deine gewünschten Stunden einzustellen.</p>
+                </div>
+            </div>
         </div>
         <div class="modal-footer">
-            <button class="modal-close waves-effect btn-flat">Fertig</button>
+            <button class="modal-close waves-effect btn-flat">Abbrechen</button>
+            <button class="modal-close waves-effect btn-flat" onclick='clicked_finished=true;'>Fertig</button>
         </div>
     </div>
     {% endif %}
