@@ -5,20 +5,19 @@
     const zeroPad = (n, digits) => n.toString().padStart(digits, '0');
     const school_number = "{{ school_number }}";
     const vorangezeigt = {{ var_vorangezeigt }};
+    {% if var_vorangezeigt == 'true' %}
     const angefragt_values = {{ var_angefragt_values|safe }};
-    var available_dates = [{% for date in dates %}"{{ date.0 }}",{% endfor %}];
-    
-    const vorangefragt_date = angefragt_values['date'];
-    const vorangefragt_type = angefragt_values['type'];
-    const vorangefragt_value = angefragt_values['value'];
-
-    const default_date = vorangefragt_date ? vorangefragt_date : "{{ default_date.0 }}";
-    var selected_date = vorangefragt_date ? vorangefragt_date : "{{ default_date.0 }}";
-    var selected_type = vorangefragt_type;
-    var selected_value = vorangefragt_value;
+    {% else %}
+    const angefragt_values = {};
+    {% endif %}
+    var selected_type = angefragt_values['type'];
+    var selected_value = angefragt_values['value'];
     if (selected_type == "klasse") {
         preferences = false;
     }
+    const default_date = angefragt_values['date'] ? angefragt_values['date'] : "{{ default_date.0 }}";
+    var selected_date = angefragt_values['date'] ? angefragt_values['date'] : "{{ default_date.0 }}";
+    var available_dates = [{% for date in dates %}"{{ date.0 }}",{% endfor %}];
 
     var date = new Date(Date.parse(`${default_date.substring(0, 4)}-${default_date.substring(4, 6)}-${default_date.substring(6, 8)}`));
     document.addEventListener('DOMContentLoaded', function() {
