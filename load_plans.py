@@ -73,6 +73,7 @@ class PlanLoader():
                 f"{date_str[6:8]}.{date_str[4:6]}.{date_str[:4]}"
             ]
         filenames = [format_date(filename) for filename in os.listdir(self.data_folder) if filename.startswith("PlanKl") and filename.endswith(".xml")]
+        filenames = sorted(filenames, key=lambda x: x[0])
         return filenames
 
     def aktualisiere_files(self):
