@@ -5,6 +5,7 @@ from random import choice
 from werkzeug.security import safe_join
 import contextlib
 import hashlib
+import json
 
 from flask import Flask, render_template
 from flask_login import UserMixin, current_user
@@ -18,6 +19,7 @@ users = db.user
 def render_template_wrapper(template_name, *args, **kwargs):
     tmp_user = users.find_one({"_id": ObjectId(current_user.get_id())})
     logged_in = tmp_user is not None
+    user_settings = tmp_user.get("settings", {})
     random_greeting = "Startseite"
     greetings = [
         "Grüß Gott {name}!",
@@ -51,7 +53,7 @@ def render_template_wrapper(template_name, *args, **kwargs):
     if logged_in:
         random_greeting = choice(greetings).format(name=tmp_user["nickname"])
 
-    return render_template(f"{template_name}.html", logged_in=logged_in, random_greeting=random_greeting, *args, **kwargs)
+    return render_template(f"{template_name}.html", logged_in=logged_in, random_greeting=random_greeting, user_settings=json.dumps(user_settings), *args, **kwargs)
 
 class User(UserMixin):
     def __init__(self, mongo_id):

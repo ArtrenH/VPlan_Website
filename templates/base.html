@@ -40,6 +40,7 @@
             timeout: 60000
         });
         var csrf_token = "{{ csrf_token() }}";
+        var USER_SETTINGS = {{ user_settings|safe }};
     </script>
     <style>
         /* Material Icons */
@@ -88,10 +89,11 @@
             <ul id="nav-bar" class="right">
                 <li><a href="{{ url_for('about') }}">Über uns</a></li>
                 {% if logged_in %}
-                <li class="preferences-nav"><a href="javascript:void(0);" class="dropdown-trigger-preferences" role="button" data-target="preferences-dropdown"><span class="material-symbols-outlined">settings</span></a></li>
+                <li class="preferences-nav"><a href="javascript:void(0);" class="dropdown-trigger-preferences" role="button" data-target="preferences-dropdown"><span class="material-symbols-outlined">tune</span></a></li>
                 <ul id='preferences-dropdown' class='dropdown-content'>
                     {% block preferences %}
                     <!--<li><a href="javascript:void(0);" data-target="todo" class="modal-trigger"><span class="material-symbols-outlined">star</span>Favoriten wählen</a></li>-->
+                    <li><a href="javascript:void(0);" data-target="settings" class="modal-trigger"><span class="material-symbols-outlined">settings</span>Einstellungen</a></li>
                     <li><a href="javascript:void(0);" data-target="preferences_modal" class="modal-trigger"><span class="material-symbols-outlined">account_circle</span>Unterricht wählen</a></li>
                     {% endblock %}
                     <li><a href="{{ url_for('authorization.logout') }}" class="waves-effect"><span class="material-symbols-outlined">logout</span>Logout</a></li>
@@ -122,7 +124,21 @@
         </div>
         <div class="modal-footer">
             <button class="modal-close waves-effect btn-flat">Abbrechen</button>
-            <button class="modal-close waves-effect btn-flat" onclick='clicked_finished=true;'>Fertig</button>
+            <button class="modal-close waves-effect btn-flat" onclick='clicked_finished=true;'>Speichern</button>
+        </div>
+    </div>
+    <div id="settings" class="modal settings_modal">
+        <div class="modal-content">
+            <h4>Einstellungen</h4>
+            <div class="row">
+                <label class="col s12" id="show_plan_toasts">
+                    <input type="checkbox" class="filled-in"><span>Lade- / Erfolgs-Toasts anzeigen</span>
+                </label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-close waves-effect btn-flat">Abbrechen</button>
+            <button class="modal-close waves-effect btn-flat" onclick='settings_clicked_finished=true;'>Speichern</button>
         </div>
     </div>
     {% endif %}

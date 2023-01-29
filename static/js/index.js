@@ -40,7 +40,9 @@ if (vorangezeigt) {
 
 function get_plan_url(url) {
     if (ajax_response !== null) {ajax_response.abort();}
-    M.toast({text: 'Lade Plan...', displayLength: 750, classes:"neutral-toast"});
+    if (get(USER_SETTINGS, "show_plan_toasts", false)) {
+        M.toast({text: 'Lade Plan...', displayLength: 750, classes:"neutral-toast"});
+    }
     window.history.replaceState(null, "", url + "&share=true");
     ajax_response = $.ajax({
         type: 'GET',
@@ -54,10 +56,14 @@ function get_plan_url(url) {
             var collapsible_elems = document.querySelectorAll('.collapsible');
             var collapsible_instances = M.Collapsible.init(collapsible_elems, {});
             M.Toast.dismissAll();
-            M.toast({text: 'Plan geladen!', displayLength: 1000, classes:"success-toast"});
+            if (get(USER_SETTINGS, "show_plan_toasts", false)) {
+                M.toast({text: 'Plan geladen!', displayLength: 1000, classes:"success-toast"});
+            }
         },
         error: function(request, status, error) {
+            //if (get(USER_SETTINGS, "show_plan_toasts", false)) {
             M.toast({text: 'Beim laden des Plans ist ein Fehler aufgetreten!', displayLength: 2000, classes:"error-toast"});
+            //}
         }
     });
 }

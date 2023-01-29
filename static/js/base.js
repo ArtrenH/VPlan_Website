@@ -1,3 +1,8 @@
+function get(object, key, default_value) {
+    var result = object[key];
+    return (typeof result !== "undefined") ? result : default_value;
+}
+
 $.ajaxSetup({
     beforeSend: function(xhr, settings) {
         if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
@@ -8,6 +13,7 @@ $.ajaxSetup({
 
 var selected_class = null;
 var clicked_finished = false;
+var settings_clicked_finished = false;
 
 function init_selects() {
     var select_elems = document.querySelectorAll('select');
@@ -52,9 +58,33 @@ function save_preferences() {
         data: JSON.stringify(selected_groups),
         success: function(response) {
             M.toast({text: 'Fachauswahl gespeichert!', classes:"success-toast", displayLength: 1000});
+            if (typeof get_plan === "function") {
+                get_plan();
+            }
         },
         error: function() {
             M.toast({text: 'Beim speichern der Fachauswahl ist ein Fehler aufgetreten!', displayLength: 2000, classes:"error-toast"});
+        }
+    });
+}
+
+function save_settings() {
+    USER_SETTINGS = {
+        "show_plan_toasts": document.querySelector('#show_plan_toasts input').checked
+    };
+    $.ajax({
+        type: 'GET',
+        url: `/settings`,
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(USER_SETTINGS),
+        success: function(response) {
+            M.toast({text: 'Einstellungen gespeichert!', classes:"success-toast", displayLength: 1000});
+            if (typeof get_plan === "function") {
+                get_plan();
+            }
+        },
+        error: function() {
+            M.toast({text: 'Beim speichern der Einstellungen ist ein Fehler aufgetreten!', displayLength: 2000, classes:"error-toast"});
         }
     });
 }
@@ -99,6 +129,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             if (selected_class === null) {return;}
             save_preferences();
+        }
+    });
+    var settings_modal_elems = document.querySelectorAll('.settings_modal');
+    var settings_modal_instances = M.Modal.init(settings_modal_elems, {
+        onOpenStart: function() {
+            settings_clicked_finished = false;
+            document.querySelector('#show_plan_toasts input').checked = USER_SETTINGS["show_plan_toasts"];
+        },
+        onCloseStart: function(elem) {
+            elem.scrollTo(0, 0);
+            if (!settings_clicked_finished) {
+                return;
+            }
+            save_settings();
         }
     });
 });

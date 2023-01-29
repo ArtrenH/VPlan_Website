@@ -48,7 +48,8 @@ def signup():
         'admin': False,
         'authorized_schools': [],
         'password_hash': generate_password_hash(password, method='sha256'),
-        "time_joined": time.time()
+        'time_joined': time.time(),
+        'settings': {}
     })
     tmp_user = User(str(tmp_id.inserted_id))
     login_user(tmp_user)
