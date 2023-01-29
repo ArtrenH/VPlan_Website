@@ -120,11 +120,27 @@ document.addEventListener('DOMContentLoaded', function() {
     var modal_elems = document.querySelectorAll('.preference_modal');
     var modal_instances = M.Modal.init(modal_elems, {
         onOpenStart: function() {
+            if (selected_class !== null && !clicked_finished) {
+                $.ajax({
+                    type: 'GET',
+                    url: `/preferences/${school_number}?course=${encodeURIComponent(selected_class)}`,
+                    dataType: 'html',
+                    success: function(response) {
+                        $('#all_checkbox').css('display', 'block');
+                        $('.checkbox-grid').html('');
+                        for (const group of $.parseJSON(response)) {
+                            let checkbox_elem = `<label class="col s6 m4 l3 xl2"><input id="${group[0]}" type="checkbox" class="filled-in" ${group[2] ? "checked=\"checked\"" : ""}><span>${group[0]} ${group[1]}</span></label>`;
+                            $('.checkbox-grid').append(checkbox_elem);
+                        }
+                    }
+                });
+            }
             clicked_finished = false;
         },
         onCloseStart: function(elem) {
             elem.scrollTo(0, 0);
             if (!clicked_finished) {
+                $('.checkbox-grid').html('');
                 return;
             }
             if (selected_class === null) {return;}
