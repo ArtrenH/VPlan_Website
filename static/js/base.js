@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var settings_modal_instances = M.Modal.init(settings_modal_elems, {
         onOpenStart: function() {
             settings_clicked_finished = false;
-            document.querySelector('#show_plan_toasts input').checked = USER_SETTINGS["show_plan_toasts"];
+            document.querySelector('#show_plan_toasts input').checked = get(USER_SETTINGS, "show_plan_toasts", false);
         },
         onCloseStart: function(elem) {
             elem.scrollTo(0, 0);

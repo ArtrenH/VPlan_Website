@@ -228,7 +228,7 @@ def settings():
         # Preventing users from saving arbitrary data in their settings
         user_settings = request.get_json()
         new_settings = {}
-        new_settings["show_plan_toasts"] = bool(user_settings["show_plan_toasts"])
+        new_settings["show_plan_toasts"] = bool(user_settings.get("show_plan_toasts", False))
         users.update_one({'_id': ObjectId(current_user.get_id())}, {"$set": {'settings': new_settings}})
 
 @app.route("/preferences/<school_number>", methods=["GET", "POST"])
