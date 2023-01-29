@@ -233,6 +233,7 @@ def extract_metadata(school_num):
     default_times = other_data.default_times()
     meta_data = {
         "dates": dates,
+        "all_dates": dates,
         "klassen": klassen,
         "klassen_grouped": klassen_grouped,
         "teachers": teachers,

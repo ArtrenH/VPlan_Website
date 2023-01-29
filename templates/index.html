@@ -14,7 +14,7 @@
     var selected_value = angefragt_values['value'];
     const default_date = angefragt_values['date'] ? angefragt_values['date'] : "{{ default_date.0 }}";
     var selected_date = angefragt_values['date'] ? angefragt_values['date'] : "{{ default_date.0 }}";
-    var available_dates = [{% for date in dates %}"{{ date.0 }}",{% endfor %}];
+    var available_dates = [{% for date in all_dates %}"{{ date.0 }}",{% endfor %}];
 
     var date = new Date(Date.parse(`${default_date.substring(0, 4)}-${default_date.substring(4, 6)}-${default_date.substring(6, 8)}`));
     document.addEventListener('DOMContentLoaded', function() {
