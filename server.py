@@ -86,17 +86,18 @@ def schulname(schulname):
 @app.route('/authorize/<schulnummer>', methods=['GET', 'POST'])
 @login_required
 def authorize_school(schulnummer):
-    if request.method != 'POST':
-        return render_template_wrapper('authorize_school', schulnummer=schulnummer)
-
-    username = request.form.get('username')
-    pw = request.form.get('pw')
     with open("creds.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         try:
             school_creds = data[schulnummer]
         except Exception:
             return render_template_wrapper('authorize_school', schulnummer=schulnummer, errors="Die angegebene Schule konnte nicht gefunden werden. Bitte überprüfe die Schulnummer und versuche es erneut. (Falls deine Schule im vorigen Schritt nicht zur Auswahl stand, schreib uns auf Discord)")
+    
+        if request.method != 'POST':
+            return render_template_wrapper('authorize_school', schulnummer=schulnummer, schulname=school_creds["display_name"])
+
+        username = request.form.get('username')
+        pw = request.form.get('pw')
         if school_creds["username"] == username and school_creds["password"] == pw:
             tmp_user = get_user(current_user.get_id())
             tmp_authorized_schools = tmp_user.get("authorized_schools", [])

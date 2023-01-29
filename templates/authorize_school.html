@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Schul-Login{% endblock %}
+{% block title %}{{ schulname }}-Login{% endblock %}
 
 {% block content %}
 <form method='POST'>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <div class="row">
         {% if errors %}<span class="error-popup col">{{ errors }} <button onclick="this.parentNode.remove();">X</button></span>{% endif %}
+        <p class="flow-text col s12">Trage hier die Zugangsdaten für deine Schule ein (dieselben wie in der VpMobil24-App)</p>
         <div class="input-field col s12">
-            <input id="username" name="username" type="text" class="validate">
+            <input id="username" name="username" value="schueler" type="text" class="validate">
             <label for="username">Nutzername</label>
         </div>
         <div class="input-field col s12">
@@ -16,7 +17,6 @@
             <label for="pw">Passwort</label>
         </div>
         <input type='submit' name='submit' value="Login" class="btn waves-effect login-btn">
-        <p class="col s12">Die Nutzerdaten sind dieselben wie in der VpMobil24-App</p>
     </div>
 </form>
 {% endblock %}
