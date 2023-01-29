@@ -606,6 +606,10 @@ input:focus.autocomplete {
     border-radius: 50%;
 }
 
+.material-symbols-outlined {
+    transition: opacity 200ms;
+}
+
 .wf-loading .material-icons, .wf-materialicons-n4-inactive .material-icons, .wf-loading .material-symbols-outlined, .wf-materialicons-n4-inactive .material-symbols-outlined { 
     opacity: 0;
 }
@@ -661,4 +665,8 @@ input:focus.autocomplete {
 
 .checkbox-grid {
     min-height: 30vh !important;
+}
+
+.checkbox-grid .flow-text {
+    margin-top: 0;
 }

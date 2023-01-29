@@ -27,7 +27,7 @@ function init_selects() {
                         $('#all_checkbox').css('display', 'block');
                         $('.checkbox-grid').html('');
                         for (const group of $.parseJSON(response)) {
-                            let checkbox_elem = `<label class="col s6 m4 l3"><input id="${group[0]}" type="checkbox" class="filled-in" ${group[2] ? "checked=\"checked\"" : ""}><span>${group[0]} ${group[1]}</span></label>`;
+                            let checkbox_elem = `<label class="col s6 m4 l3 xl2"><input id="${group[0]}" type="checkbox" class="filled-in" ${group[2] ? "checked=\"checked\"" : ""}><span>${group[0]} ${group[1]}</span></label>`;
                             $('.checkbox-grid').append(checkbox_elem);
                         }
                     }
@@ -61,6 +61,7 @@ function save_preferences() {
 
 navigator.serviceWorker && navigator.serviceWorker.register("/sw.js").then(function(registration) {});
 document.addEventListener('DOMContentLoaded', function() {
+    window.M.updateTextFields()
     if (typeof school_number !== 'undefined') {
         $.ajax({
             type: 'GET',

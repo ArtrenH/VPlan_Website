@@ -190,7 +190,7 @@ def api_response(school_number, return_json=False):
             handlers["klasse_preferences"]["function"] = plan_data.get_plan_normal
     # Tatsächliches Laden des Plans
     if args["type"] not in handlers:
-        return "type unbekannt"
+        return "Bitte wähle einen Lehrer, einen Raum, eine Klasse oder den \"Freie Räume\"-Button aus um einen Plan zu sehen."
     function = handlers[args["type"]]["function"]
     data = function(args["value"])
     ctx_data = {

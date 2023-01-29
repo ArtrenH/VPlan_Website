@@ -91,7 +91,7 @@
                 <li class="preferences-nav"><a href="javascript:void(0);" class="dropdown-trigger" role="button" data-target="preferences-dropdown"><span class="material-symbols-outlined">settings</span></a></li>
                 <ul id='preferences-dropdown' class='dropdown-content'>
                     {% block preferences %}
-                    <li><a href="javascript:void(0);" data-target="todo" class="modal-trigger"><span class="material-symbols-outlined">star</span>Favoriten wählen</a></li>
+                    <!--<li><a href="javascript:void(0);" data-target="todo" class="modal-trigger"><span class="material-symbols-outlined">star</span>Favoriten wählen</a></li>-->
                     <li><a href="javascript:void(0);" data-target="preferences_modal" class="modal-trigger"><span class="material-symbols-outlined">account_circle</span>Unterricht wählen</a></li>
                     {% endblock %}
                     <li><a href="{{ url_for('authorization.logout') }}" class="waves-effect"><span class="material-symbols-outlined">logout</span>Logout</a></li>
@@ -112,7 +112,7 @@
                     </select>
                     <label for="class_select">Klassenwahl</label>
                 </div>
-                <label class="col s6 m4 l3" id="all_checkbox" style="display: none"><input type="checkbox" class="filled-in" onchange="$('.checkbox-grid input').attr('checked', this.checked);"><span>Alle checken</span></label>
+                <label class="col s12" id="all_checkbox" style="display: none"><input type="checkbox" class="filled-in" onchange="$('.checkbox-grid input').attr('checked', this.checked);"><span>Alle checken</span></label>
                 <div class="col s12 checkbox-grid row">
                     <!-- Checkbox grid -->
                     <!-- Check all + Check none -->

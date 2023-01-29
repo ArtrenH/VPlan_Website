@@ -48,6 +48,9 @@ function get_plan_url(url) {
         dataType: 'html',
         success: function(response) {
             $('.loaded_content').html(response);
+            $([document.documentElement, document.body]).animate({
+                scrollTop: $(".loaded_content").offset().top
+            }, 200);
             var collapsible_elems = document.querySelectorAll('.collapsible');
             var collapsible_instances = M.Collapsible.init(collapsible_elems, {});
             M.Toast.dismissAll();
@@ -60,6 +63,26 @@ function get_plan_url(url) {
 }
 
 function get_plan() {
+    $('.floating-arrow').fadeIn(200);
+    if(typeof available_dates[(available_dates.indexOf(selected_date)+1)] === 'undefined') {
+        $('.arrow-right').fadeOut(200);
+        $('.arrow-right').attr('disabled', true);
+    } else {
+        $('.arrow-right').fadeIn(200);
+        $('.arrow-right').attr('disabled', false);
+    }
+    if(typeof available_dates[(available_dates.indexOf(selected_date)-1)] === 'undefined') {
+        $('.arrow-left').fadeOut(200);
+        $('.arrow-left').attr('disabled', true);
+    } else {
+        $('.arrow-left').fadeIn(200);
+        $('.arrow-left').attr('disabled', false);
+    }
+    if (selected_type == 'klasse' || selected_type == 'klasse_preferences') {
+        $('#expand-btn').fadeIn(200);
+    } else {
+        $('#expand-btn').fadeOut(200);
+    }
     if (selected_type == 'klasse' && preferences) {
         selected_type = 'klasse_preferences';
     }
