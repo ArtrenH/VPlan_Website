@@ -452,7 +452,6 @@ input:focus+label {
 
 .icon_description {
     font-size: clamp(1rem, 2vw, 3rem);
-    margin-bottom: clamp(-1rem, -2vw, -3rem);
 }
 
 @media only screen and (min-width: 400px) and (max-width: 992px) {
@@ -460,9 +459,8 @@ input:focus+label {
         font-size: 10vw;
     }
     
-    #icon_description {
+    .icon_description {
         font-size: 4vw;
-        margin-bottom: -4vw;
     }
 }
 
