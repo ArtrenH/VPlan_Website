@@ -88,7 +88,7 @@
             <ul id="nav-bar" class="right">
                 <li><a href="{{ url_for('about') }}">Über uns</a></li>
                 {% if logged_in %}
-                <li class="preferences-nav"><a href="javascript:void(0);" class="dropdown-trigger" role="button" data-target="preferences-dropdown"><span class="material-symbols-outlined">settings</span></a></li>
+                <li class="preferences-nav"><a href="javascript:void(0);" class="dropdown-trigger-preferences" role="button" data-target="preferences-dropdown"><span class="material-symbols-outlined">settings</span></a></li>
                 <ul id='preferences-dropdown' class='dropdown-content'>
                     {% block preferences %}
                     <!--<li><a href="javascript:void(0);" data-target="todo" class="modal-trigger"><span class="material-symbols-outlined">star</span>Favoriten wählen</a></li>-->

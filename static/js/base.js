@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    var dropdown_elems = document.querySelectorAll('.dropdown-trigger');
+    var dropdown_elems = document.querySelectorAll('.dropdown-trigger-preferences');
     var dropdown_instances = M.Dropdown.init(dropdown_elems, {
         coverTrigger: false,
         alignment: 'right',

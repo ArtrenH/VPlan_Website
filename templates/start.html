@@ -5,16 +5,15 @@
 {% block links %}
 <script>
     function weiterleitung() {
-        var schulnummer = instances[0].getSelectedValues()[0];
+        var schulnummer = M.FormSelect.getInstance(document.getElementById('school-select')).getSelectedValues()[0];
         if (schulnummer == "") {
             schulnummer = "10001329";
         }
         window.location.href = "/" + schulnummer;
     }
-    var instances;
     document.addEventListener('DOMContentLoaded', function() {
-        var elems = document.querySelectorAll('select');
-        instances = M.FormSelect.init(elems, {});
+        var school_select_elems = document.querySelectorAll('select');
+        var school_select_instances = M.FormSelect.init(school_select_elems, {});
     });
 </script>
 {% endblock %}
@@ -26,7 +25,7 @@
     </div>
     <div class="col s12">
         <div class="input-field">
-            <select>
+            <select id="school-select">
                 {% for school in available_schools %}
                 <option value="{{ school[2] }}" data-icon="{{ url_for('static', filename='images/school_icons/'+school[0]+".png") }}" {% if loop.index == 0 %}selected{% endif %}>{{ school[1] }}</option>
                 {% endfor %}

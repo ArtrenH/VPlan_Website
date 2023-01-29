@@ -144,3 +144,21 @@ function togglePreferences() {
         selected_type = "klasse";
     }
 }
+
+let touchstartX = 0;
+let touchendX = 0;
+let min_travel_dst = window.innerWidth/3;
+    
+function checkDirection() {
+  if (touchendX < touchstartX && Math.abs(touchendX - touchstartX) > min_travel_dst) change_day(1);
+  if (touchendX > touchstartX && Math.abs(touchendX - touchstartX) > min_travel_dst) change_day(-1);
+}
+
+document.addEventListener('touchstart', e => {
+  touchstartX = e.changedTouches[0].screenX
+})
+
+document.addEventListener('touchend', e => {
+  touchendX = e.changedTouches[0].screenX
+  checkDirection()
+})
