@@ -49,7 +49,7 @@ function get_plan_url(url) {
         success: function(response) {
             $('.loaded_content').html(response);
             $([document.documentElement, document.body]).animate({
-                scrollTop: $(".loaded_content").offset().top
+                scrollTop: $(".loaded_content").offset().top-20
             }, 200);
             var collapsible_elems = document.querySelectorAll('.collapsible');
             var collapsible_instances = M.Collapsible.init(collapsible_elems, {});
@@ -86,6 +86,7 @@ function get_plan() {
     if (selected_type == 'klasse' && preferences) {
         selected_type = 'klasse_preferences';
     }
+    $('.loaded_content').css('min-height', '100vh');
     get_plan_url(`/${school_number}?date=${selected_date}&type=${selected_type}&value=${encodeURIComponent(selected_value)}`);
 }
 
