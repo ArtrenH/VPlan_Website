@@ -69,6 +69,7 @@ function get_plan_url(url) {
 }
 
 function get_plan() {
+    if(!selected_date || !selected_type) {return;}
     $('.floating-arrow').fadeIn(200);
     if(typeof available_dates[(available_dates.indexOf(selected_date)+1)] === 'undefined') {
         $('.arrow-right').fadeOut(200);
@@ -92,7 +93,7 @@ function get_plan() {
     if (selected_type == 'klasse' && preferences) {
         selected_type = 'klasse_preferences';
     }
-    $('.loaded_content').css('min-height', '100vh');
+    $('.loaded_content').css('min-height', 'calc(100vh - 20px)');
     get_plan_url(`/${school_number}?date=${selected_date}&type=${selected_type}&value=${encodeURIComponent(selected_value)}`);
 }
 
