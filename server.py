@@ -218,18 +218,16 @@ def api_response_json(school_number):
         return redirect(url_for('authorize_school', schulnummer=school_number))
     return api_response(school_number, return_json=True)
 
-@app.route("/settings", methods=["GET", "POST"])
+@app.route("/settings", methods=["POST"])
 @login_required
 def settings():
     tmp_user = get_user(current_user.get_id())
-    if request.method == "GET":
-        return json.dumps(tmp_user["settings"])
-    else:
-        # Preventing users from saving arbitrary data in their settings
-        user_settings = request.get_json()
-        new_settings = {}
-        new_settings["show_plan_toasts"] = bool(user_settings.get("show_plan_toasts", False))
-        users.update_one({'_id': ObjectId(current_user.get_id())}, {"$set": {'settings': new_settings}})
+    
+    # Preventing users from saving arbitrary data in their settings
+    user_settings = request.get_json()
+    new_settings = {}
+    new_settings["show_plan_toasts"] = bool(user_settings.get("show_plan_toasts", False))
+    users.update_one({'_id': ObjectId(current_user.get_id())}, {"$set": {'settings': new_settings}})
 
 @app.route("/preferences/<school_number>", methods=["GET", "POST"])
 @login_required
