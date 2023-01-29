@@ -68,6 +68,17 @@
             -webkit-font-feature-settings: 'liga';
             -webkit-font-smoothing: antialiased;
         }
+        {% if logged_in %}
+        :root {
+            --background_color: {{ py_user_settings.background_color }};
+            --accent_color: {{ py_user_settings.accent_color }};
+        }
+        {% else %}
+        :root {
+            --background_color: #121212;
+            --accent_color: #BB86FC;
+        }
+        {% endif %}
     </style>
 
     <!-- Compiled and minified JavaScript -->
@@ -115,11 +126,7 @@
                     <label for="class_select">Klassenwahl</label>
                 </div>
                 <label class="col s12" id="all_checkbox" style="display: none"><input type="checkbox" class="filled-in" onchange="$('.checkbox-grid input').attr('checked', this.checked);"><span>Alle checken</span></label>
-                <div class="col s12 checkbox-grid row">
-                    <!-- Checkbox grid -->
-                    <!-- Check all + Check none -->
-                    <p class="flow-text">Wähle eine Klasse, um für diese deine gewünschten Stunden einzustellen.</p>
-                </div>
+                <div class="col s12 checkbox-grid row"></div>
             </div>
         </div>
         <div class="modal-footer">
@@ -131,9 +138,17 @@
         <div class="modal-content">
             <h4>Einstellungen</h4>
             <div class="row">
+                <p class="col s12">Damit Änderungen an den Farben übernommen werden, muss die Seite neu geladen werden.</p>
                 <label class="col s12" id="show_plan_toasts">
                     <input type="checkbox" class="filled-in"><span>Lade- / Erfolgs-Toasts anzeigen</span>
                 </label>
+                <label class="col s12" id="background_color">
+                    <input type="color" class="filled-in"><span>Hintergrundfarbe</span>
+                </label>
+                <label class="col s12" id="accent_color">
+                    <input type="color" class="filled-in"><span>Akzentfarbe</span>
+                </label>
+                <button class="modal-selection-btn btn dp01 waves-effect col s12" onclick="USER_SETTINGS={};load_settings();" id="reset-settings-btn">Einstellungen zurücksetzen</button>
             </div>
         </div>
         <div class="modal-footer">

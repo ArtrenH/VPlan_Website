@@ -70,11 +70,13 @@ function save_preferences() {
 
 function save_settings() {
     USER_SETTINGS = {
-        "show_plan_toasts": document.querySelector('#show_plan_toasts input').checked
+        "show_plan_toasts": document.querySelector('#show_plan_toasts input').checked,
+        "background_color": document.querySelector('#background_color input').value,
+        "accent_color": document.querySelector('#accent_color input').value
     };
     $.ajax({
-        type: 'GET',
-        url: `/settings`,
+        type: 'POST',
+        url: '/settings',
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(USER_SETTINGS),
         success: function(response) {
@@ -87,6 +89,12 @@ function save_settings() {
             M.toast({text: 'Beim speichern der Einstellungen ist ein Fehler aufgetreten!', displayLength: 2000, classes:"error-toast"});
         }
     });
+}
+
+function load_settings() {
+    document.querySelector('#show_plan_toasts input').checked = get(USER_SETTINGS, "show_plan_toasts", false);
+    document.querySelector('#background_color input').value = get(USER_SETTINGS, "background_color", "#121212");
+    document.querySelector('#accent_color input').value = get(USER_SETTINGS, "accent_color", "#BB86FC");
 }
 
 navigator.serviceWorker && navigator.serviceWorker.register("/sw.js").then(function(registration) {});
@@ -151,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var settings_modal_instances = M.Modal.init(settings_modal_elems, {
         onOpenStart: function() {
             settings_clicked_finished = false;
-            document.querySelector('#show_plan_toasts input').checked = get(USER_SETTINGS, "show_plan_toasts", false);
+            load_settings();
         },
         onCloseStart: function(elem) {
             elem.scrollTo(0, 0);

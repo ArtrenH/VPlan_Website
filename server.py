@@ -2,19 +2,18 @@
 
 import json
 from bson import ObjectId
-from flask import Flask, redirect, make_response, url_for, request, jsonify
+from flask import redirect, make_response, url_for, request, jsonify
 from methods import Plan_Extractor, MetaExtractor, extract_metadata, get_default_date
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable, sort_klassen
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
 from flask_compress import Compress
 from flask_wtf.csrf import CSRFProtect
 import os
-import urllib
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from modules.utils import render_template_wrapper, User, AddStaticFileHashFlask, get_user, set_user_preferences, users
+from modules.utils import render_template_wrapper, User, AddStaticFileHashFlask, get_user, set_user_preferences, users, update_settings
 from modules.authorization import authorization
 
 app = AddStaticFileHashFlask(__name__)
@@ -221,13 +220,9 @@ def api_response_json(school_number):
 @app.route("/settings", methods=["POST"])
 @login_required
 def settings():
-    tmp_user = get_user(current_user.get_id())
-    
     # Preventing users from saving arbitrary data in their settings
     user_settings = request.get_json()
-    new_settings = {}
-    new_settings["show_plan_toasts"] = bool(user_settings.get("show_plan_toasts", False))
-    users.update_one({'_id': ObjectId(current_user.get_id())}, {"$set": {'settings': new_settings}})
+    return update_settings(user_settings)
 
 @app.route("/preferences/<school_number>", methods=["GET", "POST"])
 @login_required

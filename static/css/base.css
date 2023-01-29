@@ -32,7 +32,7 @@
 }
 
 *::-webkit-scrollbar-thumb {
-    background-color: rgb(30, 30, 30);
+    background-color: #1e1e1e;
     border-radius: 10px;
     border: 4px solid #121212;
 }
@@ -46,7 +46,7 @@
 }  
 
 body {
-    background: #121212;
+    background: var(--background_color);
     color: white;
     margin-right: calc(100% - 100vw);
     min-height: 100vh;
@@ -172,25 +172,25 @@ nav img {
 }
 
 button.changed {
-    outline:#BB86FC solid 7px !important;
+    outline:var(--accent_color) solid 7px !important;
     border-radius: 1px;
     outline-offset: -1px;
 }
 
 .changed button {
-    outline:#BB86FC solid 7px !important;
+    outline:var(--accent_color) solid 7px !important;
     border-radius: 1px;
     outline-offset: -1px;
 }
 
 div:not(.link).changed {
-    outline:#BB86FC solid 7px !important;
+    outline:var(--accent_color) solid 7px !important;
     border-radius: 1px;
     outline-offset: -1px;
 }
 
 .changed {
-    background-color: #BB86FC !important;
+    background-color: var(--accent_color) !important;
 }
 
 .link {
@@ -258,7 +258,7 @@ button:disabled {
         outline: rgba(255, 255, 255, 0.08) solid 6px !important;
     }
     .changed:focus {
-        outline:#BB86FC solid 7px !important;
+        outline:var(--accent_color) solid 7px !important;
     }
 }
 
@@ -355,7 +355,7 @@ button:disabled {
     aspect-ratio: 1;
     border: none;
     border-radius: 100%;
-    background-color: #BB86FC;
+    background-color: var(--accent_color);
     transition: background-color 200ms ease;
     display: flex;
     justify-content: center;
@@ -370,7 +370,7 @@ button:disabled {
 }
 
 .floating-arrow:hover, .floating-arrow:active, .floating-arrow:focus {
-    background-color: #BB86FC;
+    background-color: var(--accent_color);
 }
 
 .arrow-left {
@@ -387,16 +387,16 @@ button:disabled {
 }
 
 .btn, .btn:hover, .btn:active, .btn:focus {
-    background: #BB86FC;
+    background: var(--accent_color);
 }
 
 input:focus {
-    border-color: #BB86FC !important;
-    box-shadow: 0 1px 0 0 #BB86FC !important
+    border-color: var(--accent_color) !important;
+    box-shadow: 0 1px 0 0 var(--accent_color) !important
 }
 
 input:focus+label {
-    color: #BB86FC !important;
+    color: var(--accent_color) !important;
 }
 
 .error-popup {
@@ -501,7 +501,7 @@ input:focus+label {
 }
 
 .datepicker-date-display, .datepicker-table td.is-selected, .month-prev:focus, .month-next:focus {
-    background-color: #BB86FC !important;
+    background-color: var(--accent_color) !important;
 }
 
 .datepicker-day-button:focus {
@@ -513,7 +513,7 @@ input:focus+label {
 }
 
 .datepicker-table td.is-today:not(.is-selected), .datepicker-cancel, .datepicker-done {
-    color: #BB86FC !important;
+    color: var(--accent_color) !important;
 }
 
 .modal-selection-btn {
@@ -562,7 +562,7 @@ input:focus+label {
 }
 
 .input-field .prefix.active {
-    color: #BB86FC;
+    color: var(--accent_color);
 }
 
 input:focus.autocomplete {
@@ -570,7 +570,7 @@ input:focus.autocomplete {
 }
 
 .highlight {
-    color: #BB86FC !important;
+    color: var(--accent_color) !important;
 }
 
 .dropdown-content li:hover, .dropdown-content li.active {
@@ -652,8 +652,8 @@ input:focus.autocomplete {
 }
 
 [type=checkbox].filled-in:checked+span:not(.lever):after {
-    border: 2px solid #BB86FC;
-    background-color: #BB86FC;
+    border: 2px solid var(--accent_color);
+    background-color: var(--accent_color);
 }
 
 [type=checkbox].filled-in:checked+span:not(.lever):before {
@@ -667,4 +667,39 @@ input:focus.autocomplete {
 
 .checkbox-grid .flow-text {
     margin-top: 0;
+}
+
+[type=color] {
+    padding: 0 0;
+    width: 20px;
+    height: 20px;
+    background: transparent;
+    border: 2px solid #5a5a5a;
+    border-radius: 2px;
+}
+
+[type="color"]::-webkit-color-swatch-wrapper {
+	padding: 0;
+}
+[type="color"]::-webkit-color-swatch {
+	border: none;
+}
+
+[type=color]+span {
+    position: relative;
+    padding-left: 15px;
+    cursor: pointer;
+    display: inline-block;
+    height: 25px;
+    line-height: 25px;
+    font-size: 1rem;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#reset-settings-btn {
+    margin-top: 20px;
+    margin-bottom: -20px;
 }

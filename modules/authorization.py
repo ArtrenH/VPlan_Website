@@ -2,7 +2,7 @@ from flask import Blueprint, request, redirect, url_for, session
 from flask_login import login_required, current_user, login_user, logout_user
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from modules.utils import render_template_wrapper, User, users
+from modules.utils import render_template_wrapper, User, users, update_settings
 import time
 
 authorization = Blueprint('authorization', __name__, template_folder='templates')
@@ -54,6 +54,7 @@ def signup():
     tmp_user = User(str(tmp_id.inserted_id))
     login_user(tmp_user)
     session.permanent = True
+    update_settings({})
     return redirect(url_for('index'))
 
 @authorization.route('/logout')
