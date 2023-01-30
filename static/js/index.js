@@ -136,6 +136,8 @@ document.addEventListener('DOMContentLoaded', function() {
             selected_value = teacher_kuerzel_map[option];
             get_plan();
             $('#teacher-picker-modal .modal-close:not(.dp01)').click();
+            $('#teacher-picker-modal input#autocomplete-input').val('');
+            M.updateTextFields()
         }
     });
 });

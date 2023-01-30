@@ -103,7 +103,7 @@ function load_settings() {
 
 navigator.serviceWorker && navigator.serviceWorker.register("/sw.js").then(function(registration) {});
 document.addEventListener('DOMContentLoaded', function() {
-    window.M.updateTextFields()
+    M.updateTextFields();
     if (typeof school_number !== 'undefined') {
         $.ajax({
             type: 'GET',
