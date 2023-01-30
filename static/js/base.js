@@ -19,7 +19,7 @@ function reload_preferences(response) {
     $('#all_checkbox').css('display', 'block');
     $('.checkbox-grid').html('');
     for (const group of $.parseJSON(response)) {
-        let checkbox_elem = `<label class="col s12 m6 l4"><input id="${group[0]}" type="checkbox" class="filled-in" ${group[2] ? "checked=\"checked\"" : ""}><span>${group[0]} ${group[1]}</span></label>`;
+        let checkbox_elem = `<label class="col s12 m6 l4 xl3"><input id="${group[0]}" type="checkbox" class="filled-in" ${group[2] ? "checked=\"checked\"" : ""}><span>${group[0]} ${group[1]}</span></label>`;
         $('.checkbox-grid').append(checkbox_elem);
     }
 }
