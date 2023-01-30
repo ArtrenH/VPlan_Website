@@ -2,7 +2,7 @@
 
 import json
 from bson import ObjectId
-from flask import redirect, make_response, url_for, request, jsonify
+from flask import redirect, make_response, send_from_directory, url_for, request, jsonify
 from methods import Plan_Extractor, MetaExtractor, extract_metadata, get_default_date
 from vplan_utils import add_spacers, remove_duplicates, convert_date_readable, sort_klassen
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
@@ -276,9 +276,7 @@ def sponsors():
 
 @app.route('/sw.js')
 def service_worker():
-    response = make_response("""self.addEventListener ("fetch", function(event) {});""", 200)
-    response.mimetype = "application/javascript"
-    return response
+    return send_from_directory("static", "js/sw.js")
 
 @app.route('/robots.txt')
 def robots():
