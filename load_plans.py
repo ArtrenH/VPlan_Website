@@ -8,6 +8,7 @@ import os
 from methods import DateExtractor, MetaExtractor
 from vplan_utils import sort_klassen
 
+
 class PlanLoader():
     def __init__(self, school_number):
         self.school_number = school_number
@@ -63,10 +64,22 @@ class PlanLoader():
                 self.aktualisiere_files()
             else: print("no change")
             time.sleep(30)
+    
+    def load_dates(self):
+        def format_date(filename):
+            date_str = filename[6:-4]
+            return [
+                date_str,
+                f"{date_str[6:8]}.{date_str[4:6]}.{date_str[:4]}"
+            ]
+        filenames = [format_date(filename) for filename in os.listdir(self.data_folder) if filename.startswith("PlanKl") and filename.endswith(".xml")]
+        filenames = sorted(filenames, key=lambda x: x[0])
+        return filenames
 
     def aktualisiere_files(self):
         date_data = DateExtractor(self.school_number)
         dates = date_data.read_data()
+        all_dates = self.load_dates()
         other_data = MetaExtractor(self.school_number)
         klassen = other_data.course_list()
         klassen_grouped = sort_klassen(klassen)
@@ -75,6 +88,7 @@ class PlanLoader():
         default_times = other_data.default_times()
         data = {
             "dates": dates,
+            "all_dates": all_dates,
             "klassen": klassen,
             "klassen_grouped": klassen_grouped,
             "teachers": teachers,
