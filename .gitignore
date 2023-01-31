@@ -165,3 +165,5 @@ creds.json
 data
 static/images/sponsors
 .idea
+
+*.xml
