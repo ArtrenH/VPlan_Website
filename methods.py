@@ -212,10 +212,13 @@ class Plan_Extractor():
         return (cur_lesson+1) // 2
 
     def get_week(self):
+        week_tag = self.day_data.find("woche")
+        if not week_tag:
+            return ""
         return {
             "1": "A",
             "2": "B"
-        }.get(self.day_data.find("woche").text.strip(), "?")
+        }.get(week_tag.text.strip(), "?")
 
 
 def extract_metadata(school_num):
