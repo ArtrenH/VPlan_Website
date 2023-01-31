@@ -1,3 +1,10 @@
+// Old Service worker did some questionable stuff, removing it with this
+navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+        registration.unregister()
+    } 
+})
+
 function get(object, key, default_value) {
     var result = object[key];
     return (typeof result !== "undefined") ? result : default_value;

@@ -1,6 +1,6 @@
 // https://developer.chrome.com/docs/workbox/caching-strategies-overview/
 // Establish a cache name
-const cacheName = 'Better_VPlan_cache_v1';
+/*const cacheName = 'Better_VPlan_cache_v1';
 
 self.addEventListener('fetch', (event) => {
     // Check if this is a navigation request
@@ -20,4 +20,6 @@ self.addEventListener('fetch', (event) => {
     } else {
         return;
     }
-});
+});*/
+
+self.addEventListener ("fetch", function(event) {});
