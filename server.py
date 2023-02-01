@@ -163,7 +163,7 @@ def api_response(school_number, return_json=False):
         plan_data = Plan_Extractor(school_number, date)
         meta_data = extract_metadata(school_number)
         rooms = plan_data.free_rooms(meta_data["rooms"])
-        timestamp = plan_data.get_timestamp()
+        timestamp = convert_date_readable(plan_data.get_timestamp())
         default_lesson = plan_data.current_lesson()
         ctx_data = {"date": convert_date_readable(date), "lessons": rooms, "timestamp": timestamp, "default_lesson": default_lesson}
         if return_json:
@@ -199,7 +199,7 @@ def api_response(school_number, return_json=False):
         "date": convert_date_readable(date),
         "plan": add_spacers(remove_duplicates(data["lessons"])),
         "zusatzinfo": data["zusatzinfo"],
-        "timestamp": plan_data.get_timestamp(),
+        "timestamp": convert_date_readable(plan_data.get_timestamp()),
         "week": plan_data.get_week()
     }
     if return_json:

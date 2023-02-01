@@ -94,9 +94,16 @@ def remove_duplicates(vplan_data):
     return sorted_data
 
 def convert_date_readable(date):
-    year = int(date[:4])
-    month = int(date[4:6])
-    day = int(date[6:])
+    time = ""
+    try:
+        year = int(date[:4])
+        month = int(date[4:6])
+        day = int(date[6:])
+    except Exception:
+        year = int(date[6:10])
+        month = int(date[3:5])
+        day = int(date[:2])
+        time = " - " + date[12:17]
     date_string = datetime.datetime(year, month, day).strftime("%a %d. %B")
     translation_arr = [
         # Weekdays
@@ -118,7 +125,7 @@ def convert_date_readable(date):
     ]
     for translation in translation_arr:
         date_string = date_string.replace(translation[0], translation[1])
-    return date_string
+    return date_string + time
 
 def sort_klassen(klassen_original):
     klassen = list(klassen_original)

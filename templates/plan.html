@@ -2,7 +2,6 @@
     <h4 class="headline">{% if plan_type %}
         Plan für {{ plan_type }} <span class='custom_badge'>{{ plan_value }}</span> am <span class='custom_badge'>{{ date }}</span> ({{ week }}-Woche)
     {% else %}{% block title %}Startseite{% endblock %}{% endif %}</h4>
-    <span class="col s12">Stand der Daten: {{ timestamp }}</span>
     {% for lesson in plan %}
         {% if lesson.spacer %}
         <div class="col s12"></div>
@@ -76,5 +75,6 @@
         {% endfor %}
         </p>
     </div>
+    <span class="col s12 timestamp_data">Stand der Daten: <span class='custom_badge'>{{ timestamp }}</span></span>
     <div class="col s12 bottom-spacer"></div>
 </div>
