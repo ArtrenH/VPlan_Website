@@ -103,7 +103,7 @@ def convert_date_readable(date):
         year = int(date[6:10])
         month = int(date[3:5])
         day = int(date[:2])
-        time = " - " + date[12:17]
+        time = " - " + date[12:17] + " Uhr"
     date_string = datetime.datetime(year, month, day).strftime("%a %d. %B")
     translation_arr = [
         # Weekdays
