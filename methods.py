@@ -94,7 +94,7 @@ class Plan_Extractor():
         teacher_lessons = []
         teacher_name = None
         if os.path.exists(f"data/{self.school_num}_teachers.json"):
-            with open(f"data/{self.school_num}_teachers.json", "r", ensure_ascii=False) as f:
+            with open(f"data/{self.school_num}_teachers.json", "r", encoding='utf-8') as f:
                 teacher_name = json.load(f).get(tag, {}).get("name", None)
         class_plans = self.day_data.find_all("Kl")
         for class_plan in class_plans:
