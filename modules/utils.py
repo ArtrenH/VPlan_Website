@@ -8,7 +8,7 @@ import contextlib
 import hashlib
 import json
 
-from flask import Flask, make_response, render_template
+from flask import Flask, make_response, render_template, redirect, url_for
 from flask_login import UserMixin, current_user
 
 from dotenv import load_dotenv
@@ -112,3 +112,17 @@ def get_user(user_id):
 def set_user_preferences(user_id, preferences):
     users.update_one({'_id': ObjectId(user_id)}, {'$set': {'preferences': preferences}})
     return "Success"
+
+
+# DOESNT WORK!! DON'T USE!!
+# nvm: could be that it works and that the errors had another reason but this wrapper currently can't work for all endpoints (for example not for handle_plan) so we just leave it here for now
+# note: it seems to work for the api endpoints (json+rendered html) but is currently not included
+def check_authentication(func):
+    def wrapper(**kwargs):
+        school_number = kwargs.get("school_number")
+        tmp_user = get_user(current_user.get_id())
+        if not (school_number in tmp_user.get("authorized_schools", []) or tmp_user.get("admin", False)):
+            return redirect(url_for('authorize_school', schulnummer=school_number))
+        return func(**kwargs)
+    wrapper.__name__ = func.__name__
+    return wrapper

@@ -92,6 +92,10 @@ class Plan_Extractor():
     
     def teacher_lessons(self, tag):
         teacher_lessons = []
+        teacher_name = None
+        if os.path.exists(f"data/{self.school_num}_teachers.json"):
+            with open(f"data/{self.school_num}_teachers.json", "r") as f:
+                teacher_name = json.load(f).get(tag, {}).get("name", None)
         class_plans = self.day_data.find_all("Kl")
         for class_plan in class_plans:
             class_name = class_plan.find("Kurz").text.strip()
@@ -100,6 +104,8 @@ class Plan_Extractor():
                 teacher = class_lesson.find("Le").text.strip()
                 info = class_lesson.find("If").text.strip()
                 if teacher == tag or tag in info:
+                    teacher_lessons.append({**{"class": class_name}, **extract_data(class_lesson), "time_data": find_times(self.day_data, class_name)})
+                if teacher_name and teacher_name in info:
                     teacher_lessons.append({**{"class": class_name}, **extract_data(class_lesson), "time_data": find_times(self.day_data, class_name)})
         return self.render(teacher_lessons)
     

@@ -82,46 +82,46 @@ def schulname(schulname):
         #return {"error": "no school with this name found"}
     return redirect("/"+ cur_schulnummer[0], code=302)
 
-@app.route('/authorize/<schulnummer>', methods=['GET', 'POST'])
+@app.route('/authorize/<school_number>', methods=['GET', 'POST'])
 @login_required
-def authorize_school(schulnummer):
+def authorize_school(school_number):
     with open("creds.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         try:
-            school_creds = data[schulnummer]
+            school_creds = data[school_number]
         except Exception:
-            return render_template_wrapper('authorize_school', schulnummer=schulnummer, errors="Die angegebene Schule konnte nicht gefunden werden. Bitte überprüfe die Schulnummer und versuche es erneut. (Falls deine Schule im vorigen Schritt nicht zur Auswahl stand, schreib uns auf Discord)")
+            return render_template_wrapper('authorize_school', schulnummer=school_number, errors="Die angegebene Schule konnte nicht gefunden werden. Bitte überprüfe die Schulnummer und versuche es erneut. (Falls deine Schule im vorigen Schritt nicht zur Auswahl stand, schreib uns auf Discord)")
     
         if request.method != 'POST':
-            return render_template_wrapper('authorize_school', schulnummer=schulnummer, schulname=school_creds["display_name"])
+            return render_template_wrapper('authorize_school', schulnummer=school_number, schulname=school_creds["display_name"])
 
         username = request.form.get('username')
         pw = request.form.get('pw')
         if school_creds["username"] == username and school_creds["password"] == pw:
             tmp_user = get_user(current_user.get_id())
             tmp_authorized_schools = tmp_user.get("authorized_schools", [])
-            if schulnummer not in tmp_authorized_schools:
-                tmp_authorized_schools.append(schulnummer)
+            if school_number not in tmp_authorized_schools:
+                tmp_authorized_schools.append(school_number)
                 users.update_one({'_id': ObjectId(current_user.get_id())}, {"$set": {'authorized_schools': tmp_authorized_schools}})
-            return redirect(url_for('handle_plan', schulnummer=schulnummer))
+            return redirect(url_for('handle_plan', schulnummer=school_number))
         else:
-            return render_template_wrapper('authorize_school', schulnummer=schulnummer, errors="Benutzername oder Passwort waren falsch! Bitte versuch es erneut.")
+            return render_template_wrapper('authorize_school', schulnummer=school_number, errors="Benutzername oder Passwort waren falsch! Bitte versuch es erneut.")
 
 # homepage for a school
-@app.route('/<schulnummer>')
+@app.route('/<school_number>')
 @login_required
-def handle_plan(schulnummer):
+def handle_plan(school_number):
     with open("creds.json", "r", encoding="utf-8") as f:
         creds = json.load(f)
-    if schulnummer not in creds:
+    if school_number not in creds:
         return "Schule nicht gefunden!"
-    if not schulnummer.isdigit():
-        return redirect("/name/" + schulnummer, code=302)
+    if not school_number.isdigit():
+        return redirect("/name/" + school_number, code=302)
     tmp_user = get_user(current_user.get_id())
-    if not (schulnummer in tmp_user.get("authorized_schools", []) or tmp_user.get("admin", False)):
-        return redirect(url_for('authorize_school', schulnummer=schulnummer))
+    if not (school_number in tmp_user.get("authorized_schools", []) or tmp_user.get("admin", False)):
+        return redirect(url_for('authorize_school', schulnummer=school_number))
     # data for selection
-    meta_data = extract_metadata(schulnummer)
+    meta_data = extract_metadata(school_number)
     default_date = get_default_date([elem[0] for elem in meta_data["dates"]])
 
     # sharable links that automatically load the plan
@@ -132,7 +132,7 @@ def handle_plan(schulnummer):
         if len(new_string_args) > 0:
             return render_template_wrapper('index',
                 **meta_data,
-                school_number=schulnummer, default_date=default_date,
+                school_number=school_number, default_date=default_date,
                 var_vorangezeigt="true", var_angefragt_values=new_string_args)
         else:
             no_args = True
@@ -140,7 +140,7 @@ def handle_plan(schulnummer):
     if len(request.args) == 0 or no_args:
         return render_template_wrapper('index',
             **meta_data,
-            school_number=schulnummer, default_date=default_date,
+            school_number=school_number, default_date=default_date,
             var_vorangezeigt="false", var_angefragt_link="")
     return "<div class='row'><p class='flow-text col s12'>Bitte wähle einen Lehrer, einen Raum, eine Klasse oder den \"Freie Räume\"-Button aus um einen Plan zu sehen.</p></div>"
 
