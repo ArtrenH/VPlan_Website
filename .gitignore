@@ -167,3 +167,6 @@ static/images/sponsors
 .idea
 
 *.xml
+
+Pipfile
+Pipfile.lock
