@@ -127,6 +127,9 @@ def convert_date_readable(date):
         date_string = date_string.replace(translation[0], translation[1])
     return date_string + time
 
+
+
+# Sorting cache data
 def sort_klassen(klassen_original):
     klassen = list(klassen_original)
     groups = []
