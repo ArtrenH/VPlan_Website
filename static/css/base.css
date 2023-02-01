@@ -138,6 +138,12 @@ nav img {
     font-size: 12px;
 }
 
+@media only screen and (max-width: 601px) {
+    .timestamp_data {
+        font-size: 15px !important;
+    }
+}
+
 .desktop-view .lesson-time {
     display: flex;
     justify-content: center;
@@ -148,7 +154,7 @@ nav img {
     font-size: 26px;
 }
 
-.desktop-view .lesson-time .time {
+.desktop-view .lesson-time .time, .timestamp_data {
     font-size: 20px;
 }
 
@@ -699,7 +705,19 @@ input:focus.autocomplete {
     user-select: none;
 }
 
-#reset-settings-btn {
+#settings-btn-wrapper {
     margin-top: 20px;
-    margin-bottom: -20px;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.datepicker-modal .is-disabled button {
+    color: rgba(255, 255, 255, 0.1) !important;
+}
+
+#delete-account-btn {
+    background: hsl(0, 95%, 66%);
+    margin-top: 10px;
 }

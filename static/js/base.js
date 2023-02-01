@@ -1,3 +1,10 @@
+// Old Service worker did some questionable stuff, removing it with this
+navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+        registration.unregister()
+    } 
+})
+
 function get(object, key, default_value) {
     var result = object[key];
     return (typeof result !== "undefined") ? result : default_value;
@@ -75,9 +82,12 @@ function save_preferences() {
 function save_settings() {
     USER_SETTINGS = {
         "show_plan_toasts": document.querySelector('#show_plan_toasts input').checked,
+        "day_switch_keys": document.querySelector('#day_switch_keys input').checked,
         "background_color": document.querySelector('#background_color input').value,
         "accent_color": document.querySelector('#accent_color input').value
     };
+    document.documentElement.style.setProperty('--background_color', USER_SETTINGS['background_color']);
+    document.documentElement.style.setProperty('--accent_color', USER_SETTINGS['accent_color']);
     $.ajax({
         type: 'POST',
         url: '/settings',
@@ -97,6 +107,7 @@ function save_settings() {
 
 function load_settings() {
     document.querySelector('#show_plan_toasts input').checked = get(USER_SETTINGS, "show_plan_toasts", false);
+    document.querySelector('#day_switch_keys input').checked = get(USER_SETTINGS, "day_switch_keys", true);
     document.querySelector('#background_color input').value = get(USER_SETTINGS, "background_color", "#121212");
     document.querySelector('#accent_color input').value = get(USER_SETTINGS, "accent_color", "#BB86FC");
 }
@@ -169,3 +180,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+function togglePasswordVisibility() {
+    let x = document.getElementById("pw");
+    if (x.type === "password") {
+        x.type = "text";
+    } else {
+        x.type = "password";
+    }
+}
+
+function delete_account() {
+    if (confirm("Willst du wirklich deinen Account löschen?")) {
+        $.ajax({
+            type: 'DELETE',
+            url: `/account`,
+            dataType: 'html',
+            success: function(response) {
+                if ($.parseJSON(response)["success"]) {
+                    M.toast({text: 'Account erfolgreich gelöscht!', classes:"success-toast", displayLength: 1000});
+                    setTimeout(function (){
+                        window.location.href = "/";
+                    }, 1000);
+                } else {
+                    M.toast({text: 'Beim löschen des Accounts ist ein Fehler aufgetreten!', displayLength: 2000, classes:"error-toast"});
+                }
+            },
+            error: function() {
+                M.toast({text: 'Beim löschen des Accounts ist ein Fehler aufgetreten!', displayLength: 2000, classes:"error-toast"});
+            }
+        });
+    }
+}

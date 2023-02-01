@@ -126,6 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return !available_dates.includes(`${date.getFullYear()}${zeroPad(date.getMonth()+1, 2)}${zeroPad(date.getDate(), 2)}`);
         }
     });
+    $('.datepicker-cancel').remove();
     datepicker_instance = datepicker_instances[0];
     var autocomplete_elems = document.querySelectorAll('.autocomplete');
     var autocomplete_instances = M.Autocomplete.init(autocomplete_elems, {
@@ -157,7 +158,7 @@ function togglePreferences() {
 
 let touchstartX = 0;
 let touchendX = 0;
-let min_travel_dst = window.innerWidth/3;
+let min_travel_dst = window.innerWidth/4;
     
 function checkDirection() {
   if (touchendX < touchstartX && Math.abs(touchendX - touchstartX) > min_travel_dst) change_day(1);
@@ -172,3 +173,14 @@ document.addEventListener('touchend', e => {
   touchendX = e.changedTouches[0].screenX
   checkDirection()
 })
+
+$(document).keydown(function(e){
+    if (e.which == 37 && get(USER_SETTINGS, "day_switch_keys", true)) { 
+        change_day(-1);
+        return false;
+    }
+    if (e.which == 39 && get(USER_SETTINGS, "day_switch_keys", true)) { 
+        change_day(1);
+        return false;
+    }
+});

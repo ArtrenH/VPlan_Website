@@ -68,17 +68,11 @@
             -webkit-font-feature-settings: 'liga';
             -webkit-font-smoothing: antialiased;
         }
-        {% if logged_in %}
+        
         :root {
-            --background_color: {{ py_user_settings.background_color }};
-            --accent_color: {{ py_user_settings.accent_color }};
+            --background_color: {{ py_user_settings.background_color if py_user_settings.background_color else '#121212' }};
+            --accent_color: {{ py_user_settings.accent_color if py_user_settings.background_color else '#BB86FC' }};
         }
-        {% else %}
-        :root {
-            --background_color: #121212;
-            --accent_color: #BB86FC;
-        }
-        {% endif %}
     </style>
 
     <!-- Compiled and minified JavaScript -->
@@ -138,9 +132,11 @@
         <div class="modal-content">
             <h4>Einstellungen</h4>
             <div class="row">
-                <p class="col s12">Damit Änderungen an den Farben übernommen werden, muss die Seite neu geladen werden.</p>
                 <label class="col s12" id="show_plan_toasts">
                     <input type="checkbox" class="filled-in"><span>Lade- / Erfolgs-Toasts anzeigen</span>
+                </label>
+                <label class="col s12" id="day_switch_keys">
+                    <input type="checkbox" class="filled-in"><span>Pfeiltasten (Keyboard) zum Tag wechseln nutzen</span>
                 </label>
                 <label class="col s12" id="background_color">
                     <input type="color" class="filled-in"><span>Hintergrundfarbe</span>
@@ -148,7 +144,11 @@
                 <label class="col s12" id="accent_color">
                     <input type="color" class="filled-in"><span>Akzentfarbe</span>
                 </label>
-                <button class="modal-selection-btn btn dp01 waves-effect col s12" onclick="USER_SETTINGS={};load_settings();" id="reset-settings-btn">Einstellungen zurücksetzen</button>
+                <div class="col s12" id="settings-btn-wrapper">
+                    <button class="modal-selection-btn btn dp01 waves-effect" onclick="USER_SETTINGS={};load_settings();" id="reset-settings-btn">Einstellungen zurücksetzen</button>
+                    <button class="modal-selection-btn btn dp01 waves-effect" onclick="window.location.href='/account'" id="saved-data-btn">Gespeicherte Daten einsehen</button>
+                </div>
+                <button class="modal-selection-btn btn waves-effect col s12" onclick="delete_account()" id="delete-account-btn">Account löschen</button>
             </div>
         </div>
         <div class="modal-footer">

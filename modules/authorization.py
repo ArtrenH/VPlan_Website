@@ -1,8 +1,9 @@
+from bson import ObjectId
 from flask import Blueprint, request, redirect, url_for, session
 from flask_login import login_required, current_user, login_user, logout_user
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from modules.utils import render_template_wrapper, User, users, update_settings
+from modules.utils import render_template_wrapper, User, users, update_settings, get_user
 import time
 
 authorization = Blueprint('authorization', __name__, template_folder='templates')
@@ -61,3 +62,19 @@ def signup():
 def logout():
     logout_user()
     return redirect(url_for('authorization.login'))
+
+@authorization.route('/account', methods=['GET', 'DELETE'])
+@login_required
+def account():
+    if request.method == "GET":
+        tmp_user = get_user(current_user.get_id())
+        return {
+                'nickname': tmp_user['nickname'], 
+                'authorized_schools': tmp_user['authorized_schools'], 
+                'preferences': tmp_user['preferences'], 
+                'settings': tmp_user['settings'], 
+                'time_joined': tmp_user['time_joined']
+            }
+    else:
+        x = users.delete_one({'_id': ObjectId(current_user.get_id())})
+        return {"success": True} if x.deleted_count == 1 else {"success": False}

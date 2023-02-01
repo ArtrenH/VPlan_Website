@@ -23,6 +23,10 @@ def update_settings(user_settings):
         new_settings["show_plan_toasts"] = bool(user_settings.get("show_plan_toasts", False))
     except Exception:
         return make_response('Invalid value for show_plan_toasts', 400)
+    try:
+        new_settings["day_switch_keys"] = bool(user_settings.get("day_switch_keys", True))
+    except Exception:
+        return make_response('Invalid value for day_switch_keys', 400)
     new_settings["background_color"] = user_settings.get("background_color", "#121212")
     if not re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', new_settings["background_color"]):
         return make_response('Invalid Color for background_color', 400)
