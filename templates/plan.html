@@ -2,7 +2,6 @@
     <h4 class="headline">{% if plan_type %}
         Plan für {{ plan_type }} <span class='custom_badge'>{{ plan_value }}</span> am <span class='custom_badge'>{{ date }}</span> ({{ week }}-Woche)
     {% else %}{% block title %}Startseite{% endblock %}{% endif %}</h4>
-    <span class="col s12">Stand der Daten: {{ timestamp }}</span>
     {% if plan|length == 0 %}
         <div class="col s12">
             <b>Heute keine Stunden für {{ plan_type }} {{ plan_value }}.</b> 
