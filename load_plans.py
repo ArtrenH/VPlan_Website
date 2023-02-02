@@ -31,6 +31,8 @@ class PlanLoader():
         data_url = f"https://{self.api_server}/{self.school_number}/mobil/_phpmob/vpdir.php"
         headers["content-type"] = f"multipart/form-data; boundary=-------Embt-Boundary--{hex_num}"
         r = requests.post(data_url, headers=headers, data=data)
+        if r.status_code != 200:
+            return False
         if r.text != self.plan_txt:
             self.plan_txt = r.text
             return True
