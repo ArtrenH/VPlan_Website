@@ -78,7 +78,7 @@ def schulname(schulname):
         creds = json.load(f)
     cur_schulnummer = [creds[elem]["school_number"] for elem in creds if creds[elem]["school_name"] == schulname]
     if len(cur_schulnummer) == 0:
-        return redirect(url_for('handle_plan', schulnummer="10001329"))
+        return redirect(url_for('handle_plan', school_number="10001329"))
         #return {"error": "no school with this name found"}
     return redirect("/"+ cur_schulnummer[0], code=302)
 
@@ -103,7 +103,7 @@ def authorize_school(school_number):
             if school_number not in tmp_authorized_schools:
                 tmp_authorized_schools.append(school_number)
                 users.update_one({'_id': ObjectId(current_user.get_id())}, {"$set": {'authorized_schools': tmp_authorized_schools}})
-            return redirect(url_for('handle_plan', schulnummer=school_number))
+            return redirect(url_for('handle_plan', school_number=school_number))
         else:
             return render_template_wrapper('authorize_school', schulnummer=school_number, errors="Benutzername oder Passwort waren falsch! Bitte versuch es erneut.")
 
@@ -119,7 +119,7 @@ def handle_plan(school_number):
         return redirect("/name/" + school_number, code=302)
     tmp_user = get_user(current_user.get_id())
     if not (school_number in tmp_user.get("authorized_schools", []) or tmp_user.get("admin", False)):
-        return redirect(url_for('authorize_school', schulnummer=school_number))
+        return redirect(url_for('authorize_school', school_number=school_number))
     # data for selection
     meta_data = extract_metadata(school_number)
     default_date = get_default_date([elem[0] for elem in meta_data["dates"]])
