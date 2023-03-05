@@ -51,6 +51,12 @@ def find_course(plan, course):
             return kl
     return {"error": "chosen class has not been found"}
 
+def extract_klausur_data(klausur_soup):
+    return { 
+        tag[2:].lower(): klausur_soup.find(tag).text.strip() for tag in (
+            "KlJahrgang", "KlKurs", "KlKursleiter", "KlStunde", "KlBeginn", "KlDauer", "KlKinfo"
+        )
+    }
 
 class Plan_Extractor():
     def __init__(self, school_num, date):
@@ -66,6 +72,7 @@ class Plan_Extractor():
         os.makedirs(self.data_folder, exist_ok=True)
         self.get()
         self.zusatzinfo = find_zusatzinfo(self.day_data)
+        self.klausuren = []
         self.freie_tage = self.parse_freie_tage()
         self.date_after = self.next_day()
         self.date_before = self.next_day(False)
@@ -88,7 +95,7 @@ class Plan_Extractor():
         return self.day_data
     
     def render(self, lessons):
-        return Plan(self.school_num, self.date, lessons, self.zusatzinfo, date_after=self.date_after, date_before=self.date_before).render()
+        return Plan(self.school_num, self.date, lessons, self.zusatzinfo, klausuren_lst=self.klausuren, date_after=self.date_after, date_before=self.date_before).render()
     
     def teacher_lessons(self, tag):
         teacher_lessons = []
@@ -130,6 +137,10 @@ class Plan_Extractor():
         lessons = []
         for std in std_all:
             lessons.append({**{"class": course}, **extract_data(std), "time_data": time_data})
+        klausuren_tag = course_data.find("Klausuren")
+        if klausuren_tag:
+            self.klausuren = klausuren_tag.find_all("Klausur")
+            self.klausuren = [extract_klausur_data(klausur) for klausur in self.klausuren]
         return self.render(lessons)
     
     def set_preferences(self, preferences):

@@ -77,12 +77,36 @@ class Zusatzinfo():
     def render(self):
         return self.zusatzinfo_lst
 
+# not used (YET -> current use without the class and direct rendering...)
+class Klausur():
+    def __init__(self, data_dict):
+        self.jahrgang = data_dict.get("jahrgang", "")
+        self.kurs = data_dict.get("kurs", "")
+        self.kursleiter = data_dict.get("kursleiter", "")
+        self.stunde = data_dict.get("stunde", "")
+        self.beginn = data_dict.get("beginn", "")
+        self.dauer = data_dict.get("dauer", "")
+        self.info = data_dict.get("kinfo", "")
+    
+    def render(self):
+        return {
+            "jahrgang": self.jahrgang,
+            "kurs": self.kurs,
+            "kursleiter": self.kursleiter,
+            "stunde": self.stunde,
+            "beginn": self.beginn,
+            "dauer": self.dauer,
+            "kinfo": self.kinfo,
+        }
+
+
 class Plan():
     def __init__(self, school_num, date, lesson_dicts, zusatzinfo_lst, **kwargs):
         self.school_num = school_num
         self.lesson_dicts = lesson_dicts
         self.lessons = [Lesson(lesson_dict, school_num, date) for lesson_dict in lesson_dicts]
         self.zusatzinfo_lst = zusatzinfo_lst
+        self.klausuren_lst = kwargs.get("klausuren_lst", [])
         self.new_dates = [
             kwargs.get("date_before", date),
             date,
@@ -93,6 +117,7 @@ class Plan():
         return {
             "lessons": sorted([lesson.render() for lesson in self.lessons], key=lambda x: x["lesson"]),
             "zusatzinfo": Zusatzinfo(self.zusatzinfo_lst).render(),
+            "klausuren": self.klausuren_lst,
             "new_dates": self.new_dates
         }
 
