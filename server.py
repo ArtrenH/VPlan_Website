@@ -198,6 +198,7 @@ def api_response(school_number, return_json=False):
         "plan_value": args["value"],
         "date": convert_date_readable(date),
         "plan": add_spacers(remove_duplicates(data["lessons"])),
+        "klausuren": data["klausuren"],
         "zusatzinfo": data["zusatzinfo"],
         "timestamp": convert_date_readable(plan_data.get_timestamp()),
         "week": plan_data.get_week()

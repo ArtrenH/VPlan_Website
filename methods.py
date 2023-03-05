@@ -401,10 +401,11 @@ def get_default_date(date_list):
 
 
 if __name__ == "__main__":
-    p = Plan_Extractor("10001329", "20230127")
-    print(p.get_week())
-    #m = MetaExtractor("10001329")
-    #c = m.course_list()
+    #p = Plan_Extractor("10001329", "20230127")
+    #print(p.get_week())
+    m = MetaExtractor("10001329")
+    c = m.course_list()
+    print(c)
     #c = m.group_list("JG12")
     #print(c)
     #c = MetaExtractor("10001329").current_school_days_str()
