@@ -53,12 +53,6 @@ def update_settings(user_settings):
 def render_template_wrapper(template_name, *args, **kwargs):
     tmp_user = users.find_one({"_id": ObjectId(current_user.get_id())})
 
-    schools = tmp_user.get("authorized_schools", [])
-    available_favorites = {}
-    for school in schools:
-        for klasse in MetaExtractor(school).course_list():
-            available_favorites.setdefault(school, []).append(klasse)
-
     logged_in = tmp_user is not None
     user_settings = {}
     random_greeting = "Startseite"
@@ -91,9 +85,14 @@ def render_template_wrapper(template_name, *args, **kwargs):
         "Howdy {name}!",
     ]
 
+    available_favorites = {}
     if logged_in:
         user_settings = tmp_user.get("settings", {})
         random_greeting = choice(greetings).format(name=tmp_user["nickname"])
+        schools = tmp_user.get("authorized_schools", [])
+        for school in schools:
+            for klasse in MetaExtractor(school).course_list():
+                available_favorites.setdefault(school, []).append(klasse)
 
     return render_template(f"{template_name}.html", available_favorites=available_favorites, logged_in=logged_in, random_greeting=random_greeting, user_settings=json.dumps(user_settings), py_user_settings=user_settings, *args, **kwargs)
 
