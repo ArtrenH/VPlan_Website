@@ -55,8 +55,8 @@ class Plan_Extractor():
     def teacher_lessons(self, tag):
         if self.caching:
             if os.path.exists(f"data/{self.school_num}_plans/{self.date}/teachers.json"):
-                with open(f"data/{self.school_num}_plans/{self.date}/teachers.json", "r") as f:
-                    data = json.load(f, encoding="utf-8")
+                with open(f"data/{self.school_num}_plans/{self.date}/teachers.json", "r", encoding="utf-8") as f:
+                    data = json.load(f)
                     if tag in data:
                         return data[tag]
         teacher_lessons = []
@@ -80,8 +80,8 @@ class Plan_Extractor():
     def room_lessons(self, room):
         if self.caching:
             if os.path.exists(f"data/{self.school_num}_plans/{self.date}/rooms.json"):
-                with open(f"data/{self.school_num}_plans/{self.date}/rooms.json", "r") as f:
-                    data = json.load(f, encoding="utf-8")
+                with open(f"data/{self.school_num}_plans/{self.date}/rooms.json", "r", encoding="utf-8") as f:
+                    data = json.load(f)
                     if room in data:
                         return data[room]
         room_lessons = []
@@ -99,8 +99,8 @@ class Plan_Extractor():
     def get_plan_normal(self, course):
         if self.caching:
             if os.path.exists(f"data/{self.school_num}_plans/{self.date}/courses.json"):
-                with open(f"data/{self.school_num}_plans/{self.date}/courses.json", "r") as f:
-                    data = json.load(f, encoding="utf-8")
+                with open(f"data/{self.school_num}_plans/{self.date}/courses.json", "r", encoding="utf-8") as f:
+                    data = json.load(f)
                     if course in data:
                         return data[course]
         course_data = find_course(self.day_data, course)
