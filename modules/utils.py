@@ -12,12 +12,17 @@ from flask import Flask, make_response, render_template, redirect, url_for
 from flask_login import UserMixin, current_user
 
 from dotenv import load_dotenv
+
+from methods import MetaExtractor
 load_dotenv()
 
 db = pymongo.MongoClient(os.getenv("MONGO_URL") if os.getenv("MONGO_URL") else "", 27017).vplan
 users = db.user
 
 def update_settings(user_settings):
+    tmp_user = users.find_one({"_id": ObjectId(current_user.get_id())})
+    authorized_schools = tmp_user.get("authorized_schools", [])
+
     new_settings = {}
     try:
         new_settings["show_plan_toasts"] = bool(user_settings.get("show_plan_toasts", False))
@@ -33,11 +38,21 @@ def update_settings(user_settings):
     new_settings["accent_color"] = user_settings.get("accent_color", "#BB86FC")
     if not re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', new_settings["accent_color"]):
         return make_response('Invalid Color for accent_color', 400)
+    
+    
+    new_settings["favorite"] = user_settings.get("favorite", [])
+    if new_settings["favorite"] != []:
+        if new_settings["favorite"][0] not in authorized_schools:
+            return make_response('Schoolnumber not authorized for user', 400)
+        if new_settings["favorite"][1] not in MetaExtractor(new_settings["favorite"][0]).course_list():
+            return make_response('Course not recognized', 400)
+
     users.update_one({'_id': ObjectId(current_user.get_id())}, {"$set": {'settings': new_settings}})
     return make_response('success', 200)
 
 def render_template_wrapper(template_name, *args, **kwargs):
     tmp_user = users.find_one({"_id": ObjectId(current_user.get_id())})
+
     logged_in = tmp_user is not None
     user_settings = {}
     random_greeting = "Startseite"
@@ -70,11 +85,16 @@ def render_template_wrapper(template_name, *args, **kwargs):
         "Howdy {name}!",
     ]
 
+    available_favorites = {}
     if logged_in:
         user_settings = tmp_user.get("settings", {})
         random_greeting = choice(greetings).format(name=tmp_user["nickname"])
+        schools = tmp_user.get("authorized_schools", [])
+        for school in schools:
+            for klasse in MetaExtractor(school).course_list():
+                available_favorites.setdefault(school, []).append(klasse)
 
-    return render_template(f"{template_name}.html", logged_in=logged_in, random_greeting=random_greeting, user_settings=json.dumps(user_settings), py_user_settings=user_settings, *args, **kwargs)
+    return render_template(f"{template_name}.html", available_favorites=available_favorites, logged_in=logged_in, random_greeting=random_greeting, user_settings=json.dumps(user_settings), py_user_settings=user_settings, *args, **kwargs)
 
 class User(UserMixin):
     def __init__(self, mongo_id):
@@ -89,7 +109,7 @@ class AddStaticFileHashFlask(Flask):
         self._file_hash_cache = {}
     def inject_url_defaults(self, endpoint, values):
         super(AddStaticFileHashFlask, self).inject_url_defaults(endpoint, values)
-        if endpoint == "static" and "filename" in values:
+        if endpoint == "static" and "filename" in values and "site.webmanifest" not in values["filename"]:
             filepath = safe_join(self.static_folder, values["filename"])
             if os.path.isfile(filepath):
                 cache = self._file_hash_cache.get(filepath)

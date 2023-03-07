@@ -527,6 +527,7 @@ input:focus+label {
     width: 100%;
     border-radius: 5px;
     padding: 0px !important;
+    height: unset !important;
 }
 
 .modal-selection-btn:focus, #expand-btn:focus {

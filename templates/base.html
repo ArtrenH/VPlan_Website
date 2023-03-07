@@ -98,7 +98,6 @@
                 <ul id='preferences-dropdown' class='dropdown-content'>
                     <li><a href="javascript:void(0);" data-target="settings" class="modal-trigger"><span class="material-symbols-outlined">settings</span>Einstellungen</a></li>
                     {% block preferences %}
-                    <!--<li><a href="javascript:void(0);" data-target="todo" class="modal-trigger"><span class="material-symbols-outlined">star</span>Favoriten wählen</a></li>-->
                     <li><a href="javascript:void(0);" data-target="preferences_modal" class="modal-trigger"><span class="material-symbols-outlined">account_circle</span>Unterricht wählen</a></li>
                     {% endblock %}
                     <li><a href="{{ url_for('authorization.logout') }}" class="waves-effect"><span class="material-symbols-outlined">logout</span>Logout</a></li>
@@ -144,6 +143,21 @@
                 <label class="col s12" id="accent_color">
                     <input type="color" class="filled-in"><span>Akzentfarbe</span>
                 </label>
+                <div class="col s12">
+                    <span>Favorit:</span>
+                </div>
+                <div class="col s12">
+                    <select id="favorite">
+                        <option value="" selected>Kein Favorit ausgewählt</option>
+                        {% for school, favorites in available_favorites.items() %}
+                        <optgroup label="{{ school }}">    
+                            {% for favorite in favorites %}
+                            <option value="{{ school }},{{ favorite }}">{{ favorite }}</option>
+                            {% endfor %}
+                        {% endfor %}
+                        </optgroup>
+                    </select>
+                </div>
                 <div class="col s12" id="settings-btn-wrapper">
                     <button class="modal-selection-btn btn dp01 waves-effect" onclick="USER_SETTINGS={};load_settings();" id="reset-settings-btn">Einstellungen zurücksetzen</button>
                     <button class="modal-selection-btn btn dp01 waves-effect" onclick="window.location.href='/account'" id="saved-data-btn">Gespeicherte Daten einsehen</button>

@@ -1,6 +1,6 @@
 <div class="row vplan-wrapper">
     <h4 class="headline">{% if plan_type %}
-        Plan für {{ plan_type }} <span class='custom_badge'>{{ plan_value }}</span> am <span class='custom_badge'>{{ date }}</span> ({{ week }}-Woche)
+        Plan für {{ plan_type }} <span class='custom_badge'>{{ plan_value }}</span> am <span class='custom_badge'>{{ date }}</span>{% if week %} ({{ week }}-Woche){% endif %}
     {% else %}{% block title %}Startseite{% endblock %}{% endif %}</h4>
     {% if plan|length == 0 %}
         <div class="col s12">
@@ -73,23 +73,26 @@
             </div>
         </div>
     {% endfor %}
+    {% if klausuren %}
     <div class="col s12">
+        <h4><b>Klausuren:</b></h4>
+        <p class="flow-text">
+        {% for elem in klausuren %}
+            {{ elem.beginn }} Uhr: {{ elem.kurs }}, {{ elem.kursleiter }} ({{ elem.dauer}} Minuten ) <br>
+        {% endfor %}
+        </p>
+    </div>
+    {% endif %}
+    <div class="col s12">
+        {% if klausuren %}
+        <h4><b>Weitere Infos:</b></h4>
+        {% endif %}
         <p class="flow-text">
         {% for elem in zusatzinfo %}
             {{ elem }} <br>
         {% endfor %}
         </p>
     </div>
-    {% if klausuren %}
-        <h4>Klausuren:</h4>
-        <div class="col s12">
-            <p class="flow-text">
-            {% for elem in klausuren %}
-                {{ elem.beginn }} Uhr: {{ elem.kurs }}, {{ elem.kursleiter }} ({{ elem.dauer}} Minuten ) <br>
-            {% endfor %}
-            </p>
-        </div>
-    {% endif %}
     <span class="col s12 timestamp_data">Stand der Daten: <span class='custom_badge'>{{ timestamp }}</span></span>
     <div class="col s12 bottom-spacer"></div>
 </div>

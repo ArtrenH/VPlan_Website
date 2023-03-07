@@ -54,6 +54,16 @@ def index():
         tmp_data = json.load(f)
         return render_template_wrapper('start', available_schools=[[item["school_name"], item["display_name"], key] for key, item in tmp_data.items()])
 
+@app.route('/favorite')
+@login_required
+def favorite():
+    tmp_user = get_user(current_user.get_id())
+    favorite = tmp_user.get("settings", {}).get("favorite", [])
+    if not favorite:
+        return redirect(url_for('index'))
+    else:
+        return redirect(f"{url_for('handle_plan', school_number=favorite[0])}?type=klasse_preferences&value={favorite[1]}&share=true")
+
 @app.route('/about')
 def about():
     return render_template_wrapper('about', devs=[
