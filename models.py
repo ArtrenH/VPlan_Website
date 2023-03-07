@@ -5,7 +5,7 @@
 # course: Kurs, z.B. eth1, lat
 import json
 import urllib
-from flask import url_for
+#from flask import url_for
 
 
 class Lesson():
@@ -46,28 +46,10 @@ class Lesson():
             "subject_changed": self.subject_changed,
             "teacher_changed": self.teacher_changed,
             "room_changed": self.room_changed,
-            "room_link": self.get_room_link(),
-            "teacher_link": self.get_teacher_link(),
-            "class_link": self.get_class_link(),
             "begin": self.begin,
             "end": self.end,
             "course_id": self.course_id
         }
-    
-    def get_class_link(self):
-        if self.class_name == "--":
-            return "#"
-        return url_for('handle_plan', school_number=self.school_num, date=self.date, type="klasse", value=self.class_name)
-    
-    def get_teacher_link(self):
-        if self.teacher == "--":
-            return "#"
-        return url_for('handle_plan', school_number=self.school_num, date=self.date, type="teacher", value=self.teacher)
-    
-    def get_room_link(self):
-        if self.room == "--":
-            return "#"
-        return url_for('handle_plan', school_number=self.school_num, date=self.date, type="room", value=self.room)
     
 
 class Zusatzinfo():

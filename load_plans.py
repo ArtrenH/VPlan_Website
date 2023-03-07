@@ -5,7 +5,7 @@ import json
 from tqdm import tqdm
 import time
 import os
-from methods import DateExtractor, MetaExtractor
+from methods import DateExtractor, MetaExtractor, Plan_Extractor
 from vplan_utils import sort_klassen
 
 
@@ -49,11 +49,15 @@ class PlanLoader():
         for plan_file in tqdm(plan_files):
             self.get_plan(plan_file)
     
-    def get_plan(self, plan_file):
+    def get_plan(self, plan_file: str):
         plan_url = f"https://{self.api_server}/{self.school_number}/mobil/mobdaten/{plan_file}"
         r = requests.get(plan_url, headers=self.headers)
         with open(f"{self.data_folder}/{plan_file}", "w", encoding="utf-8") as f:
             f.write(r.text)
+        if plan_file != "Klassen.xml":
+            plan_date = ''.join([char for char in plan_file if char.isdigit()])
+            self.precalculate_school(plan_date)
+
     
     def check_infinite(self):
         while True:
@@ -100,6 +104,28 @@ class PlanLoader():
         with open(f"{self.data_folder}/meta.json", "w+", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
         print("Metadaten aktualisiert")
+
+    def precalculate_school(self, date):
+        school_num = self.school_number
+        os.makedirs(f"data/{school_num}_plans/{date}", exist_ok=True)
+        m = MetaExtractor(school_num)
+        p = Plan_Extractor(school_num, date, caching=False)
+
+        teacher_data = {teacher: p.teacher_lessons(teacher) for teacher in 
+                        [teacher["kuerzel"] for teacher in m.teacher_list()]}
+        with open(f"data/{school_num}_plans/{date}/teachers.json", "w+") as f:
+            json.dump(teacher_data, f, ensure_ascii=False)
+
+        room_data = {room: p.room_lessons(room) for room in m.room_list()}
+        with open(f"data/{school_num}_plans/{date}/rooms.json", "w+") as f:
+            json.dump(room_data, f, ensure_ascii=False)
+        
+        course_data = {course: p.get_plan_normal(course) for course in m.course_list()}
+        with open(f"data/{school_num}_plans/{date}/courses.json", "w+") as f:
+            json.dump(course_data, f, ensure_ascii=False)
+    
+
+
 
 if __name__ == "__main__":
     p = PlanLoader("10001329")
