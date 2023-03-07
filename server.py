@@ -154,6 +154,7 @@ def handle_plan(school_number):
             var_vorangezeigt="false", var_angefragt_link="")
     return "<div class='row'><p class='flow-text col s12'>Bitte wähle einen Lehrer, einen Raum, eine Klasse oder den \"Freie Räume\"-Button aus um einen Plan zu sehen.</p></div>"
 
+
 # api for plans
 @app.route("/api/<school_number>")
 @login_required
