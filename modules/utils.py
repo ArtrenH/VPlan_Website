@@ -110,7 +110,7 @@ class AddStaticFileHashFlask(Flask):
         self._file_hash_cache = {}
     def inject_url_defaults(self, endpoint, values):
         super(AddStaticFileHashFlask, self).inject_url_defaults(endpoint, values)
-        if endpoint == "static" and "filename" in values:
+        if endpoint == "static" and "filename" in values and "site.webmanifest" not in values["filename"]:
             filepath = safe_join(self.static_folder, values["filename"])
             if os.path.isfile(filepath):
                 cache = self._file_hash_cache.get(filepath)
