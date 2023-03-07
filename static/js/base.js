@@ -32,8 +32,8 @@ function reload_preferences(response) {
 }
 
 function init_selects() {
-    var select_elems = document.querySelectorAll('select');
-    var select_instances = M.FormSelect.init(select_elems, {
+    var class_select_elems = document.querySelector('#class_select');
+    M.FormSelect.init(class_select_elems, {
         dropdownOptions: {
             onCloseStart: function(elem) {
                 selected_class = elem.value;
@@ -52,6 +52,8 @@ function init_selects() {
             }
         }
     });
+    var select_elems = document.querySelectorAll('select');
+    M.FormSelect.init(select_elems, {});
 }
 
 function save_preferences() {
@@ -68,23 +70,25 @@ function save_preferences() {
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(selected_groups),
         success: function(response) {
-            M.toast({text: 'Fachauswahl gespeichert!', classes:"success-toast", displayLength: 1000});
+            M.toast({text: 'Fachauswahl gespeichert!', classes: "success-toast", displayLength: 1000});
             if (typeof get_plan === "function") {
                 get_plan();
             }
         },
         error: function() {
-            M.toast({text: 'Beim speichern der Fachauswahl ist ein Fehler aufgetreten!', displayLength: 2000, classes:"error-toast"});
+            M.toast({text: 'Beim speichern der Fachauswahl ist ein Fehler aufgetreten!', displayLength: 2000, classes: "error-toast"});
         }
     });
 }
 
 function save_settings() {
+    let favorite = document.querySelector('#favorite').value.split(',');
     USER_SETTINGS = {
         "show_plan_toasts": document.querySelector('#show_plan_toasts input').checked,
         "day_switch_keys": document.querySelector('#day_switch_keys input').checked,
         "background_color": document.querySelector('#background_color input').value,
-        "accent_color": document.querySelector('#accent_color input').value
+        "accent_color": document.querySelector('#accent_color input').value,
+        "favorite": favorite != "" ? favorite : [],
     };
     document.documentElement.style.setProperty('--background_color', USER_SETTINGS['background_color']);
     document.documentElement.style.setProperty('--accent_color', USER_SETTINGS['accent_color']);
@@ -110,6 +114,10 @@ function load_settings() {
     document.querySelector('#day_switch_keys input').checked = get(USER_SETTINGS, "day_switch_keys", true);
     document.querySelector('#background_color input').value = get(USER_SETTINGS, "background_color", "#121212");
     document.querySelector('#accent_color input').value = get(USER_SETTINGS, "accent_color", "#BB86FC");
+    document.querySelector('#favorite').value = get(USER_SETTINGS, "favorite", []).join(",");
+    // Refresh selected Value
+    M.FormSelect.getInstance(document.querySelector('#favorite')).destroy();
+    M.FormSelect.init(document.querySelector('#favorite'), {});
 }
 
 navigator.serviceWorker && navigator.serviceWorker.register("/sw.js").then(function(registration) {});
