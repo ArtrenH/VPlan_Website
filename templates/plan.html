@@ -75,7 +75,7 @@
     {% endfor %}
     {% if klausuren %}
     <div class="col s12">
-        <h4>Klausuren:</h4>
+        <h4><b>Klausuren:</b></h4>
         <p class="flow-text">
         {% for elem in klausuren %}
             {{ elem.beginn }} Uhr: {{ elem.kurs }}, {{ elem.kursleiter }} ({{ elem.dauer}} Minuten ) <br>
@@ -84,7 +84,7 @@
     </div>
     {% endif %}
     <div class="col s12">
-        <h4>Weitere Infos:</h4>
+        <h4><b>Weitere Infos:</b></h4>
         <p class="flow-text">
         {% for elem in zusatzinfo %}
             {{ elem }} <br>
