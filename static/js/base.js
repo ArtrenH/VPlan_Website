@@ -52,7 +52,7 @@ function init_selects() {
             }
         }
     });
-    var select_elems = document.querySelectorAll('select');
+    var select_elems = document.querySelectorAll('select:not(#class_select)');
     M.FormSelect.init(select_elems, {});
 }
 

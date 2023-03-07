@@ -73,23 +73,24 @@
             </div>
         </div>
     {% endfor %}
+    {% if klausuren %}
     <div class="col s12">
+        <h4>Klausuren:</h4>
+        <p class="flow-text">
+        {% for elem in klausuren %}
+            {{ elem.beginn }} Uhr: {{ elem.kurs }}, {{ elem.kursleiter }} ({{ elem.dauer}} Minuten ) <br>
+        {% endfor %}
+        </p>
+    </div>
+    {% endif %}
+    <div class="col s12">
+        <h4>Weitere Infos:</h4>
         <p class="flow-text">
         {% for elem in zusatzinfo %}
             {{ elem }} <br>
         {% endfor %}
         </p>
     </div>
-    {% if klausuren %}
-        <h4>Klausuren:</h4>
-        <div class="col s12">
-            <p class="flow-text">
-            {% for elem in klausuren %}
-                {{ elem.beginn }} Uhr: {{ elem.kurs }}, {{ elem.kursleiter }} ({{ elem.dauer}} Minuten ) <br>
-            {% endfor %}
-            </p>
-        </div>
-    {% endif %}
     <span class="col s12 timestamp_data">Stand der Daten: <span class='custom_badge'>{{ timestamp }}</span></span>
     <div class="col s12 bottom-spacer"></div>
 </div>
