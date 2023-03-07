@@ -84,7 +84,9 @@
     </div>
     {% endif %}
     <div class="col s12">
+        {% if klausuren %}
         <h4><b>Weitere Infos:</b></h4>
+        {% endif %}
         <p class="flow-text">
         {% for elem in zusatzinfo %}
             {{ elem }} <br>
