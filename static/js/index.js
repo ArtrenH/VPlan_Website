@@ -43,6 +43,7 @@ function get_plan_url(url) {
     if (get(USER_SETTINGS, "show_plan_toasts", false)) {
         M.toast({text: 'Lade Plan...', displayLength: 750, classes:"neutral-toast"});
     }
+    $(".loaded_content").addClass("loading");
     window.history.replaceState(null, "", url + "&share=true");
     ajax_response = $.ajax({
         type: 'GET',
@@ -59,11 +60,13 @@ function get_plan_url(url) {
             if (get(USER_SETTINGS, "show_plan_toasts", false)) {
                 M.toast({text: 'Plan geladen!', displayLength: 1000, classes:"success-toast"});
             }
+            $(".loaded_content").removeClass("loading");
         },
         error: function(request, status, error) {
             //if (get(USER_SETTINGS, "show_plan_toasts", false)) {
             M.toast({text: 'Beim laden des Plans ist ein Fehler aufgetreten!', displayLength: 2000, classes:"error-toast"});
             //}
+            $(".loaded_content").removeClass("loading");
         }
     });
 }

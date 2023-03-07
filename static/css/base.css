@@ -722,3 +722,27 @@ input:focus.autocomplete {
     background: hsl(0, 95%, 66%);
     margin-top: 10px;
 }
+
+.loaded_content {
+    position: relative;
+    min-height: 20px;
+}
+
+.loaded_content::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    background: var(--background_color);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 500ms ease;
+    z-index: 2;
+}
+
+.loaded_content.loading::before {
+    transform: scaleY(101%);
+}
