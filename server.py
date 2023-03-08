@@ -297,6 +297,13 @@ def robots():
     response.mimetype = "text/plain"
     return response
 
+
+@app.route('/api_example')
+@login_required
+def example():
+    with open("example.json", "r") as f:
+        return jsonify(json.load(f))
+
 if __name__ == '__main__':
     app.run(port=5010)
     #app.run(host='0.0.0.0', port=5010)
