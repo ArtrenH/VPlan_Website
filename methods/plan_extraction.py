@@ -101,6 +101,7 @@ class Plan_Extractor():
             if os.path.exists(f"data/{self.school_num}_plans/{self.date}/courses.json"):
                 with open(f"data/{self.school_num}_plans/{self.date}/courses.json", "r", encoding="utf-8") as f:
                     data = json.load(f)
+                    self.klausuren = data[course]["klausuren"]
                     if course in data:
                         return data[course]
         course_data = find_course(self.day_data, course)

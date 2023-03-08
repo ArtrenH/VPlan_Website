@@ -214,6 +214,7 @@ def api_response(school_number, return_json=False):
         "timestamp": convert_date_readable(plan_data.get_timestamp()),
         "week": plan_data.get_week()
     }
+    print(data["klausuren"])
     if return_json:
         return jsonify(ctx_data)
     return render_template_wrapper(
