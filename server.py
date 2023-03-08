@@ -299,10 +299,10 @@ def robots():
 
 
 @app.route('/api_example')
-@login_required
 def example():
     with open("example.json", "r", encoding="utf-8") as f:
         return jsonify(json.load(f))
+        return f.read()
 
 if __name__ == '__main__':
     app.run(port=5010)
