@@ -301,7 +301,7 @@ def robots():
 @app.route('/api_example')
 @login_required
 def example():
-    with open("example.json", "r") as f:
+    with open("example.json", "r", encoding="utf-8") as f:
         return jsonify(json.load(f))
 
 if __name__ == '__main__':
