@@ -12,9 +12,6 @@
     .container {
         width: 95%;
     }
-    nav {
-        padding: 0px 5px !important;
-    }
 }
 
 * {
@@ -51,16 +48,6 @@ body {
     margin-right: calc(100% - 100vw);
     min-height: 100vh;
     overflow-x: hidden;
-}
-
-nav {
-    padding: 0px 20px;
-    margin-right: calc(100% - 100vw);
-}
-
-nav img {
-    height: 100%;
-    padding: 5px;
 }
 
 .headline {
@@ -635,10 +622,6 @@ input:focus.autocomplete {
 
 .collapsible-header, .collapsible-body {
     border-color: rgba(255, 255, 255, 0.1);
-}
-
-.preferences-nav span {
-    vertical-align: middle;
 }
 
 .dropdown-content {
