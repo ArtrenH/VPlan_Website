@@ -1,0 +1,28 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "watch": "watch \"npm run build\" src",
+    "story:dev": "histoire dev",
+    "story:build": "histoire build",
+    "story:preview": "histoire preview"
+  },
+  "devDependencies": {
+    "@histoire/plugin-svelte": "^0.15.8",
+    "@sveltejs/vite-plugin-svelte": "^2.0.2",
+    "histoire": "^0.15.8",
+    "node-sass": "^8.0.0",
+    "sass": "^1.59.2",
+    "svelte": "^3.55.1",
+    "svelte-preprocess": "^5.0.1",
+    "vite": "^4.1.0"
+  },
+  "dependencies": {
+    "watch": "^1.0.2"
+  }
+}
