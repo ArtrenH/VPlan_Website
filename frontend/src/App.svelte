@@ -6,6 +6,7 @@
     <meta http-equiv="content-Language" content="de" />
     <meta name="description" content="Die (garantiert bessere!!!) Alternative zur VpMobil24 App" />
     <meta name="revisit-after" content="NO" />
+    <title>Better VPlan</title>
 
     <!-- Auto-Generated Icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icons/apple-touch-icon.png">
@@ -20,7 +21,6 @@
 
     <!-- Materialize -->
     <link rel="stylesheet" href="/assets/css/materialize.min.css">
-    <script src="assets/js/libraries/webfont.js"></script>
     <style>
         @font-face {
             font-family: 'Material Symbols Outlined';
@@ -52,7 +52,6 @@
         }
     </style>
     <link rel="stylesheet" href="/assets/css/base.css">
-    <script src="assets/js/libraries/materialize.min.js" defer></script>
 </svelte:head>
 
 <script>
