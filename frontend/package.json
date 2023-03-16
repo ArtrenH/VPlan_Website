@@ -20,7 +20,7 @@
     "sass": "^1.59.2",
     "svelte": "^3.55.1",
     "svelte-preprocess": "^5.0.1",
-    "vite": "^4.1.0"
+    "vite": "^4.2.0"
   },
   "dependencies": {
     "watch": "^1.0.2"
