@@ -202,3 +202,15 @@ def classify_rooms(rooms):
             data[house][floor] = sorted(data[house][floor])
     new_keys = sorted(data.keys(), key=lambda x: int(x) if x not in ["Aula", "TH"] else 10)
     return {key: data[key] for key in new_keys}
+
+from copy import deepcopy
+import random
+
+def randomize(plan):
+    original = deepcopy(plan)
+    random.shuffle(plan)
+    for ind, elem in enumerate(original):
+        plan[ind]["lesson"] = elem["lesson"]
+        plan[ind]["begin"] = elem["begin"]
+        plan[ind]["end"] = elem["end"]
+    return plan

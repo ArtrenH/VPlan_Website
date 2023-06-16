@@ -4,7 +4,7 @@ import json
 from bson import ObjectId
 from flask import redirect, make_response, send_from_directory, url_for, request, jsonify
 from methods import Plan_Extractor, MetaExtractor, extract_metadata, get_default_date
-from vplan_utils import add_spacers, remove_duplicates, convert_date_readable, sort_klassen
+from vplan_utils import add_spacers, remove_duplicates, convert_date_readable, sort_klassen, randomize
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
 from flask_compress import Compress
 from flask_wtf.csrf import CSRFProtect
@@ -95,6 +95,8 @@ def schulname(schulname):
 @app.route('/authorize/<school_number>', methods=['GET', 'POST'])
 @login_required
 def authorize_school(school_number):
+    with open("auth_log/auth.log", "a") as f:
+        f.write(f"\n\nNew auth attempt for {school_number}\nargs: {request.args}\nbody: {request.form}")
     with open("creds.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         try:
@@ -214,6 +216,9 @@ def api_response(school_number, return_json=False):
         "timestamp": convert_date_readable(plan_data.get_timestamp()),
         "week": plan_data.get_week()
     }
+    if date == "20230616":
+        print("hii")
+        ctx_data["plan"] = randomize(ctx_data["plan"])
     print(data["klausuren"])
     if return_json:
         return jsonify(ctx_data)
